@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4957A6</color>
+    <color name="colorPrimaryDark">#454489</color>
+    <color name="colorAccent">#FFB217</color>
+
+    <color name="tr_white_b3">#B3FFFFFF</color>
+    <color name="tr_black_80">#80000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="gray">#9e9e9e</color>
+    <color name="light_gray">#B3FFFFFF</color>
+    <color name="background_blue">#242d34</color>
+
+    <color name="rth_red">#D0021B</color>
+
+    <color name="colorPopupBackground">#FFFFFF</color>
+</resources>

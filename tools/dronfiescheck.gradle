@@ -1,0 +1,68 @@
+apply plugin: 'checkstyle'
+
+task checkstyle(type: Checkstyle) {
+    description 'Check code standard'
+    group 'verification'
+    configFile file("${project.rootDir}/tools/rules-checkstyle.xml")
+    source fileTree('src/main/java')
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    classpath = files()
+    showViolations true
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        html.destination = "${project.rootDir}/tools/checkstyle.html"
+    }
+}
+
+
+apply plugin: 'findbugs'
+
+task findbugs(type: FindBugs) {
+    description 'Find bugs mainly design flaws, bad practices, multithreaded correctness and code vulnerabilities.'
+    group 'verification'
+    excludeFilter = file("$project.rootDir/tools/rules-findbugs.xml")
+//    classes = fileTree("$project.buildDir/intermediates/classes/dev/debug/com/aranoah")
+    classes = fileTree("$project.buildDir/intermediates/javac/debug/compileDebugJavaWithJavac/classes/")
+//    classes = files("$project.buildDir/intermediates/classes")
+    source = fileTree('src/main/java')
+    effort 'max'
+    reportLevel = "high"
+    classpath = files()
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        html.destination = "$project.rootDir/tools/findbugs.html"
+//        reportDir.dest = "$project.rootDir/tools/"
+    }
+}
+
+apply plugin: 'pmd'
+
+task pmd(type: Pmd) {
+    description 'Identifying potential problems mainly dead code, duplicated code, cyclomatic complexity and overcomplicated expressions'
+    group 'verification'
+    ruleSetFiles = files("$project.rootDir/tools/rules-pmd.xml")
+    source = fileTree('src/main/java')
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        html.destination = "$project.rootDir/tools/pmd.html"
+    }
+}
+
+task dronfiesCheck {
+    description 'Run checkers'
+    group 'verification'
+    dependsOn 'pmd'
+//    dependsOn 'checkstyle'
+    dependsOn 'findbugs'
+//    abortOnError false
+}

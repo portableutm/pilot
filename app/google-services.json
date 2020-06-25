@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "553999867803",
+    "firebase_url": "https://dronfies-labs-station-pro.firebaseio.com",
+    "project_id": "dronfies-labs-station-pro",
+    "storage_bucket": "dronfies-labs-station-pro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553999867803:android:89fcaa89a8e3a6c1",
+        "android_client_info": {
+          "package_name": "com.dronfieslabs.portableutmpilot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "553999867803-hcptgvur442t0662ihin634tgreet3n4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJoBHx4xN_tJiGJVJIXORekF-1Iphgmbs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "553999867803-hcptgvur442t0662ihin634tgreet3n4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

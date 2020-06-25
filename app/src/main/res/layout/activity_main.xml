@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linear_layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:paddingLeft="40dp"
+    android:paddingRight="40dp"
+    tools:context=".ui.activities.MainActivity">
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/button_go_fly"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_margin="20dp"
+        android:text="@string/str_go_fly"
+        android:textSize="20sp"
+        style="@style/RaisedButton"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/button_operations"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_margin="20dp"
+        android:text="@string/str_operations"
+        android:textSize="20sp"
+        style="@style/RaisedButton"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/button_settings"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_margin="20dp"
+        android:text="@string/str_settings"
+        android:textSize="20sp"
+        style="@style/RaisedButton"/>
+
+</LinearLayout>

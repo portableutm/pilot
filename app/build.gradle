@@ -1,0 +1,179 @@
+apply plugin: 'com.android.application'
+
+ext.versionMajor = 1
+ext.versionMinor = 0
+ext.versionPatch = 0
+ext.versionClassifier = null
+ext.isSnapshot = false
+ext.minimumSdkVersion = 24
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+    defaultConfig {
+        applicationId "com.dronfieslabs.portableutmpilot"
+        minSdkVersion project.ext.minimumSdkVersion
+        targetSdkVersion 28
+        versionCode generateVersionCode()
+        versionName generateVersionName()
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        // Enabling multidex support.
+        multiDexEnabled true
+    }
+    lintOptions {
+//        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+        }
+
+    }
+    packagingOptions {
+        packagingOptions {
+            doNotStrip "*/*/libdjivideo.so"
+            doNotStrip "*/*/libSDKRelativeJNI.so"
+            doNotStrip "*/*/libFlyForbid.so"
+            doNotStrip "*/*/libduml_vision_bokeh.so"
+            doNotStrip "*/*/libyuv2.so"
+            doNotStrip "*/*/libGroudStation.so"
+            doNotStrip "*/*/libFRCorkscrew.so"
+            doNotStrip "*/*/libUpgradeVerify.so"
+            doNotStrip "*/*/libFR.so"
+
+            exclude 'lib/x86/libGNaviMapex.so'
+            exclude 'lib/armeabi/libGNaviMapex.so'
+            exclude 'lib/x86_64/libGNaviMapex.so'
+            exclude 'lib/arm64-v8a/libGNaviMapex.so'
+            exclude 'lib/armeabi-v7a/libGNaviMapex.so'
+
+            exclude 'lib/armeabi-v7a/libGNaviUtils.so'
+            exclude 'lib/x86/libGNaviUtils.so'
+
+            exclude 'lib/arm64-v8a/libGNaviMap.so'
+            exclude 'lib/armeabi/libGNaviMap.so'
+            exclude 'lib/x86/libGNaviMap.so'
+            exclude 'lib/armeabi-v7a/libGNaviMap.so'
+            exclude 'lib/x86_64/libGNaviMap.so'
+
+            exclude 'lib/x86/libGNaviSearch.so'
+            exclude 'lib/armeabi/libGNaviSearch.so'
+            exclude 'lib/arm64-v8a/libGNaviSearch.so'
+            exclude 'lib/armeabi-v7a/libGNaviSearch.so'
+            exclude 'lib/x86_64/libGNaviSearch.so'
+
+            exclude 'lib/arm64-v8a/libGNaviUtils.so'
+            exclude 'lib/armeabi/libGNaviUtils.so'
+            exclude 'lib/x86_64/libGNaviUtils.so'
+
+            exclude 'lib/armeabi/libRoadLineRebuildAPI.so'
+            exclude 'lib/x86_64/libRoadLineRebuildAPI.so'
+            exclude 'lib/x86/libRoadLineRebuildAPI.so'
+            exclude 'lib/arm64-v8a/libRoadLineRebuildAPI.so'
+            exclude 'lib/armeabi-v7a/libRoadLineRebuildAPI.so'
+
+            exclude 'lib/armeabi/libGNaviData.so'
+            exclude 'lib/x86/libGNaviData.so'
+            exclude 'lib/arm64-v8a/libGNaviData.so'
+            exclude 'lib/armeabi-v7a/libGNaviData.so'
+            exclude 'lib/x86_64/libGNaviData.so'
+
+            exclude 'META-INF/rxjava.properties'
+            pickFirst 'protobuf.meta'
+        }
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+private Integer generateVersionCode() {
+    return ext.minimumSdkVersion * 10000000 + ext.versionMajor * 10000 + ext.versionMinor * 100 + ext.versionPatch
+}
+
+private String generateVersionName() {
+    String versionName = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}"
+    if (ext.versionClassifier == null && ext.isSnapshot) {
+        ext.versionClassifier = "SNAPSHOT"
+    }
+
+    if (ext.versionClassifier != null) {
+        versionName += "-" + ext.versionClassifier
+    }
+    return versionName;
+}
+
+dependencies {
+
+
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.cloudinary:cloudinary-android:1.24.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.firebase:firebase-jobdispatcher:0.5.2'
+    implementation 'com.google.firebase:firebase-database:16.0.6'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+    implementation 'com.firebaseui:firebase-ui-auth:4.3.0'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.mockito:mockito-core:2.+"
+    testImplementation 'org.json:json:20180130'
+
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.1.0'
+    implementation 'com.google.android.gms:play-services-places:16.0.0'
+
+    // DJI
+    implementation('com.dji:dji-uxsdk:4.9', {
+//             Uncomment the following line if your app does not need Anti Distortion for
+//             Mavic 2 Pro and Mavic 2 Zoom. It will greatly reducing the size of the APK:
+        exclude module: 'library-anti-distortion'
+    })
+    compileOnly 'com.dji:dji-sdk-provided:4.9'
+
+
+    implementation 'com.zhihu.android:matisse:0.4.3'
+    implementation 'com.android.support:cardview-v7:28.0.0'
+
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.0'
+}
+
+
+configurations {
+    //all*.exclude module: 'gson'
+}
+
+apply plugin: 'com.google.gms.google-services'
+
+//apply plugin: 'com.noveogroup.android.check'
+//
+//check {
+//    abortOnError false
+//    checkstyle { config easy() }
+//    findbugs { config hard() }
+//    pmd { config hard() }
+//}
+
+
+apply from: '../tools/dronfiescheck.gradle'

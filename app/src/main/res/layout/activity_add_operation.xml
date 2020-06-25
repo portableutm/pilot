@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activities.AddOperationActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_height="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:id="@+id/toolbar"
+        android:background="@color/colorPrimary"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <!-- Dummy item to prevent edit_text_description from receiving focus -->
+    <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_width="0px"
+        android:layout_height="0px"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@id/toolbar">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="20dp"
+                android:orientation="vertical">
+
+                <!-- Description -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_description"/>
+                <EditText
+                    android:id="@+id/edit_text_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"/>
+
+                <!-- Start Date and Time -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_start"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <android.support.v7.widget.AppCompatButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:textSize="24dp"
+                        android:id="@+id/button_start_date"
+                        android:onClick="onClickSetStartDate"
+                        style="@style/FlatButton"
+                        android:layout_marginBottom="20dp"/>
+                    <android.support.v7.widget.AppCompatButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:textSize="24dp"
+                        android:id="@+id/button_start_time"
+                        android:onClick="onClickSetStartTime"
+                        style="@style/FlatButton"
+                        android:layout_marginBottom="20dp"/>
+                </LinearLayout>
+
+                <!-- Duration -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_duration"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal">
+                    <android.support.v7.widget.AppCompatSeekBar
+                        android:id="@+id/seekbar_duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:min="1"
+                        android:progress="2"
+                        android:max="5"
+                        android:layout_gravity="center_vertical"/>
+                    <android.support.v7.widget.AppCompatButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/button_duration"
+                        android:text=""
+                        android:layout_gravity="center_vertical"
+                        android:onClick="onClickDuration"
+                        style="@style/FlatButton"/>
+                </LinearLayout>
+
+                <!-- Max. Altitude -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_maximum_altitude"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal">
+                    <android.support.v7.widget.AppCompatSeekBar
+                        android:id="@+id/seekbar_max_height"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:min="10"
+                        android:max="120"
+                        android:progress="100"
+                        android:layout_gravity="center_vertical"/>
+                    <android.support.v7.widget.AppCompatButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/button_max_height"
+                        android:text=""
+                        android:layout_gravity="center_vertical"
+                        android:onClick="onClickMaxHeight"
+                        style="@style/FlatButton"/>
+                </LinearLayout>
+
+                <!-- Pilot -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_pilot"/>
+                <EditText
+                    android:id="@+id/edit_text_pilot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"/>
+
+                <!-- Drone -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_drone"/>
+                <EditText
+                    android:id="@+id/edit_text_drone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"/>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Add Operation -->
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/button_define_polygon"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/str_define_polygon"
+            android:layout_gravity="center"
+            android:onClick="onClickDefinePolygon"
+            android:layout_margin="20dp"
+            style="@style/RaisedButton"/>
+    </LinearLayout>
+
+</RelativeLayout>

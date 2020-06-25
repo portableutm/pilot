@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+
+    <dji.ux.widget.PreFlightStatusWidget
+        android:id="@+id/preFlightStatusWidget"
+        android:layout_width="238dp"
+        android:layout_height="25dp"
+        android:layout_weight="1" />
+
+    <dji.ux.widget.FlightModeWidget
+        android:layout_width="103dp"
+        android:layout_height="22dp"
+        android:layout_weight="1"/>
+
+    <dji.ux.widget.GPSSignalWidget
+        android:layout_width="44dp"
+        android:layout_height="22dp"
+        android:layout_weight="1"/>
+
+    <dji.ux.widget.VisionWidget
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_weight="1"/>
+
+    <dji.ux.widget.RemoteControlSignalWidget
+        android:layout_width="38dp"
+        android:layout_height="22dp"
+        android:layout_weight="1"/>
+
+    <dji.ux.widget.VideoSignalWidget
+        android:layout_width="38dp"
+        android:layout_height="22dp"
+        android:layout_weight="1"/>
+
+    <dji.ux.widget.WiFiSignalWidget
+        android:layout_width="22dp"
+        android:layout_height="20dp"
+        android:layout_weight="1"/>
+
+    <dji.ux.widget.BatteryWidget
+        android:layout_width="96dp"
+        android:layout_height="22dp"
+        custom:excludeView="singleVoltage"
+        android:layout_weight="1"/>
+
+</merge>
