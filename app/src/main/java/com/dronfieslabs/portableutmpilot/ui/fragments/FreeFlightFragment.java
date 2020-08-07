@@ -33,6 +33,7 @@ import butterknife.ButterKnife;
 import dji.common.camera.SettingsDefinitions;
 import dji.common.error.DJIError;
 import dji.common.flightcontroller.FlightControllerState;
+import dji.common.flightcontroller.GPSSignalLevel;
 import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
 import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
 import dji.common.flightcontroller.virtualstick.VerticalControlMode;
@@ -154,23 +155,28 @@ public class FreeFlightFragment extends android.support.v4.app.Fragment implemen
         mFlightControllerStateCallback = new FlightControllerState.Callback() {
             @Override
             public void onUpdate(FlightControllerState state) {
+                GPSSignalLevel gpsSignalLevel = state.getGPSSignalLevel();
+                if(state.getSatelliteCount() < 6 || (gpsSignalLevel != GPSSignalLevel.LEVEL_3 && gpsSignalLevel != GPSSignalLevel.LEVEL_4 && gpsSignalLevel != GPSSignalLevel.LEVEL_5)){
+                    // if we dont have good gps signal, we dont execute the flight controller state listener
+                    return;
+                }
                 double lat = state.getAircraftLocation().getLatitude();
                 double lon = state.getAircraftLocation().getLongitude();
                 double alt = state.getAircraftLocation().getAltitude();
+                double heading = state.getAircraftHeadDirection();
 
                 if(getOperationId() != null){
                     long now = new Date().getTime();
                     if((now - mLastPositionSentTimestamp)/1000 >= 3){
                         mLastPositionSentTimestamp = now;
                         try{
-                            DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(FreeFlightFragment.this.getContext())).sendPosition(lon, lat, alt, getOperationId(), new ICompletitionCallback<String>() {
+                            DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(FreeFlightFragment.this.getContext())).sendPosition(lon, lat, alt, heading, getOperationId(), new ICompletitionCallback<String>() {
                                 @Override
                                 public void onResponse(String s, String errorMessage) {}
                             });
                         }catch(Exception ex){}
                     }
                 }
-                //Log.d("onUpdate", "Altitude: " + mCurrentPoint.getAltitude());
             }
         };
     }

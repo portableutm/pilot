@@ -122,7 +122,7 @@ public class DronfiesUssServices {
         });
     }
 
-    public void sendPosition(double lon, double lat, double alt, String operationId, final ICompletitionCallback<String> callback){
+    public void sendPosition(double lon, double lat, double alt, double heading, String operationId, final ICompletitionCallback<String> callback){
         Date now = new Date();
         String timeSent = new SimpleDateFormat("yyyy-MM-dd").format(now) + "T" + new SimpleDateFormat("HH:mm:ss.SSS").format(now) + "Z";
         Position position = new Position(
@@ -131,6 +131,7 @@ public class DronfiesUssServices {
                     "Point",
                     new double[]{lon, lat}
                 ),
+                heading,
                 timeSent,
                 operationId
         );
@@ -265,6 +266,7 @@ public class DronfiesUssServices {
         );
         return new Operation(
                 operation.getDescription(),
+                "",
                 "Simple polygon",
                 "",
                 formatDateForOperationObject(submitDate),
@@ -284,7 +286,7 @@ public class DronfiesUssServices {
 
     private com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation getOperationFromJsonObject(JsonObject jsonObject) throws Exception {
         String id = jsonObject.get("gufi").getAsString();
-        String description = jsonObject.get("flight_comments").getAsString();
+        String description = jsonObject.get("name").getAsString();
         String pilotName = "";
         try{
             pilotName = jsonObject.get("contact").getAsString();

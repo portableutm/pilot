@@ -4,6 +4,7 @@ import java.util.List;
 
 class Operation {
 
+    private String name;
     private String flight_comments;
     private String volumes_description;
     private String flight_number;
@@ -20,11 +21,12 @@ class Operation {
     private List<OperationVolume> operation_volumes;
     private List<NegotiationAgreement> negotiation_agreements;
 
-    public Operation(String flight_comments, String volumes_description, String flight_number,
+    public Operation(String name, String flight_comments, String volumes_description, String flight_number,
                      String submit_time, String update_time, int faa_rule, int state, boolean near_structure,
                      String contact, String aircraft_comments, List<String> uas_registrations, PriorityElements priority_elements,
                      List<ContingencyPlan> contingency_plans, List<OperationVolume> operation_volumes,
                      List<NegotiationAgreement> negotiation_agreements) {
+        this.name = name;
         this.flight_comments = flight_comments;
         this.volumes_description = volumes_description;
         this.flight_number = flight_number;
