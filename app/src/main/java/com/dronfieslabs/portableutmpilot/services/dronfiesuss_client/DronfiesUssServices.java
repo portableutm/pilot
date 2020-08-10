@@ -1,5 +1,7 @@
 package com.dronfieslabs.portableutmpilot.services.dronfiesuss_client;
 
+import android.util.Log;
+
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.GPSCoordinates;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.ICompletitionCallback;
 import com.google.gson.Gson;
@@ -168,7 +170,6 @@ public class DronfiesUssServices {
                 }
                 // we update the authToken everytime a service responds succesfully
                 //DronfiesUssServices.this.authToken = response.headers().get("token");
-
                 List<com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation> listOperations = new ArrayList<>();
                 JsonObject jsonObject = new Gson().toJsonTree((Map<?, List<?>>)response.body()).getAsJsonObject();
                 for(JsonElement jsonElement : jsonObject.get("ops").getAsJsonArray()){
@@ -276,6 +277,7 @@ public class DronfiesUssServices {
                 false,
                 operation.getPilotName(),
                 operation.getDroneDescription(),
+                operation.getOwner(),
                 new ArrayList<String>(),
                 priorityElements,
                 contingencyPlans,
@@ -304,6 +306,7 @@ public class DronfiesUssServices {
         String strEffectiveTimeEnd = jsonObjectOperationVolume.get("effective_time_end").getAsString();
         int maxAltitude = (int)Math.round(jsonObjectOperationVolume.get("max_altitude").getAsDouble());
         com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation.EnumOperationState state = com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation.EnumOperationState.valueOf(jsonObject.get("state").getAsString());
+        String owner = jsonObject.getAsJsonObject("owner").get("username").getAsString();
         // parse polygon
         List<GPSCoordinates> polygon = new ArrayList<>();
         try{
@@ -327,7 +330,8 @@ public class DronfiesUssServices {
                 maxAltitude,
                 pilotName,
                 droneDescription,
-                state
+                state,
+                owner
         );
     }
 

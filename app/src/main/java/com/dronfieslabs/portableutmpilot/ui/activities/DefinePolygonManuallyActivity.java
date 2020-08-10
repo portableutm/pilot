@@ -108,13 +108,14 @@ public class DefinePolygonManuallyActivity extends AppCompatActivity {
             try{
                 droneDescription = mReceivedData.split(mDataSeparator)[5];
             }catch(Exception ex){}
+            String owner = SharedPreferencesUtils.getUsername(this);
 
             // create operation object
             List<GPSCoordinates> polygon = new ArrayList<>();
             for(double[] latLng : mVertices){
                 polygon.add(new GPSCoordinates(latLng[0], latLng[1]));
             }
-            Operation operation = new Operation(null, description, polygon, startDatetime, endDatetime, maxAltitude, pilotName, droneDescription, null);
+            Operation operation = new Operation(null, description, polygon, startDatetime, endDatetime, maxAltitude, pilotName, droneDescription, null, owner);
 
             // show progress bar while the operation is being executed
             final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);

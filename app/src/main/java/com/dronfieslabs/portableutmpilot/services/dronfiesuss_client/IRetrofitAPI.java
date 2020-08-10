@@ -19,7 +19,7 @@ interface IRetrofitAPI {
     @POST("position")
     Call<Object> sendPosition(@Header("auth") String authToken, @Body Position position);
 
-    @GET("operation/creator")
+    @GET("operation/owner")
     Call<Object> getOperations(@Header("auth") String authToken);
 
     @DELETE("operation/{id}")

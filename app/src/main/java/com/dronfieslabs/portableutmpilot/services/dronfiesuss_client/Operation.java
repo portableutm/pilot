@@ -15,6 +15,7 @@ class Operation {
     private boolean near_structure;
     private String contact;
     private String aircraft_comments;
+    private String owner;
     private List<String> uas_registrations;
     private PriorityElements priority_elements;
     private List<ContingencyPlan> contingency_plans;
@@ -23,7 +24,7 @@ class Operation {
 
     public Operation(String name, String flight_comments, String volumes_description, String flight_number,
                      String submit_time, String update_time, int faa_rule, int state, boolean near_structure,
-                     String contact, String aircraft_comments, List<String> uas_registrations, PriorityElements priority_elements,
+                     String contact, String aircraft_comments, String owner, List<String> uas_registrations, PriorityElements priority_elements,
                      List<ContingencyPlan> contingency_plans, List<OperationVolume> operation_volumes,
                      List<NegotiationAgreement> negotiation_agreements) {
         this.name = name;
@@ -37,6 +38,7 @@ class Operation {
         this.near_structure = near_structure;
         this.contact = contact;
         this.aircraft_comments = aircraft_comments;
+        this.owner = owner;
         this.uas_registrations = uas_registrations;
         this.priority_elements = priority_elements;
         this.contingency_plans = contingency_plans;

@@ -18,12 +18,13 @@ public class Operation {
     private String pilotName;
     private String droneDescription;
     private EnumOperationState state;
+    private String owner;
 
     //--------------------------------------------------------------------------------------------------------
     //--------------------------------------------- CONSTRUCTORS ---------------------------------------------
     //--------------------------------------------------------------------------------------------------------
 
-    public Operation(String id, String description, List<GPSCoordinates> polygon, Date startDatetime, Date endDatetime, int maxAltitude, String pilotName, String droneDescription, EnumOperationState state) {
+    public Operation(String id, String description, List<GPSCoordinates> polygon, Date startDatetime, Date endDatetime, int maxAltitude, String pilotName, String droneDescription, EnumOperationState state, String owner) {
         this.id = id;
         this.description = description;
         this.polygon = polygon;
@@ -33,6 +34,7 @@ public class Operation {
         this.pilotName = pilotName;
         this.droneDescription = droneDescription;
         this.state = state;
+        this.owner = owner;
     }
 
     //--------------------------------------------------------------------------------------------------------
@@ -109,6 +111,14 @@ public class Operation {
 
     public void setState(EnumOperationState state) {
         this.state = state;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public int getDurationInHours(){
