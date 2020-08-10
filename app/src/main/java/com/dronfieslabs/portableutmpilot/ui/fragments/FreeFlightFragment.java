@@ -163,6 +163,7 @@ public class FreeFlightFragment extends android.support.v4.app.Fragment implemen
                 double lat = state.getAircraftLocation().getLatitude();
                 double lon = state.getAircraftLocation().getLongitude();
                 double alt = state.getAircraftLocation().getAltitude();
+                if(alt < 0) alt = 0;
                 double heading = state.getAircraftHeadDirection();
 
                 if(getOperationId() != null){
