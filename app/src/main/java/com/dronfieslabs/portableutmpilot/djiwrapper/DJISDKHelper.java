@@ -12,6 +12,7 @@ import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.camera.Camera;
 import dji.sdk.products.Aircraft;
+import dji.sdk.sdkmanager.DJISDKInitEvent;
 import dji.sdk.sdkmanager.DJISDKManager;
 
 public class DJISDKHelper {
@@ -51,12 +52,27 @@ public class DJISDKHelper {
                     broadcastProductChange();
                 }
 
-                @Override
+              @Override
+              public void onProductChanged(BaseProduct baseProduct) {
+
+              }
+
+              @Override
                 public void onComponentChange(BaseProduct.ComponentKey componentKey, BaseComponent baseComponent, BaseComponent baseComponent1) {
                     Log.d("DJISDKHelper", "onComponentChange " + componentKey + ": " + baseComponent + " / " + baseComponent1);
                 }
 
-                private void broadcastProductChange() {
+              @Override
+              public void onInitProcess(DJISDKInitEvent djisdkInitEvent, int i) {
+
+              }
+
+              @Override
+              public void onDatabaseDownloadProgress(long l, long l1) {
+
+              }
+
+              private void broadcastProductChange() {
 //                        doStream();
                     //TODO: Reducir el delay y notificar de otra forma la conexión inicial
                     mainLoopHandler.removeCallbacks(broadcastProductChangeRunnable);

@@ -13,8 +13,8 @@ task checkstyle(type: Checkstyle) {
 
     reports {
         xml.enabled = true
-        html.enabled = true
-        html.destination = "${project.rootDir}/tools/checkstyle.html"
+        html.enabled = false
+        //html.destination = "${project.rootDir}/tools/checkstyle.html"
     }
 }
 
@@ -36,7 +36,7 @@ task findbugs(type: FindBugs) {
     reports {
         xml.enabled = false
         html.enabled = true
-        html.destination = "$project.rootDir/tools/findbugs.html"
+        //html.destination = "$project.rootDir/tools/findbugs.html"
 //        reportDir.dest = "$project.rootDir/tools/"
     }
 }
@@ -53,8 +53,8 @@ task pmd(type: Pmd) {
 
     reports {
         xml.enabled = false
-        html.enabled = true
-        html.destination = "$project.rootDir/tools/pmd.html"
+        html.enabled = false
+        //html.destination = "$project.rootDir/tools/pmd.html"
     }
 }
 

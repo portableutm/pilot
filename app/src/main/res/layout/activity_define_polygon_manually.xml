@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.DefinePolygonManuallyActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:id="@+id/toolbar"
@@ -34,7 +34,7 @@
                 android:layout_weight="1"
                 android:textSize="20sp"
                 android:text="@string/str_polygon"/>
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/str_add"
@@ -60,7 +60,7 @@
             android:layout_height="120dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/buttonGuardar"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

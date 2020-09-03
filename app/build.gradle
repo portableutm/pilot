@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 ext.versionMajor = 1
-ext.versionMinor = 2
-ext.versionPatch = 1
+ext.versionMinor = 3
+ext.versionPatch = 0
 ext.versionClassifier = null
 ext.isSnapshot = false
-ext.minimumSdkVersion = 24
+ext.minimumSdkVersion = 26
 
 android {
     compileSdkVersion 28
@@ -16,9 +16,14 @@ android {
         targetSdkVersion 28
         versionCode generateVersionCode()
         versionName generateVersionName()
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         // Enabling multidex support.
         multiDexEnabled true
+        ndk {
+            // On x86 devices that run Android API 23 or above, if the application is targeted with API 23 or
+            // above, FFmpeg lib might lead to runtime crashes or warnings.
+            abiFilters 'armeabi-v7a', 'x86', 'arm64-v8a'
+        }
     }
     lintOptions {
 //        checkReleaseBuilds false
@@ -48,44 +53,16 @@ android {
             doNotStrip "*/*/libFRCorkscrew.so"
             doNotStrip "*/*/libUpgradeVerify.so"
             doNotStrip "*/*/libFR.so"
-
-            exclude 'lib/x86/libGNaviMapex.so'
-            exclude 'lib/armeabi/libGNaviMapex.so'
-            exclude 'lib/x86_64/libGNaviMapex.so'
-            exclude 'lib/arm64-v8a/libGNaviMapex.so'
-            exclude 'lib/armeabi-v7a/libGNaviMapex.so'
-
-            exclude 'lib/armeabi-v7a/libGNaviUtils.so'
-            exclude 'lib/x86/libGNaviUtils.so'
-
-            exclude 'lib/arm64-v8a/libGNaviMap.so'
-            exclude 'lib/armeabi/libGNaviMap.so'
-            exclude 'lib/x86/libGNaviMap.so'
-            exclude 'lib/armeabi-v7a/libGNaviMap.so'
-            exclude 'lib/x86_64/libGNaviMap.so'
-
-            exclude 'lib/x86/libGNaviSearch.so'
-            exclude 'lib/armeabi/libGNaviSearch.so'
-            exclude 'lib/arm64-v8a/libGNaviSearch.so'
-            exclude 'lib/armeabi-v7a/libGNaviSearch.so'
-            exclude 'lib/x86_64/libGNaviSearch.so'
-
-            exclude 'lib/arm64-v8a/libGNaviUtils.so'
-            exclude 'lib/armeabi/libGNaviUtils.so'
-            exclude 'lib/x86_64/libGNaviUtils.so'
-
-            exclude 'lib/armeabi/libRoadLineRebuildAPI.so'
-            exclude 'lib/x86_64/libRoadLineRebuildAPI.so'
-            exclude 'lib/x86/libRoadLineRebuildAPI.so'
-            exclude 'lib/arm64-v8a/libRoadLineRebuildAPI.so'
-            exclude 'lib/armeabi-v7a/libRoadLineRebuildAPI.so'
-
-            exclude 'lib/armeabi/libGNaviData.so'
-            exclude 'lib/x86/libGNaviData.so'
-            exclude 'lib/arm64-v8a/libGNaviData.so'
-            exclude 'lib/armeabi-v7a/libGNaviData.so'
-            exclude 'lib/x86_64/libGNaviData.so'
-
+            doNotStrip "*/*/libDJIFlySafeCore.so"
+            doNotStrip "*/*/libdjifs_jni.so"
+            doNotStrip "*/*/libsfjni.so"
+            doNotStrip "*/*/libDJICommonJNI.so"
+            doNotStrip "*/*/libDJICSDKCommon.so"
+            doNotStrip "*/*/libDJIUpgradeCore.so"
+            doNotStrip "*/*/libDJIUpgradeJNI.so"
+            doNotStrip "*/*/libDJIWaypointV2Core.so"
+            doNotStrip "*/*/libAMapSDK_MAP_v6_9_2.so"
+            doNotStrip "*/*/libDJIMOP.so"
             exclude 'META-INF/rxjava.properties'
             pickFirst 'protobuf.meta'
         }
@@ -114,17 +91,17 @@ private String generateVersionName() {
 
 dependencies {
 
-
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation 'com.google.android.material:material:1.0.0'
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.cloudinary:cloudinary-android:1.24.0'
     implementation 'com.google.code.gson:gson:2.8.5'
@@ -145,16 +122,27 @@ dependencies {
     implementation 'com.google.android.gms:play-services-places:16.0.0'
 
     // DJI
-    implementation('com.dji:dji-uxsdk:4.9', {
+    implementation('com.dji:dji-uxsdk:4.13', {
 //             Uncomment the following line if your app does not need Anti Distortion for
 //             Mavic 2 Pro and Mavic 2 Zoom. It will greatly reducing the size of the APK:
         exclude module: 'library-anti-distortion'
     })
-    compileOnly 'com.dji:dji-sdk-provided:4.9'
+    compileOnly 'com.dji:dji-sdk-provided:4.13.1'
 
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.core:core:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
+    implementation 'androidx.annotation:annotation:1.0.0'
+    implementation 'com.jakewharton:butterknife:10.0.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
+    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0-rc01"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation 'com.zhihu.android:matisse:0.4.3'
-    implementation 'com.android.support:cardview-v7:28.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
 
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.0'
 }

@@ -11,17 +11,14 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.djiwrapper.DJISDKHelper;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
-
-import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
-
 import java.util.Locale;
 
 

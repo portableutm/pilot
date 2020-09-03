@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TextureView;
@@ -44,7 +44,7 @@ import dji.sdk.camera.Camera;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
 
-public class FreeFlightFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
+public class FreeFlightFragment extends androidx.fragment.app.Fragment implements View.OnClickListener {
 
     @BindView(R.id.button_cancel) ImageButton mButtonCancel;
     @BindView(R.id.tv_free_flight_mode)

@@ -10,7 +10,7 @@
     android:paddingRight="40dp"
     tools:context=".ui.activities.MainActivity">
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button_go_fly"
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -19,7 +19,7 @@
         android:textSize="20sp"
         style="@style/RaisedButton"/>
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button_operations"
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -28,7 +28,7 @@
         android:textSize="20sp"
         style="@style/RaisedButton"/>
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button_settings"
         android:layout_width="match_parent"
         android:layout_height="70dp"
