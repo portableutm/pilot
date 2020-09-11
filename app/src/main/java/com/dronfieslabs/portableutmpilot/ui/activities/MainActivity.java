@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private void onClickGoFly(){
         boolean utmEnable = SharedPreferencesUtils.getUTMEnable(this);
         if(!utmEnable){
-            UIGenericUtils.GoToActivity(this, FreeFlightActivity.class);
+            UIGenericUtils.GoToActivity(this, FlightActivity.class);
         }else{
             UIGenericUtils.ShowConfirmationAlert(
                 this,
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UIGenericUtils.GoToActivity(MainActivity.this, FreeFlightActivity.class);
+                        UIGenericUtils.GoToActivity(MainActivity.this, FlightActivity.class);
                     }
                 }
             );

@@ -37,6 +37,10 @@
             android:name=".ui.activities.FreeFlightActivity"
             android:screenOrientation="userLandscape" />
         <activity
+            android:name=".ui.activities.FlightActivity"
+            android:screenOrientation="userLandscape" />
+
+        <activity
             android:name=".ui.activities.SplashActivity"
             android:screenOrientation="portrait"
             android:noHistory="true"
