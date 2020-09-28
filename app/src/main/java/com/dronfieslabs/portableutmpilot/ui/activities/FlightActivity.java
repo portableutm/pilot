@@ -4,6 +4,7 @@ import android.Manifest;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -13,15 +14,21 @@ import com.dji.mapkit.core.maps.DJIMap;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.djiwrapper.DJISDKHelper;
 import com.dronfieslabs.portableutmpilot.djiwrapper.DJISDKHelperObserver;
+import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.DronfiesUssServices;
+import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.ICompletitionCallback;
+import com.dronfieslabs.portableutmpilot.ui.fragments.FreeFlightFragment;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
+import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
 import java.text.DecimalFormat;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import dji.common.flightcontroller.FlightControllerState;
+import dji.common.flightcontroller.GPSSignalLevel;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
 import dji.ux.widget.FPVOverlayWidget;
@@ -35,11 +42,14 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
     private DecimalFormat dfDecimal = new DecimalFormat("###,##0.0");
 
     // state
+    private String mOperationId = null;
     private Aircraft mAircraftConnected = null;
     private int mDistanceBetweenAircraftAndHome = -1;
     private int mAircraftAltitude = -1;
     private double mAircraftHorizontalSpeed = -1;
     private double mAircraftVerticalSpeed = -1;
+    // we try to send the position to the UTM each 3 seconds, so we need this variable to know when was the last time we sent it
+    private long mLastPositionSentTimestamp = -1;
 
     // views
     private RelativeLayout mRelativeLayoutFullscreenMapFPV;
@@ -72,10 +82,15 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         }
         setContentView(R.layout.activity_flight);
 
+        // initialize state
+        try{
+            mOperationId = getIntent().getStringExtra("OPERATION_ID");
+        }catch(Exception ex){}
+
         // views binding
         mRelativeLayoutFullscreenMapFPV = findViewById(R.id.relative_layout_fullscreen_map_fpv);
         mRelativeLayoutSmallMapFPV = findViewById(R.id.relative_layout_small_map_fpv);
-        //mFPVWidget = findViewById(R.id.fpv_widget);
+        mFPVWidget = findViewById(R.id.fpv_widget);
         mFPVOverlayWidget = findViewById(R.id.fpv_overlay_widget);
         mMapWidget = findViewById(R.id.mapWidget);
         mMapWidget.initGoogleMap(new MapWidget.OnMapReadyListener() {
@@ -142,7 +157,7 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
     //-------------------------------------------------------------------------------------------------------------
 
     private void onClickFullscreen(){
-        /*if(mFPVWidget.getParent().equals(mRelativeLayoutFullscreenMapFPV)){
+        if(mFPVWidget.getParent().equals(mRelativeLayoutFullscreenMapFPV)){
             // it means that we have to minimize the fpv and maximize the map
             mRelativeLayoutFullscreenMapFPV.removeView(mFPVWidget);
             mRelativeLayoutFullscreenMapFPV.removeView(mFPVOverlayWidget);
@@ -159,8 +174,7 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
             mRelativeLayoutFullscreenMapFPV.addView(mFPVWidget, 0, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             mRelativeLayoutFullscreenMapFPV.addView(mFPVOverlayWidget, 1, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             mRelativeLayoutSmallMapFPV.addView(mMapWidget, 0);
-        }*/
-        UIGenericUtils.ShowToast(this, "not implemented!");
+        }
     }
 
     @Override
@@ -186,6 +200,30 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
                 mAircraftHorizontalSpeed = Math.sqrt(Math.pow(flightControllerState.getVelocityX(), 2) + Math.pow(flightControllerState.getVelocityY(), 2));
                 mAircraftVerticalSpeed = Math.abs(flightControllerState.getVelocityZ());
                 updateScreenValues();
+
+                // send position to the utm
+                if(mOperationId != null){
+                    GPSSignalLevel gpsSignalLevel = flightControllerState.getGPSSignalLevel();
+                    if(flightControllerState.getSatelliteCount() < 6 || (gpsSignalLevel != GPSSignalLevel.LEVEL_3 && gpsSignalLevel != GPSSignalLevel.LEVEL_4 && gpsSignalLevel != GPSSignalLevel.LEVEL_5)){
+                        // if we dont have good gps signal, we dont execute the flight controller state listener
+                        return;
+                    }
+                    double lat = flightControllerState.getAircraftLocation().getLatitude();
+                    double lon = flightControllerState.getAircraftLocation().getLongitude();
+                    double alt = flightControllerState.getAircraftLocation().getAltitude();
+                    if(alt < 0) alt = 0;
+                    double heading = flightControllerState.getAircraftHeadDirection();
+                    long now = new Date().getTime();
+                    if((now - mLastPositionSentTimestamp)/1000 >= 3){
+                        mLastPositionSentTimestamp = now;
+                        try{
+                            DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(FlightActivity.this)).sendPosition(lon, lat, alt, heading, mOperationId, new ICompletitionCallback<String>() {
+                                @Override
+                                public void onResponse(String s, String errorMessage) {}
+                            });
+                        }catch(Exception ex){}
+                    }
+                }
             }
         });
     }

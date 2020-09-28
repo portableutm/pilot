@@ -315,7 +315,7 @@ public class OperationsActivity extends AppCompatActivity {
                     }
                     UIGenericUtils.GoToActivity(
                         OperationsActivity.this,
-                        FreeFlightActivity.class,
+                        FlightActivity.class,
                         Arrays.asList("OPERATION_ID"),
                         Arrays.asList(operation.getId())
                     );
