@@ -30,6 +30,7 @@ import android.widget.TimePicker;
 
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
+import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -53,6 +54,7 @@ public class AddOperationActivity extends AppCompatActivity {
     private Button buttonDuration;
     private SeekBar seekBarMaxHeight;
     private SeekBar seekBarDuration;
+    private EditText editTextPilot;
     private TextView textViewSelectDrone;
 
     @Override
@@ -101,6 +103,9 @@ public class AddOperationActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
+        editTextPilot = findViewById(R.id.edit_text_pilot);
+        final String username = SharedPreferencesUtils.getUsername(this);
+        editTextPilot.setText(username);
         textViewSelectDrone = findViewById(R.id.text_view_select_drone);
         textViewSelectDrone.setOnClickListener(new View.OnClickListener() {
             @Override
