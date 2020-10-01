@@ -1,5 +1,6 @@
 package com.dronfieslabs.portableutmpilot.services.dronfiesuss_client;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -24,4 +25,7 @@ interface IRetrofitAPI {
 
     @DELETE("operation/{id}")
     Call<Object> deleteOperation(@Header("auth") String authToken, @Path("id") String id);
+
+    @GET("vehicle")
+    Call<ResponseBody> getVehicles(@Header("auth") String authToken);
 }

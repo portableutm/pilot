@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -11,11 +12,13 @@ import android.widget.Toast;
 
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.DronfiesUssServices;
+import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.Vehicle;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.ICompletitionCallback;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {

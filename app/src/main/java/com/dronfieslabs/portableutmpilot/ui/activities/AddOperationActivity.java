@@ -5,10 +5,16 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +25,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.dronfieslabs.portableutmpilot.R;
@@ -28,18 +35,25 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class AddOperationActivity extends AppCompatActivity {
 
+    // consts
     public static final String DATA_SEPARATOR = "#@@#";
+    public static final int REQUEST_CODE_SELECT_DRONE = 1;
 
+    // state
+    private String vehicleId = null;
+    private String vehicleName = null;
+
+    // views
     private Button buttonStartDate;
     private Button buttonStartTime;
     private Button buttonMaxHeight;
     private Button buttonDuration;
     private SeekBar seekBarMaxHeight;
     private SeekBar seekBarDuration;
+    private TextView textViewSelectDrone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +101,13 @@ public class AddOperationActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
+        textViewSelectDrone = findViewById(R.id.text_view_select_drone);
+        textViewSelectDrone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickSelectDrone();
+            }
+        });
 
         // set default values
         Calendar calNow = Calendar.getInstance();
@@ -94,11 +115,31 @@ public class AddOperationActivity extends AppCompatActivity {
         buttonStartTime.setText(new SimpleDateFormat("HH:mm").format(calNow.getTime()));
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE_SELECT_DRONE){
+            if(resultCode == RESULT_OK){
+                vehicleId = data.getStringExtra(SelectDroneActivity.PARAM_VEHICLE_ID_KEY);
+                vehicleName = data.getStringExtra(SelectDroneActivity.PARAM_VEHICLE_NAME_KEY);
+                textViewSelectDrone.setText(vehicleName);
+            }
+        }
+    }
+
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
     //---------------------------------------------- ONCLICK METHODS ----------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
+
+    private void onClickSelectDrone(){
+        Intent intent = new Intent(this, SelectDroneActivity.class);
+        if(vehicleId != null){
+            intent.putExtra(SelectDroneActivity.PARAM_VEHICLE_ID_KEY, vehicleId);
+        }
+        startActivityForResult(intent, REQUEST_CODE_SELECT_DRONE);
+    }
 
     public void onClickMaxHeight(View view){
         final NumberPicker numberPicker = new NumberPicker(this);
@@ -209,7 +250,6 @@ public class AddOperationActivity extends AppCompatActivity {
         Date endDatetime = null;
         int maxAltitude = -1;
         String pilotName = null;
-        String droneDescription = null;
         try{
             description = getDescription();
             startDatetime = getStartDatetime();
@@ -224,7 +264,9 @@ public class AddOperationActivity extends AppCompatActivity {
             endDatetime = cal.getTime();
             maxAltitude = getMaxAltitude();
             pilotName = getPilotName();
-            droneDescription = getDroneDescription();
+            if(vehicleId == null){
+                throw new Exception(getString(R.string.exc_msg_drone_not_selected));
+            }
         }catch(Exception ex){
             UIGenericUtils.ShowAlert(AddOperationActivity.this, getText(R.string.str_invalid_data) + "", ex.getMessage());
             return;
@@ -237,7 +279,7 @@ public class AddOperationActivity extends AppCompatActivity {
                 sdf.format(endDatetime) + DATA_SEPARATOR +
                 maxAltitude + DATA_SEPARATOR +
                 pilotName + DATA_SEPARATOR +
-                droneDescription;
+                vehicleId;
 
         // show a dialog for the user to choose the method for defining the polygon
         final LinearLayout linearLayout = new LinearLayout(this);
@@ -352,17 +394,6 @@ public class AddOperationActivity extends AppCompatActivity {
         }
         if(retorno.length() < 1 || retorno.length() > 20){
             throw new Exception(getString(R.string.exc_msg_invalid_operation_pilot__2));
-        }
-        return retorno;
-    }
-
-    private String getDroneDescription() throws Exception {
-        String retorno = ((EditText)findViewById(R.id.edit_text_drone)).getText().toString();
-        if(retorno.contains(DATA_SEPARATOR)){
-            throw new Exception(getText(R.string.exc_msg_invalid_operation_drone) + " " + DATA_SEPARATOR);
-        }
-        if(retorno.length() < 1 || retorno.length() > 20){
-            throw new Exception(getString(R.string.exc_msg_invalid_operation_drone__2));
         }
         return retorno;
     }

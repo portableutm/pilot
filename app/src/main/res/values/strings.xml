@@ -20,12 +20,13 @@
         2) Verify your internet connection\n
         3) Open the application again
     </string>
+    <string name="exc_msg_drone_not_selected">You have not selected the drone you are going to use during the operation</string>
     <string name="exc_msg_getting_operations_error">Error getting operations</string>
     <string name="exc_msg_invalid_operation_datetime">Datetime format is not valid (dd/MM/yyyy HH:mm)</string>
     <string name="exc_msg_invalid_operation_description">The description can not contain the following combination of characters</string>
     <string name="exc_msg_invalid_operation_description__2">The description must be between 1 and 50 characters</string>
     <string name="exc_msg_invalid_operation_drone">The dron can not contain the following combination of characters</string>
-    <string name="exc_msg_invalid_operation_drone__2">The drone must be between 1 and 20 characters</string>
+    <string name="exc_msg_invalid_operation_drone__2">The drone must be between 1 and 40 characters</string>
     <string name="exc_msg_invalid_operation_pilot">The pilot can not contain the following combination of characters</string>
     <string name="exc_msg_invalid_operation_pilot__2">The pilot name must be between 1 and 20 characters</string>
     <string name="exc_msg_invalid_latitude">The latitude must be a value between -90 and 90</string>
@@ -33,6 +34,7 @@
     <string name="exc_msg_no_polygon_drawn">You didn\'t draw the polygon you want to save</string>
     <string name="exc_msg_not_enough_points">The polygon must have at least 3 vertices</string>
     <string name="exc_msg_operation_not_activated">Operation must be Activated, before the flight begins</string>
+    <string name="exc_msg_user_has_no_drones">There is no drone registered, asociated to your user account</string>
     <string name="exc_msg_utm_connection_failed">It was not possible to connect to the UTM. Please, go to Settings and test the connection.</string>
 
     <string name="miscellaneous_def_polygon_instructions">1) Click on the map to define the polygon vertices.\n\n2) You can delete any polygon vertice clicking on it.\n\n3) You can move the vertices, if you press and hold on any of them.</string>
@@ -88,17 +90,22 @@
     <string name="str_longitude">Longitude</string>
     <string name="str_maximum_altitude">Maximum Altitude</string>
     <string name="str_meters">Meters</string>
+    <string name="str_model">Model</string>
     <string name="str_no">No</string>
+    <string name="str_no_drones">No Drones</string>
     <string name="str_operation_added">Operation Added</string>
     <string name="str_operation_is_not_activated">Operation is not Activated</string>
     <string name="str_operations">Operations</string>
     <string name="str_password">Password</string>
     <string name="str_pilot">Pilot</string>
+    <string name="str_plate">Plate</string>
     <string name="str_polygon">Polygon</string>
     <string name="str_quit">Quit</string>
     <string name="str_report_position">Report position</string>
     <string name="str_return">Return</string>
     <string name="str_save">Save</string>
+    <string name="str_select_drone">Select Drone</string>
+    <string name="str_serial">Serial</string>
     <string name="str_settings">Settings</string>
     <string name="str_sign_up_failed">Sing up failed</string>
     <string name="str_spanish">Spanish</string>

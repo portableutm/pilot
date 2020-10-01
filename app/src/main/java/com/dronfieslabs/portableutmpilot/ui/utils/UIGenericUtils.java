@@ -28,6 +28,10 @@ public class UIGenericUtils {
     //-----------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------
 
+    public static int ConvertDPToPX(Context context, int dp){
+        return (int)Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics()));
+    }
+
     public static void ShowToast(Context context, String message){
         String m = "null";
         if(message != null){

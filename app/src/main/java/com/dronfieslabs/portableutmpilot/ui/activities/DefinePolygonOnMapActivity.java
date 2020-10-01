@@ -190,10 +190,13 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
             try{
                 pilotName = mReceivedData.split(mDataSeparator)[4];
             }catch (Exception ex){}
-            String droneDescription = "";
+            String droneId = null;
             try{
-                droneDescription = mReceivedData.split(mDataSeparator)[5];
-            }catch(Exception ex){}
+                droneId = mReceivedData.split(mDataSeparator)[5];
+            }catch(Exception ex){
+                UIGenericUtils.ShowToast(this, "Invalid drone id");
+                return;
+            }
             String owner = SharedPreferencesUtils.getUsername(this);
 
             // create operation object
@@ -203,7 +206,7 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
             }
             LatLng firstVertix = mListPolygonCoordinates.get(0);
             polygon.add(new GPSCoordinates(firstVertix.latitude, firstVertix.longitude));
-            Operation operation = new Operation(null, description, polygon, startDatetime, endDatetime, maxAltitude, pilotName, droneDescription, null, owner);
+            Operation operation = new Operation(null, description, polygon, startDatetime, endDatetime, maxAltitude, pilotName, droneId, null, null, owner);
 
             // show progress bar while the operation is being executed
             final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);

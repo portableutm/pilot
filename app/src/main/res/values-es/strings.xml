@@ -11,12 +11,13 @@
         2) Verifique su conexión a internet\n
         3) Vuelva a abrir la aplicación
     </string>
+    <string name="exc_msg_drone_not_selected">No ha seleccionado el dron que utilizará durante la operación</string>
     <string name="exc_msg_getting_operations_error">Error al traer operaciones</string>
     <string name="exc_msg_invalid_operation_datetime">Formato de fecha y hora inválido (dd/MM/yyyy HH:mm)</string>
     <string name="exc_msg_invalid_operation_description">La descripción no puede contener la combinación de caracteres</string>
     <string name="exc_msg_invalid_operation_description__2">La descripción debe tener entre 1 y 50 caracteres</string>
     <string name="exc_msg_invalid_operation_drone">El dron no puede contener la combinación de caracteres</string>
-    <string name="exc_msg_invalid_operation_drone__2">El dron debe tener entre 1 y 20 caracteres</string>
+    <string name="exc_msg_invalid_operation_drone__2">El dron debe tener entre 1 y 40 caracteres</string>
     <string name="exc_msg_invalid_operation_pilot">El piloto no puede contener la combinación de caracteres</string>
     <string name="exc_msg_invalid_operation_pilot__2">El piloto debe tener entre 1 y 20 caracteres</string>
     <string name="exc_msg_invalid_latitude">La latitud debe estar entre -90 y 90</string>
@@ -24,6 +25,7 @@
     <string name="exc_msg_no_polygon_drawn">No ha dibujado el polígono que desea guardar</string>
     <string name="exc_msg_not_enough_points">El polígono debe tener por lo menos 3 vértices</string>
     <string name="exc_msg_operation_not_activated">La operación debe estar Activada, antes de que el vuelo comience</string>
+    <string name="exc_msg_user_has_no_drones">No hay ningún dron registrado, asociado a su cuenta de usuario</string>
     <string name="exc_msg_utm_connection_failed">No fue posible conectarse al UTM. Por favor, vaya a la sección de Opciones, y prueba la conexión.</string>
 
     <string name="miscellaneous_def_polygon_instructions">1) Clickea sobre cualquier parte del mapa para definir los vértices del polígono.\n\n2) Puedes borrar cualquier vértice del polígono haciéndole click arriba.\n\n3) Puedes mover los vértices, si mantienes presionado sobre cualquiera de ellos.</string>
@@ -79,17 +81,22 @@
     <string name="str_longitude">Longitud</string>
     <string name="str_maximum_altitude">Altitud Máxima</string>
     <string name="str_meters">Metros</string>
+    <string name="str_model">Modelo</string>
     <string name="str_no">No</string>
+    <string name="str_no_drones">No Hay Drones</string>
     <string name="str_operation_added">Operación Agregada</string>
     <string name="str_operation_is_not_activated">La Operación no está Activada</string>
     <string name="str_operations">Operaciones</string>
     <string name="str_password">Contraseña</string>
     <string name="str_pilot">Piloto</string>
+    <string name="str_plate">Matrícula</string>
     <string name="str_polygon">Polígono</string>
     <string name="str_quit">Salir</string>
     <string name="str_report_position">Reportar posición</string>
     <string name="str_return">Volver</string>
     <string name="str_save">Guardar</string>
+    <string name="str_select_drone">Seleccionar Dron</string>
+    <string name="str_serial">Serial</string>
     <string name="str_settings">Opciones</string>
     <string name="str_sign_up_failed">Registro fallido</string>
     <string name="str_spanish">Español</string>

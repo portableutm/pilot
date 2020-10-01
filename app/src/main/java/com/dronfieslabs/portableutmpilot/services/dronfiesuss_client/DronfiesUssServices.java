@@ -10,6 +10,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,6 +98,7 @@ public class DronfiesUssServices {
         });
     }
 
+    // When we add an operation, the droneDescription is ignored. This field is used when we get the operations from the backend
     public void addOperation(com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation operation, final ICompletitionCallback<String> callback){
         api.addOperation(authToken, transformOperation(operation)).enqueue(new Callback<Object>() {
             @Override
@@ -205,6 +209,17 @@ public class DronfiesUssServices {
         });
     }
 
+    public List<Vehicle> getVehicles() throws Exception {
+        String responseBody = api.getVehicles(authToken).execute().body().string();
+        JSONArray jsonArrayVehicles = new JSONArray(responseBody);
+        List<Vehicle> ret = new ArrayList<>();
+        for(int i = 0; i < jsonArrayVehicles.length(); i++){
+            JSONObject jsonObject = jsonArrayVehicles.getJSONObject(i);
+            ret.add(parseVehicle(jsonObject));
+        }
+        return ret;
+    }
+
     //----------------------------------------------------------------------------------------------------
     //----------------------------------------- PRIVATE METHODS  -----------------------------------------
     //----------------------------------------------------------------------------------------------------
@@ -217,6 +232,8 @@ public class DronfiesUssServices {
         }
 
         Date submitDate = new Date();
+        List<String> uasRegistrations = new ArrayList<>();
+        uasRegistrations.add(operation.getDroneId());
         PriorityElements priorityElements = new PriorityElements(
                 1,
                 "EMERGENCY_AIR_AND_GROUND_IMPACT"
@@ -276,9 +293,9 @@ public class DronfiesUssServices {
                 2,
                 false,
                 operation.getPilotName(),
-                operation.getDroneDescription(),
+                null,
                 operation.getOwner(),
-                new ArrayList<String>(),
+                uasRegistrations,
                 priorityElements,
                 contingencyPlans,
                 operationVolumes,
@@ -293,9 +310,11 @@ public class DronfiesUssServices {
         try{
             pilotName = jsonObject.get("contact").getAsString();
         }catch(Exception ex){}
-        String droneDescription = "";
+        String droneId = null;
+        String droneDescription = null;
         try{
-            droneDescription = jsonObject.get("aircraft_comments").getAsString();
+            droneId = jsonObject.get("uas_registrations").getAsJsonArray().get(0).getAsJsonObject().get("uvin").getAsString();
+            droneDescription = jsonObject.get("uas_registrations").getAsJsonArray().get(0).getAsJsonObject().get("vehicleName").getAsString();
         }catch(Exception ex){}
         JsonArray jsonArrayOperationVolumes = jsonObject.get("operation_volumes").getAsJsonArray();
         if(jsonArrayOperationVolumes.size() != 1){
@@ -329,6 +348,7 @@ public class DronfiesUssServices {
                 parseDate(strEffectiveTimeEnd),
                 maxAltitude,
                 pilotName,
+                droneId,
                 droneDescription,
                 state,
                 owner
@@ -342,5 +362,43 @@ public class DronfiesUssServices {
     private String formatDateForOperationObject(Date date){
         // example: 2019-12-11T19:59:10Z
         return new SimpleDateFormat("yyyy-MM-dd").format(date) + "T" + new SimpleDateFormat("HH:mm:ss").format(date) + "Z";
+    }
+
+    private Vehicle parseVehicle(JSONObject jsonObjectVehicle) throws Exception{
+        String uvin = getStringValueFromJSONObject(jsonObjectVehicle, "uvin");
+        Date date = null;
+        if(jsonObjectVehicle.has("date") && !jsonObjectVehicle.isNull("date")){
+            date = parseDate(jsonObjectVehicle.getString("date"));
+        }
+        String nNumber = getStringValueFromJSONObject(jsonObjectVehicle, "nNumber");
+        String faaNumber = getStringValueFromJSONObject(jsonObjectVehicle, "faaNumber");
+        String vehicleName = getStringValueFromJSONObject(jsonObjectVehicle, "vehicleName");
+        String manufacturer = getStringValueFromJSONObject(jsonObjectVehicle, "manufacturer");
+        String model = getStringValueFromJSONObject(jsonObjectVehicle, "model");
+        String strVehicleClass = getStringValueFromJSONObject(jsonObjectVehicle, "class");
+        Vehicle.EnumVehicleClass vehicleClass = null;
+        if(strVehicleClass != null){
+            if(strVehicleClass.equalsIgnoreCase("MULTIROTOR")){
+                vehicleClass = Vehicle.EnumVehicleClass.MULTIROTOR;
+            }else if(strVehicleClass.equalsIgnoreCase("FIXEDWING")){
+                vehicleClass = Vehicle.EnumVehicleClass.FIXEDWING;
+            }
+        }
+        String registeredBy = null;
+        if(jsonObjectVehicle.has("registeredBy") && !jsonObjectVehicle.isNull("registeredBy")){
+            registeredBy = getStringValueFromJSONObject(jsonObjectVehicle.getJSONObject("registeredBy"), "username");
+        }
+        String owner = null;
+        if(jsonObjectVehicle.has("owner") && !jsonObjectVehicle.isNull("owner")){
+            owner = getStringValueFromJSONObject(jsonObjectVehicle.getJSONObject("owner"), "username");
+        }
+        return new Vehicle(uvin, date, nNumber, faaNumber, vehicleName, manufacturer, model, vehicleClass, registeredBy, owner);
+    }
+
+    private String getStringValueFromJSONObject(JSONObject jsonObject, String key) throws Exception {
+        if(!jsonObject.has(key) || jsonObject.isNull(key)){
+            return null;
+        }
+        return jsonObject.getString(key);
     }
 }

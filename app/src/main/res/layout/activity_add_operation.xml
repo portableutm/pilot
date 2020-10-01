@@ -148,11 +148,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/str_drone"/>
-                <EditText
-                    android:id="@+id/edit_text_drone"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/text_view_select_drone"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"/>
+                    android:layout_marginTop="15dp"
+                    android:text="@string/str_select_drone"
+                    android:textSize="16dp"
+                    android:textStyle="bold"/>
 
             </LinearLayout>
         </ScrollView>

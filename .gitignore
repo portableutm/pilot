@@ -58,3 +58,4 @@ Setup/app/release/
 \.idea/caches/
 
 .idea/
+release/output.json

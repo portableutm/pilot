@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.dronfieslabs.portableutmpilot">
-    <!-- Permissions and features -->
+
     <application
         android:name=".SetupApplication"
         android:allowBackup="true"
@@ -13,7 +13,11 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
-        <activity android:name=".ui.activities.MainActivity"
+        <activity android:name=".ui.activities.SelectDroneActivity"
+            android:theme="@style/LightStyle"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.activities.MainActivity"
             android:theme="@style/LightStyle" />
         <activity
             android:name=".ui.activities.DefinePolygonManuallyActivity"
@@ -39,11 +43,10 @@
         <activity
             android:name=".ui.activities.FlightActivity"
             android:screenOrientation="userLandscape" />
-
         <activity
             android:name=".ui.activities.SplashActivity"
-            android:screenOrientation="portrait"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,7 +57,6 @@
         <activity
             android:name=".ui.activities.SettingsActivity"
             android:theme="@style/LightStyle" />
-
         <activity
             android:name="dji.sdk.sdkmanager.DJIAoaControllerActivity"
             android:theme="@android:style/Theme.Translucent">
@@ -69,7 +71,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDt0p1-KH8EX7BdR3eukNwV6E1GnzMRp8w" />
-
         <meta-data
             android:name="com.dji.sdk.API_KEY"
             android:value="b54e4588dded80d19e600cc0" />
@@ -87,19 +88,19 @@
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="false" />
+
     <uses-feature
         android:name="android.hardware.usb.accessory"
         android:required="true" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
