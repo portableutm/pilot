@@ -29,6 +29,7 @@
     <string name="exc_msg_invalid_operation_drone__2">The drone must be between 1 and 40 characters</string>
     <string name="exc_msg_invalid_operation_pilot">The pilot can not contain the following combination of characters</string>
     <string name="exc_msg_invalid_operation_pilot__2">The pilot name must be between 1 and 20 characters</string>
+    <string name="exc_msg_invalid_period">The end of the operation must be after the start</string>
     <string name="exc_msg_invalid_latitude">The latitude must be a value between -90 and 90</string>
     <string name="exc_msg_invalid_longitude">The longitude must be a value between -180 and 180</string>
     <string name="exc_msg_no_polygon_drawn">You didn\'t draw the polygon you want to save</string>
@@ -72,6 +73,7 @@
     <string name="str_drone_not_connected">Drone not connected</string>
     <string name="str_duration">Duration</string>
     <string name="str_enable">Enable</string>
+    <string name="str_end">End</string>
     <string name="str_english">English</string>
     <string name="str_error">Error</string>
     <string name="str_establish">Establish</string>

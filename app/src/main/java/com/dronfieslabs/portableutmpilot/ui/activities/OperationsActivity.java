@@ -132,9 +132,9 @@ public class OperationsActivity extends AppCompatActivity {
                 }
                 // if there not was an error, load operations into the activity
                 for(Operation operation : operations){
-                    if(operation.getState() == null || operation.getState() == Operation.EnumOperationState.CLOSED || operation.getState() == Operation.EnumOperationState.NOT_ACCEPTED){
+                    /*if(operation.getState() == null || operation.getState() == Operation.EnumOperationState.CLOSED || operation.getState() == Operation.EnumOperationState.NOT_ACCEPTED){
                         continue;
-                    }
+                    }*/
                     // adjust operation startdatetime and enddatetime with device timezone
                     int timezoneOffsetInMilliseconds = Calendar.getInstance().getTimeZone().getRawOffset();
                     Calendar cal = Calendar.getInstance();

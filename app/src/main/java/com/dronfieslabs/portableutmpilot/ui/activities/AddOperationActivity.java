@@ -50,10 +50,10 @@ public class AddOperationActivity extends AppCompatActivity {
     // views
     private Button buttonStartDate;
     private Button buttonStartTime;
+    private Button buttonEndDate;
+    private Button buttonEndTime;
     private Button buttonMaxHeight;
-    private Button buttonDuration;
     private SeekBar seekBarMaxHeight;
-    private SeekBar seekBarDuration;
     private EditText editTextPilot;
     private TextView textViewSelectDrone;
 
@@ -69,34 +69,15 @@ public class AddOperationActivity extends AppCompatActivity {
         // bind views
         buttonStartDate = findViewById(R.id.button_start_date);
         buttonStartTime = findViewById(R.id.button_start_time);
+        buttonEndDate = findViewById(R.id.button_end_date);
+        buttonEndTime = findViewById(R.id.button_end_time);
         buttonMaxHeight = findViewById(R.id.button_max_height);
-        buttonDuration = findViewById(R.id.button_duration);
         seekBarMaxHeight = findViewById(R.id.seekbar_max_height);
         buttonMaxHeight.setText(seekBarMaxHeight.getProgress() + " " + getString(R.string.str_meters));
         seekBarMaxHeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 buttonMaxHeight.setText(progress + " " + getString(R.string.str_meters));
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
-        seekBarDuration = findViewById(R.id.seekbar_duration);
-        String strHoras = getString(R.string.str_hour);
-        if(seekBarDuration.getProgress() > 1){
-            strHoras += "s";
-        }
-        buttonDuration.setText(seekBarDuration.getProgress() + " " + strHoras);
-        seekBarDuration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                String strHoras = getString(R.string.str_hour);
-                if(progress > 1){
-                    strHoras += "s";
-                }
-                buttonDuration.setText(progress + " " + strHoras);
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
@@ -118,6 +99,9 @@ public class AddOperationActivity extends AppCompatActivity {
         Calendar calNow = Calendar.getInstance();
         buttonStartDate.setText(new SimpleDateFormat("dd/MM/yyyy").format(calNow.getTime()));
         buttonStartTime.setText(new SimpleDateFormat("HH:mm").format(calNow.getTime()));
+        calNow.add(Calendar.HOUR_OF_DAY, 2);
+        buttonEndDate.setText(new SimpleDateFormat("dd/MM/yyyy").format(calNow.getTime()));
+        buttonEndTime.setText(new SimpleDateFormat("HH:mm").format(calNow.getTime()));
     }
 
     @Override
@@ -170,30 +154,6 @@ public class AddOperationActivity extends AppCompatActivity {
             .show();
     }
 
-    public void onClickDuration(View view){
-        final NumberPicker numberPicker = new NumberPicker(this);
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(5);
-        numberPicker.setValue(seekBarDuration.getProgress());
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(numberPicker);
-        builder.setTitle(R.string.str_duration)
-            .setPositiveButton(
-                R.string.str_establish,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        seekBarDuration.setProgress(numberPicker.getValue());
-                    }
-                }
-            )
-            .setNegativeButton(
-                getText(R.string.str_cancel),
-                null
-            )
-            .create()
-            .show();
-    }
-
     public void onClickSetStartDate(View view){
         // get current value
         final Calendar calCurrentValue = Calendar.getInstance();
@@ -227,7 +187,7 @@ public class AddOperationActivity extends AppCompatActivity {
         try{
             calCurrentValue.setTime(sdf.parse(buttonStartTime.getText().toString()));
         }catch(Exception ex){}
-        // open timepickerdialog, showing the current valu
+        // open timepickerdialog, showing the current value
         TimePickerDialog timePickerDialog = new TimePickerDialog(
             this,
             new TimePickerDialog.OnTimeSetListener() {
@@ -245,6 +205,57 @@ public class AddOperationActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    public void onClickSetEndDate(View view){
+        // get current value
+        final Calendar calCurrentValue = Calendar.getInstance();
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try{
+            calCurrentValue.setTime(sdf.parse(buttonEndDate.getText().toString()));
+        }catch(Exception ex){}
+        // open datepickerdialog, showing the current value
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        // set the selected date on the buttonEndDate
+                        Calendar calSelectedDate = Calendar.getInstance();
+                        calSelectedDate.set(year, month, dayOfMonth);
+                        buttonEndDate.setText(sdf.format(calSelectedDate.getTime()));
+                    }
+                },
+                calCurrentValue.get(Calendar.YEAR),
+                calCurrentValue.get(Calendar.MONTH),
+                calCurrentValue.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show();
+    }
+
+    public void onClickSetEndTime(View view){
+        // get current value
+        final Calendar calCurrentValue = Calendar.getInstance();
+        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        try{
+            calCurrentValue.setTime(sdf.parse(buttonEndTime.getText().toString()));
+        }catch(Exception ex){}
+        // open timepickerdialog, showing the current value
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                this,
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        Calendar calSelectedTime = Calendar.getInstance();
+                        calSelectedTime.set(0,0,0, hourOfDay, minute);
+                        buttonEndTime.setText(sdf.format(calSelectedTime.getTime()));
+                    }
+                },
+                calCurrentValue.get(Calendar.HOUR_OF_DAY),
+                calCurrentValue.get(Calendar.MINUTE),
+                true
+        );
+        timePickerDialog.show();
+    }
+
     public void onClickDefinePolygon(View view){
         // close keyboard
         closeKeyboard();
@@ -258,15 +269,20 @@ public class AddOperationActivity extends AppCompatActivity {
         try{
             description = getDescription();
             startDatetime = getStartDatetime();
+            endDatetime = getEndDatetime();
             // to the utm backend, we need to pass utc time, so we adjust the startdatetime using the device timezone
             int timeZoneOffsetInMilliseconds = Calendar.getInstance().getTimeZone().getRawOffset();
             Calendar cal = Calendar.getInstance();
             cal.setTime(startDatetime);
             cal.add(Calendar.MILLISECOND, -timeZoneOffsetInMilliseconds);
             startDatetime = cal.getTime();
-            int durationInHours = getDurationInHours();
-            cal.add(Calendar.HOUR_OF_DAY, durationInHours);
+            cal = Calendar.getInstance();
+            cal.setTime(endDatetime);
+            cal.add(Calendar.MILLISECOND, -timeZoneOffsetInMilliseconds);
             endDatetime = cal.getTime();
+            if(!endDatetime.after(startDatetime)){
+                throw new Exception(getString(R.string.exc_msg_invalid_period));
+            }
             maxAltitude = getMaxAltitude();
             pilotName = getPilotName();
             if(vehicleId == null){
@@ -384,8 +400,15 @@ public class AddOperationActivity extends AppCompatActivity {
         return ret;
     }
 
-    private int getDurationInHours() {
-        return seekBarDuration.getProgress();
+    private Date getEndDatetime() throws Exception {
+        String strEndDatetime = buttonEndDate.getText() + " " + buttonEndTime.getText();
+        Date ret = null;
+        try{
+            ret = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(strEndDatetime);
+        }catch(Exception ex){
+            throw new Exception(getText(R.string.exc_msg_invalid_operation_datetime) + "", ex);
+        }
+        return ret;
     }
 
     private int getMaxAltitude() {
