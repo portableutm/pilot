@@ -1,6 +1,7 @@
 package com.dronfieslabs.portableutmpilot.ui.activities;
 
 import android.Manifest;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -11,18 +12,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dji.mapkit.core.maps.DJIMap;
+import com.dji.mapkit.core.models.DJILatLng;
+import com.dji.mapkit.core.models.annotations.DJIPolygonOptions;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.djiwrapper.DJISDKHelper;
 import com.dronfieslabs.portableutmpilot.djiwrapper.DJISDKHelperObserver;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.DronfiesUssServices;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.ICompletitionCallback;
-import com.dronfieslabs.portableutmpilot.ui.fragments.FreeFlightFragment;
-import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,6 +47,7 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
 
     // state
     private String mOperationId = null;
+    private List<LatLng> mOperationPolygon = null;
     private Aircraft mAircraftConnected = null;
     private int mDistanceBetweenAircraftAndHome = -1;
     private int mAircraftAltitude = -1;
@@ -85,6 +90,12 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         // initialize state
         try{
             mOperationId = getIntent().getStringExtra("OPERATION_ID");
+            mOperationPolygon = new ArrayList<>();
+            for(String str : getIntent().getStringArrayExtra("OPERATION_POLYGON")){
+                double lat = Double.parseDouble(str.split(";")[0]);
+                double lng = Double.parseDouble(str.split(";")[1]);
+                mOperationPolygon.add(new LatLng(lat, lng));
+            }
         }catch(Exception ex){}
 
         // views binding
@@ -96,7 +107,7 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         mMapWidget.initGoogleMap(new MapWidget.OnMapReadyListener() {
             @Override
             public void onMapReady(@NonNull final DJIMap map) {
-                map.setMapType(DJIMap.MapType.SATELLITE);
+                onMapReady2(map);
             }
         });
         mMapWidget.onCreate(savedInstanceState);
@@ -155,6 +166,22 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
     //---------------------------------------------- EVENT HANDLERS  ----------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
+
+    private void onMapReady2(@NonNull final DJIMap map){
+        map.setMapType(DJIMap.MapType.SATELLITE);
+        // if operation received, draw polygon
+        if(mOperationId != null && mOperationPolygon != null && mOperationPolygon.size() > 2){
+            DJIPolygonOptions polygonOptions = new DJIPolygonOptions();
+            polygonOptions.strokeWidth(5);
+            polygonOptions.strokeColor(Color.rgb(255, 162, 0));
+            polygonOptions.fillColor(Color.argb(64, 255, 162, 0));
+            polygonOptions.zIndex(-2);
+            for(LatLng latLng : mOperationPolygon){
+                polygonOptions.add(new DJILatLng(latLng.latitude, latLng.longitude));
+            }
+            map.addPolygon(polygonOptions);
+        }
+    }
 
     private void onClickFullscreen(){
         if(mFPVWidget.getParent().equals(mRelativeLayoutFullscreenMapFPV)){
@@ -223,6 +250,8 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
                             });
                         }catch(Exception ex){}
                     }
+
+                    //
                 }
             }
         });

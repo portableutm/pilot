@@ -313,12 +313,16 @@ public class OperationsActivity extends AppCompatActivity {
                         UIGenericUtils.ShowAlert(OperationsActivity.this, getString(R.string.str_operation_is_not_activated), getString(R.string.exc_msg_operation_not_activated));
                         return;
                     }
-                    UIGenericUtils.GoToActivity(
-                        OperationsActivity.this,
-                        FlightActivity.class,
-                        Arrays.asList("OPERATION_ID"),
-                        Arrays.asList(operation.getId())
-                    );
+                    Intent intent = new Intent(OperationsActivity.this, FlightActivity.class);
+                    intent.putExtra("OPERATION_ID", operation.getId());
+                    // we do not pass the last coordinate, because the first and the last coordinate of the polygon are the same
+                    String[] vecPolygonCoordinates = new String[operation.getPolygon().size() - 1];
+                    for(int i = 0; i < operation.getPolygon().size() - 1; i++){
+                        GPSCoordinates gpsCoordinates = operation.getPolygon().get(i);
+                        vecPolygonCoordinates[i] = gpsCoordinates.getLatitude() + ";" + gpsCoordinates.getLongitude();
+                    }
+                    intent.putExtra("OPERATION_POLYGON", vecPolygonCoordinates);
+                    startActivity(intent);
                 }
             }else{
                 // if next action is null, it means that the user wants to see the details of the operation
