@@ -1,8 +1,14 @@
 package com.dronfieslabs.portableutmpilot.ui.activities;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -34,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         // views binding
         mLinearLayoutRoot = findViewById(R.id.linear_layout_root);
-        Button mButtonGoFly = findViewById(R.id.button_go_fly);
+        final Button mButtonGoFly = findViewById(R.id.button_go_fly);
         mButtonGoFly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 mLinearLayoutRoot.addView(mButtonOperations, 1);
             }
         }
+
         super.onResume();
     }
 

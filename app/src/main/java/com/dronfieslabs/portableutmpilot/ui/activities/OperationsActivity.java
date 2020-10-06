@@ -315,6 +315,7 @@ public class OperationsActivity extends AppCompatActivity {
                     }
                     Intent intent = new Intent(OperationsActivity.this, FlightActivity.class);
                     intent.putExtra("OPERATION_ID", operation.getId());
+                    intent.putExtra("OPERATION_MAX_ALTITUDE", operation.getMaxAltitude());
                     // we do not pass the last coordinate, because the first and the last coordinate of the polygon are the same
                     String[] vecPolygonCoordinates = new String[operation.getPolygon().size() - 1];
                     for(int i = 0; i < operation.getPolygon().size() - 1; i++){
