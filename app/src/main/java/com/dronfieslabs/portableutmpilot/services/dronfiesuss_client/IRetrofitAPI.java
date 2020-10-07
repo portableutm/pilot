@@ -8,6 +8,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 interface IRetrofitAPI {
 
@@ -22,6 +23,9 @@ interface IRetrofitAPI {
 
     @GET("operation/owner")
     Call<Object> getOperations(@Header("auth") String authToken);
+
+    @GET("operation/owner")
+    Call<Object> getOperations(@Header("auth") String authToken, @Query("limit") int limit, @Query("offset") int offset);
 
     @DELETE("operation/{id}")
     Call<Object> deleteOperation(@Header("auth") String authToken, @Path("id") String id);

@@ -5,8 +5,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
@@ -14,6 +18,8 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,10 +44,17 @@ import java.util.List;
 
 public class OperationsActivity extends AppCompatActivity {
 
-    private String nextAction = null;
+    // const
+    private static int OPERATIONS_PER_PAGE = 10;
 
+    // state
+    private String nextAction = null;
+    private int mOperationsLoaded = 0;
+
+    // views
     private LinearLayout mLinearLayoutOperations;
     private RelativeLayout mRelativeLayoutRoot;
+    private AppCompatButton mButtonLoadMore;
 
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
@@ -60,6 +73,13 @@ public class OperationsActivity extends AppCompatActivity {
 
         mLinearLayoutOperations = findViewById(R.id.linearLayoutOperations);
         mRelativeLayoutRoot = findViewById(R.id.relative_layout_root);
+        mButtonLoadMore = findViewById(R.id.button_load_more);
+        mButtonLoadMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickLoadOperations();
+            }
+        });
 
         try{
             nextAction = getIntent().getStringExtra("NEXT_ACTION");
@@ -69,12 +89,13 @@ public class OperationsActivity extends AppCompatActivity {
             // if next action is FREE_FLIGHT, hide add operation button
             findViewById(R.id.buttonAddOperation).setVisibility(View.INVISIBLE);
         }
+
+        loadOperations();
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        loadOperations();
     }
 
     @Override
@@ -99,6 +120,10 @@ public class OperationsActivity extends AppCompatActivity {
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
 
+    private void onClickLoadOperations(){
+        loadOperations();
+    }
+
     public void onClickAddOperation(View view){
         UIGenericUtils.GoToActivity(OperationsActivity.this, AddOperationActivity.class);
     }
@@ -113,40 +138,43 @@ public class OperationsActivity extends AppCompatActivity {
         // before loading the operations, we show a progress bar
         final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
         // to refresh the operations list, we first remove all old operations
-        mLinearLayoutOperations.removeAllViews();
+        //mLinearLayoutOperations.removeAllViews();
         try {
-            DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(this)).getOperations(new ICompletitionCallback<List<Operation>>() {
+            DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(this)).getOperations(OPERATIONS_PER_PAGE, mOperationsLoaded, new ICompletitionCallback<List<Operation>>() {
                 @Override
                 public void onResponse(final List<Operation> operations, final String errorMessage) {
-                // onResponse, we remove the progressbar from the activity
-                mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
-                // now we handle the response
-                if(errorMessage != null){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            UIGenericUtils.ShowAlert(OperationsActivity.this, getString(R.string.exc_msg_getting_operations_error),getString(R.string.str_error) + ": " + errorMessage);
-                        }
-                    });
-                    return;
-                }
-                // if there not was an error, load operations into the activity
-                for(Operation operation : operations){
-                    /*if(operation.getState() == null || operation.getState() == Operation.EnumOperationState.CLOSED || operation.getState() == Operation.EnumOperationState.NOT_ACCEPTED){
-                        continue;
-                    }*/
-                    // adjust operation startdatetime and enddatetime with device timezone
-                    int timezoneOffsetInMilliseconds = Calendar.getInstance().getTimeZone().getRawOffset();
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(operation.getStartDatetime());
-                    cal.add(Calendar.MILLISECOND, timezoneOffsetInMilliseconds);
-                    operation.setStartDatetime(cal.getTime());
-                    cal.setTime(operation.getEndDatetime());
-                    cal.add(Calendar.MILLISECOND, timezoneOffsetInMilliseconds);
-                    operation.setEndDatetime(cal.getTime());
-                    // add operation to the activity
-                    mLinearLayoutOperations.addView(getOperationView(operation));
-                }
+                    // onResponse, we remove the progressbar from the activity
+                    mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                    // now we handle the response
+                    if(errorMessage != null){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UIGenericUtils.ShowAlert(OperationsActivity.this, getString(R.string.exc_msg_getting_operations_error),getString(R.string.str_error) + ": " + errorMessage);
+                            }
+                        });
+                        return;
+                    }
+                    // if there not was an error, load operations into the activity
+                    int operationsLoaded = 0;
+                    for(Operation operation : operations){
+                        /*if(operation.getState() == null || operation.getState() == Operation.EnumOperationState.CLOSED || operation.getState() == Operation.EnumOperationState.NOT_ACCEPTED){
+                            continue;
+                        }*/
+                        // adjust operation startdatetime and enddatetime with device timezone
+                        int timezoneOffsetInMilliseconds = Calendar.getInstance().getTimeZone().getRawOffset();
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(operation.getStartDatetime());
+                        cal.add(Calendar.MILLISECOND, timezoneOffsetInMilliseconds);
+                        operation.setStartDatetime(cal.getTime());
+                        cal.setTime(operation.getEndDatetime());
+                        cal.add(Calendar.MILLISECOND, timezoneOffsetInMilliseconds);
+                        operation.setEndDatetime(cal.getTime());
+                        // add operation to the activity
+                        mLinearLayoutOperations.addView(getOperationView(operation));
+                        operationsLoaded++;
+                    }
+                    mOperationsLoaded += operationsLoaded;
                 }
             });
         } catch (NoAuthenticatedException e) {
@@ -157,7 +185,13 @@ public class OperationsActivity extends AppCompatActivity {
 
     // return the view that has to be added to the linearLayoutOperations
     private View getOperationView(final Operation operation){
+        CardView cardView = new CardView(this);
+        cardView.setBackgroundColor(getColor(R.color.white));
         final LinearLayout linearLayoutRoot =  new LinearLayout(this);
+        cardView.addView(linearLayoutRoot);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, 0, 0, UIGenericUtils.ConvertDPToPX(this, 10));
+        cardView.setLayoutParams(new LinearLayout.LayoutParams(layoutParams));
 
         int black = Color.rgb(0, 0, 0);
         int grey = Color.rgb(100, 100, 100);
@@ -356,6 +390,6 @@ public class OperationsActivity extends AppCompatActivity {
             }
             }
         });
-        return linearLayoutRoot;
+        return cardView;
     }
 }

@@ -162,10 +162,18 @@ public class DronfiesUssServices {
     }
 
     public void getOperations(final ICompletitionCallback<List<com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation>> callback) throws NoAuthenticatedException {
+        getOperations(null, null, callback);
+    }
+
+    public void getOperations(Integer limit, Integer offset, final ICompletitionCallback<List<com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation>> callback) throws NoAuthenticatedException {
         if(authToken == null){
             throw new NoAuthenticatedException("You must call login method, before calling this method");
         }
-        api.getOperations(authToken).enqueue(new Callback<Object>() {
+        Call<Object> call = api.getOperations(authToken);
+        if(limit != null && offset != null){
+            call = api.getOperations(authToken, limit, offset);
+        }
+        call.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
                 if(!response.isSuccessful()){

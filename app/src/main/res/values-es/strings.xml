@@ -111,4 +111,5 @@
     <string name="str_version">Version</string>
     <string name="str_yes">Si</string>
     <string name="str_login_failed">Login Failed</string>
+    <string name="str_load_more">Cargar Más</string>
 </resources>
