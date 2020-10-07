@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Station Pro</string>
+    <string name="app_name">Portable UTM Pilot</string>
     <!--
         To add strings to this file, we use the following prefix on the string keys:
         1) conf_msg: for confirmation messages
