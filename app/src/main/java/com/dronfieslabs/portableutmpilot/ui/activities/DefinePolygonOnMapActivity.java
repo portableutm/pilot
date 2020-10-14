@@ -206,7 +206,7 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
             }
             LatLng firstVertix = mListPolygonCoordinates.get(0);
             polygon.add(new GPSCoordinates(firstVertix.latitude, firstVertix.longitude));
-            Operation operation = new Operation(null, description, polygon, startDatetime, endDatetime, maxAltitude, pilotName, droneId, null, null, owner);
+            Operation operation = new Operation(null, description, polygon, startDatetime, endDatetime, maxAltitude, pilotName, droneId, null, null, owner, null);
 
             // show progress bar while the operation is being executed
             final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);

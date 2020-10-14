@@ -314,6 +314,7 @@ public class DronfiesUssServices {
     private com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation getOperationFromJsonObject(JsonObject jsonObject) throws Exception {
         String id = jsonObject.get("gufi").getAsString();
         String description = jsonObject.get("name").getAsString();
+        String flightComments = jsonObject.get("flight_comments").getAsString();
         String pilotName = "";
         try{
             pilotName = jsonObject.get("contact").getAsString();
@@ -359,7 +360,8 @@ public class DronfiesUssServices {
                 droneId,
                 droneDescription,
                 state,
-                owner
+                owner,
+                flightComments
         );
     }
 

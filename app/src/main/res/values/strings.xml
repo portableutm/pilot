@@ -13,6 +13,7 @@
 
     <string name="conf_msg_operation_added">The operation has been successfully added</string>
 
+    <string name="exc_msg_another_operation">"The operation has not been accepted because there is already another operation accepted in that place, in the requested period"</string>
     <string name="exc_msg_auth_to_see_operations">There was an error trying to login on the UTM. Please, go to settings and test the connection</string>
     <string name="exc_msg_dji_sdk_sign_up_failed">
         The application couldn\'t be registered by DJI SDK, and therefore cannot connect to the drone
@@ -37,6 +38,7 @@
     <string name="exc_msg_operation_not_activated">Operation must be Activated, before the flight begins</string>
     <string name="exc_msg_user_has_no_drones">There is no drone registered, asociated to your user account</string>
     <string name="exc_msg_utm_connection_failed">It was not possible to connect to the UTM. Please, go to Settings and test the connection.</string>
+    <string name="exc_msg_uvr">"The operation has not been accepted because there is an UVR in that place"</string>
 
     <string name="miscellaneous_def_polygon_instructions">1) Click on the map to define the polygon vertices.\n\n2) You can delete any polygon vertice clicking on it.\n\n3) You can move the vertices, if you press and hold on any of them.</string>
     <string name="miscellaneous_def_polygon_options">

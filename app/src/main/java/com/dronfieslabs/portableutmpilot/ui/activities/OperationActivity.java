@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dronfieslabs.portableutmpilot.R;
@@ -29,9 +30,10 @@ import java.util.List;
 
 public class OperationActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    public static final String FLIGHT_COMMENTS = "FLIGHT_COMMENTS";
     public static final String DESCRIPTION_KEY = "DESCRIPTION";
     public static final String START_KEY = "START";
-    public static final String DURATION_KEY = "DURATION";
+    public static final String END_KEY = "END";
     public static final String MAX_ALTITUDE_KEY = "MAX_ALTITUDE";
     public static final String PILOT_KEY = "PILOT";
     public static final String DRONE_KEY = "DRONE";
@@ -53,15 +55,22 @@ public class OperationActivity extends FragmentActivity implements OnMapReadyCal
         // add colon to the textviews
         ((TextView)findViewById(R.id.textview_description_title)).append(":");
         ((TextView)findViewById(R.id.textview_start_title)).append(":");
-        ((TextView)findViewById(R.id.textview_duration_title)).append(":");
+        ((TextView)findViewById(R.id.textview_end_title)).append(":");
         ((TextView)findViewById(R.id.textview_max_altitude_title)).append(":");
         ((TextView)findViewById(R.id.textview_pilot_title)).append(":");
         ((TextView)findViewById(R.id.textview_drone_title)).append(":");
 
         // add operation data to the textviews
+        String flightComments = getIntent().getStringExtra(FLIGHT_COMMENTS);
+        TextView textViewFlightComments = findViewById(R.id.textview_flight_comments);
+        if(flightComments == null){
+            ((LinearLayout)textViewFlightComments.getParent()).removeView(textViewFlightComments);
+        }else{
+            textViewFlightComments.setText(flightComments);
+        }
         ((TextView)findViewById(R.id.textview_description_value)).setText(getIntent().getStringExtra(DESCRIPTION_KEY));
         ((TextView)findViewById(R.id.textview_start_value)).setText(getIntent().getStringExtra(START_KEY));
-        ((TextView)findViewById(R.id.textview_duration_value)).setText(getIntent().getStringExtra(DURATION_KEY));
+        ((TextView)findViewById(R.id.textview_end_value)).setText(getIntent().getStringExtra(END_KEY));
         ((TextView)findViewById(R.id.textview_max_altitude_value)).setText(getIntent().getStringExtra(MAX_ALTITUDE_KEY));
         ((TextView)findViewById(R.id.textview_pilot_value)).setText(getIntent().getStringExtra(PILOT_KEY));
         ((TextView)findViewById(R.id.textview_drone_value)).setText(getIntent().getStringExtra(DRONE_KEY));

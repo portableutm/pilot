@@ -341,53 +341,57 @@ public class OperationsActivity extends AppCompatActivity {
         linearLayoutRoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if(nextAction != null){
-                if(nextAction.equals("FREE_FLIGHT")){
-                    if(operation.getState() != Operation.EnumOperationState.ACTIVATED){
-                        UIGenericUtils.ShowAlert(OperationsActivity.this, getString(R.string.str_operation_is_not_activated), getString(R.string.exc_msg_operation_not_activated));
-                        return;
+                if(nextAction != null){
+                    if(nextAction.equals("FREE_FLIGHT")){
+                        if(operation.getState() != Operation.EnumOperationState.ACTIVATED){
+                            UIGenericUtils.ShowAlert(OperationsActivity.this, getString(R.string.str_operation_is_not_activated), getString(R.string.exc_msg_operation_not_activated));
+                            return;
+                        }
+                        Intent intent = new Intent(OperationsActivity.this, FlightActivity.class);
+                        intent.putExtra("OPERATION_ID", operation.getId());
+                        intent.putExtra("OPERATION_MAX_ALTITUDE", operation.getMaxAltitude());
+                        // we do not pass the last coordinate, because the first and the last coordinate of the polygon are the same
+                        String[] vecPolygonCoordinates = new String[operation.getPolygon().size() - 1];
+                        for(int i = 0; i < operation.getPolygon().size() - 1; i++){
+                            GPSCoordinates gpsCoordinates = operation.getPolygon().get(i);
+                            vecPolygonCoordinates[i] = gpsCoordinates.getLatitude() + ";" + gpsCoordinates.getLongitude();
+                        }
+                        intent.putExtra("OPERATION_POLYGON", vecPolygonCoordinates);
+                        startActivity(intent);
                     }
-                    Intent intent = new Intent(OperationsActivity.this, FlightActivity.class);
-                    intent.putExtra("OPERATION_ID", operation.getId());
-                    intent.putExtra("OPERATION_MAX_ALTITUDE", operation.getMaxAltitude());
-                    // we do not pass the last coordinate, because the first and the last coordinate of the polygon are the same
-                    String[] vecPolygonCoordinates = new String[operation.getPolygon().size() - 1];
-                    for(int i = 0; i < operation.getPolygon().size() - 1; i++){
-                        GPSCoordinates gpsCoordinates = operation.getPolygon().get(i);
-                        vecPolygonCoordinates[i] = gpsCoordinates.getLatitude() + ";" + gpsCoordinates.getLongitude();
+                }else{
+                    // if next action is null, it means that the user wants to see the details of the operation
+                    // serialize the polygon coordinates
+                    String strPolygon = "[";
+                    if(operation.getPolygon() != null){
+                        for(GPSCoordinates coordinates : operation.getPolygon()){
+                            strPolygon += "("+coordinates.getLatitude()+";"+coordinates.getLongitude()+"),";
+                        }
                     }
-                    intent.putExtra("OPERATION_POLYGON", vecPolygonCoordinates);
+                    if(strPolygon.endsWith(",")){
+                        strPolygon = strPolygon.substring(0, strPolygon.length()-1);
+                    }
+                    strPolygon += "]";
+                    // generate the intent and go to the new activity
+                    Intent intent = new Intent(OperationsActivity.this, OperationActivity.class);
+                    if(operation.getState() != null && operation.getState().equals(Operation.EnumOperationState.NOT_ACCEPTED)){
+                        if(operation.getFlightComments() != null){
+                            if(operation.getFlightComments().trim().equalsIgnoreCase("ANOTHER_OPERATION")){
+                                intent.putExtra(OperationActivity.FLIGHT_COMMENTS, getString(R.string.exc_msg_another_operation));
+                            }else if(operation.getFlightComments().trim().equalsIgnoreCase("UVR")){
+                                intent.putExtra(OperationActivity.FLIGHT_COMMENTS, getString(R.string.exc_msg_uvr));
+                            }
+                        }
+                    }
+                    intent.putExtra(OperationActivity.DESCRIPTION_KEY, operation.getDescription());
+                    intent.putExtra(OperationActivity.START_KEY, new SimpleDateFormat("dd/MM/yyyy HH:mm").format(operation.getStartDatetime()));
+                    intent.putExtra(OperationActivity.END_KEY, new SimpleDateFormat("dd/MM/yyyy HH:mm").format(operation.getEndDatetime()));
+                    intent.putExtra(OperationActivity.MAX_ALTITUDE_KEY, operation.getMaxAltitude() + " " + getString(R.string.str_meters));
+                    intent.putExtra(OperationActivity.DRONE_KEY, operation.getDroneDescription());
+                    intent.putExtra(OperationActivity.PILOT_KEY, operation.getPilotName());
+                    intent.putExtra(OperationActivity.POLYGON_KEY, strPolygon);
                     startActivity(intent);
                 }
-            }else{
-                // if next action is null, it means that the user wants to see the details of the operation
-                // generate duration string
-                String strDuration = operation.getDurationInHours() + " " + getString(R.string.str_hour);
-                if(operation.getDurationInHours() > 1){
-                    strDuration = operation.getDurationInHours() + " " + getString(R.string.str_hours);
-                }
-                // serialize the polygon coordinates
-                String strPolygon = "[";
-                if(operation.getPolygon() != null){
-                    for(GPSCoordinates coordinates : operation.getPolygon()){
-                        strPolygon += "("+coordinates.getLatitude()+";"+coordinates.getLongitude()+"),";
-                    }
-                }
-                if(strPolygon.endsWith(",")){
-                    strPolygon = strPolygon.substring(0, strPolygon.length()-1);
-                }
-                strPolygon += "]";
-                // generate the intent and go to the new activity
-                Intent intent = new Intent(OperationsActivity.this, OperationActivity.class);
-                intent.putExtra(OperationActivity.DESCRIPTION_KEY, operation.getDescription());
-                intent.putExtra(OperationActivity.START_KEY, new SimpleDateFormat("dd/MM/yyyy HH:mm").format(operation.getStartDatetime()));
-                intent.putExtra(OperationActivity.DURATION_KEY, strDuration);
-                intent.putExtra(OperationActivity.MAX_ALTITUDE_KEY, operation.getMaxAltitude() + " " + getString(R.string.str_meters));
-                intent.putExtra(OperationActivity.DRONE_KEY, operation.getDroneDescription());
-                intent.putExtra(OperationActivity.PILOT_KEY, operation.getPilotName());
-                intent.putExtra(OperationActivity.POLYGON_KEY, strPolygon);
-                startActivity(intent);
-            }
             }
         });
         return cardView;

@@ -4,6 +4,7 @@
 
     <string name="conf_msg_operation_added">La operación ha sido agregada correctamente</string>
 
+    <string name="exc_msg_another_operation">"La operación no ha sido aceptada porque ya existe otra operación aceptada en ese lugar, en el periodo solicitado"</string>
     <string name="exc_msg_auth_to_see_operations">Hubo un error al tratar de loguearse en el UTM. Por favor, vaya a la sección de opciones y pruebe la conexión</string>
     <string name="exc_msg_dji_sdk_sign_up_failed">
         La aplicación no pudo ser registrada por el SDK de DJI, y por lo tanto no podrá conectarla al dron.\n
@@ -28,6 +29,7 @@
     <string name="exc_msg_operation_not_activated">La operación debe estar Activada, antes de que el vuelo comience</string>
     <string name="exc_msg_user_has_no_drones">No hay ningún dron registrado, asociado a su cuenta de usuario</string>
     <string name="exc_msg_utm_connection_failed">No fue posible conectarse al UTM. Por favor, vaya a la sección de Opciones, y prueba la conexión.</string>
+    <string name="exc_msg_uvr">"La operación no ha sido aceptada porque hay una UVR en ese lugar"</string>
 
     <string name="miscellaneous_def_polygon_instructions">1) Clickea sobre cualquier parte del mapa para definir los vértices del polígono.\n\n2) Puedes borrar cualquier vértice del polígono haciéndole click arriba.\n\n3) Puedes mover los vértices, si mantienes presionado sobre cualquiera de ellos.</string>
     <string name="miscellaneous_def_polygon_options">

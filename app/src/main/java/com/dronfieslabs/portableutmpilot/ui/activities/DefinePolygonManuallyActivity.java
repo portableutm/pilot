@@ -118,7 +118,7 @@ public class DefinePolygonManuallyActivity extends AppCompatActivity {
             for(double[] latLng : mVertices){
                 polygon.add(new GPSCoordinates(latLng[0], latLng[1]));
             }
-            Operation operation = new Operation(null, description, polygon, startDatetime, endDatetime, maxAltitude, pilotName, vehicleId, null, null, owner);
+            Operation operation = new Operation(null, description, polygon, startDatetime, endDatetime, maxAltitude, pilotName, vehicleId, null, null, owner, null);
 
             // show progress bar while the operation is being executed
             final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
