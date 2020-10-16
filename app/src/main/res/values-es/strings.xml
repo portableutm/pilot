@@ -103,10 +103,12 @@
     <string name="str_serial">Serial</string>
     <string name="str_settings">Opciones</string>
     <string name="str_sign_up_failed">Registro fallido</string>
+    <string name="str_since">Desde</string>
     <string name="str_spanish">Español</string>
     <string name="str_start">Comienzo</string>
     <string name="str_state">Estado</string>
     <string name="str_test_connection">Probar Conexión</string>
+    <string name="str_to">Hasta</string>
     <string name="str_username">Nombre de Usuario</string>
     <string name="str_utm_connection_failed">Conexión con el UTM falló</string>
     <string name="str_utm_endpoint">Endpoint del UTM</string>

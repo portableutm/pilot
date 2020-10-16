@@ -19,7 +19,8 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activities.MainActivity"
-            android:theme="@style/LightStyle" />
+            android:theme="@style/LightStyle"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activities.DefinePolygonManuallyActivity"
             android:screenOrientation="portrait"
@@ -37,6 +38,7 @@
         <activity
             android:name=".ui.activities.OperationsActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:theme="@style/LightStyle" />
         <activity
             android:name=".ui.activities.FreeFlightActivity"

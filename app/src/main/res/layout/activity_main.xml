@@ -5,36 +5,84 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:paddingLeft="40dp"
-    android:paddingRight="40dp"
     tools:context=".ui.activities.MainActivity">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_go_fly"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_margin="20dp"
-        android:text="@string/str_go_fly"
-        android:textSize="20sp"
-        style="@style/RaisedButton"/>
+    <!--##################################################################################-->
+    <!--##################################### Header #####################################-->
+    <!--##################################################################################-->
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_operations"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_margin="20dp"
-        android:text="@string/str_operations"
-        android:textSize="20sp"
-        style="@style/RaisedButton"/>
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/logo"/>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_settings"
+    <!--##################################################################################-->
+    <!--##################################### Image  #####################################-->
+    <!--##################################################################################-->
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_margin="20dp"
-        android:text="@string/str_settings"
-        android:textSize="20sp"
-        style="@style/RaisedButton"/>
+        android:layout_height="140dp"
+        android:orientation="vertical"
+        android:background="@color/colorPrimaryDark"
+        android:paddingTop="20dp">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/main_act_img"/>
+    </LinearLayout>
 
+    <!--##################################################################################-->
+    <!--#################################### Buttons  ####################################-->
+    <!--##################################################################################-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@color/colorPrimaryDark">
+        <Button
+            android:id="@+id/button_go_fly"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/rounded_button"
+            android:text="@string/str_go_fly"
+            android:textColor="@color/white"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/button_operations"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/rounded_button"
+            android:text="@string/str_operations"
+            android:textColor="@color/white"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/button_settings"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/rounded_button"
+            android:text="@string/str_settings"
+            android:textColor="@color/white"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <!--##################################################################################-->
+    <!--##################################### Footer #####################################-->
+    <!--##################################################################################-->
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:src="@drawable/main_act_footer"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"/>
 </LinearLayout>

@@ -10,6 +10,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.util.TypedValue;
@@ -52,6 +53,7 @@ public class OperationsActivity extends AppCompatActivity {
     private int mOperationsLoaded = 0;
 
     // views
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private LinearLayout mLinearLayoutOperations;
     private RelativeLayout mRelativeLayoutRoot;
     private AppCompatButton mButtonLoadMore;
@@ -66,6 +68,18 @@ public class OperationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_operations);
+
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mLinearLayoutOperations.removeAllViews();
+                mOperationsLoaded = 0;
+                loadOperations();
+                // set refreshing in false
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,18 +98,14 @@ public class OperationsActivity extends AppCompatActivity {
         try{
             nextAction = getIntent().getStringExtra("NEXT_ACTION");
         }catch(Exception ex){}
-
-        if(nextAction != null && nextAction.equals("FREE_FLIGHT")){
-            // if next action is FREE_FLIGHT, hide add operation button
-            findViewById(R.id.buttonAddOperation).setVisibility(View.INVISIBLE);
-        }
-
-        loadOperations();
     }
 
     @Override
     protected void onResume(){
         super.onResume();
+        mLinearLayoutOperations.removeAllViews();
+        mOperationsLoaded = 0;
+        loadOperations();
     }
 
     @Override
@@ -233,12 +243,6 @@ public class OperationsActivity extends AppCompatActivity {
         if(stateDrawableId != null){
             imageViewState.setImageResource(stateDrawableId);
         }
-        imageViewState.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UIGenericUtils.ShowToast(OperationsActivity.this, getString(R.string.str_state) + ": " + operation.getState());
-            }
-        });
 
         TextView textViewDescription = new TextView(this);
         textViewDescription.setTextColor(stateColor);
@@ -246,21 +250,27 @@ public class OperationsActivity extends AppCompatActivity {
         textViewDescription.setPadding(30, 30, 30, 0);
         textViewDescription.setText(operation.getDescription());
 
+        TextView textViewState = new TextView(this);
+        textViewState.setTextColor(stateColor);
+        textViewState.setPadding(30, 0, 30, 0);
+        textViewState.setText(getString(R.string.str_state) + ": " + operation.getState());
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         TextView textViewStartDate = new TextView(this);
         textViewStartDate.setTextColor(stateColor);
         textViewStartDate.setPadding(30, 0, 30, 0);
-        textViewStartDate.setText("Desde: " + sdf.format(operation.getStartDatetime()));
+        textViewStartDate.setText(getString(R.string.str_since) + ": " + sdf.format(operation.getStartDatetime()));
 
         TextView textViewEndDate = new TextView(this);
         textViewEndDate.setTextColor(stateColor);
         textViewEndDate.setPadding(30, 0, 30, 30);
-        textViewEndDate.setText("Hasta: " + sdf.format(operation.getEndDatetime()));
+        textViewEndDate.setText(getString(R.string.str_to) + ": " + sdf.format(operation.getEndDatetime()));
 
         LinearLayout linearLayoutOperationData = new LinearLayout(this);
         linearLayoutOperationData.setLayoutParams(new TableLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
         linearLayoutOperationData.setOrientation(LinearLayout.VERTICAL);
         linearLayoutOperationData.addView(textViewDescription);
+        linearLayoutOperationData.addView(textViewState);
         linearLayoutOperationData.addView(textViewStartDate);
         linearLayoutOperationData.addView(textViewEndDate);
 

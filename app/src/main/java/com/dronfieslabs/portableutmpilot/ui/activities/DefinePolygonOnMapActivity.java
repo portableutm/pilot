@@ -237,9 +237,8 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
                         new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
-                            // clear the activities stack and go back to the ProjectsActivity
-                            Intent intent = new Intent(DefinePolygonOnMapActivity.this, MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            // go back to the OperationsActivity
+                            Intent intent = new Intent(DefinePolygonOnMapActivity.this, OperationsActivity.class);
                             startActivity(intent);
                             }
                         }
