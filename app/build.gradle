@@ -2,18 +2,18 @@ apply plugin: 'com.android.application'
 
 ext.versionMajor = 1
 ext.versionMinor = 12
-ext.versionPatch = 2
+ext.versionPatch = 3
 ext.versionClassifier = null
 ext.isSnapshot = false
 ext.minimumSdkVersion = 26
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId "com.dronfieslabs.portableutmpilot"
         minSdkVersion project.ext.minimumSdkVersion
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode generateVersionCode()
         versionName generateVersionName()
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
