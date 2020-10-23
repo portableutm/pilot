@@ -18,10 +18,7 @@ task checkstyle(type: Checkstyle) {
     }
 }
 
-
-apply plugin: 'findbugs'
-
-task findbugs(type: FindBugs) {
+/*task findbugs(type: FindBugs) {
     description 'Find bugs mainly design flaws, bad practices, multithreaded correctness and code vulnerabilities.'
     group 'verification'
     excludeFilter = file("$project.rootDir/tools/rules-findbugs.xml")
@@ -39,7 +36,7 @@ task findbugs(type: FindBugs) {
         //html.destination = "$project.rootDir/tools/findbugs.html"
 //        reportDir.dest = "$project.rootDir/tools/"
     }
-}
+}*/
 
 apply plugin: 'pmd'
 
@@ -63,6 +60,5 @@ task dronfiesCheck {
     group 'verification'
     dependsOn 'pmd'
 //    dependsOn 'checkstyle'
-    dependsOn 'findbugs'
 //    abortOnError false
 }
