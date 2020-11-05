@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
         boolean registrationWasSuccessful = intent.getBooleanExtra(DJISDKHelper.EXTRA_REGISTRATION_RESULT, false);
         if(registrationWasSuccessful){
-            UIGenericUtils.GoToActivity(SplashActivity.this, MainActivity.class);
+            goToNextActivity();
         }else{
             UIGenericUtils.ShowErrorAlertWithOkButton(
                 SplashActivity.this,
@@ -42,7 +42,7 @@ public class SplashActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UIGenericUtils.GoToActivity(SplashActivity.this, MainActivity.class);
+                        goToNextActivity();
                     }
                 }
             );
@@ -121,5 +121,14 @@ public class SplashActivity extends AppCompatActivity {
             conf.locale = new Locale(SharedPreferencesUtils.getAppLocale(this).toLowerCase());
         }
         res.updateConfiguration(conf, dm);
+    }
+
+    private void goToNextActivity(){
+        String username = SharedPreferencesUtils.getUsername(this);
+        if(username != null && !username.isEmpty()){
+            UIGenericUtils.GoToActivity(SplashActivity.this, MainActivity.class);
+        }else{
+            UIGenericUtils.GoToActivity(SplashActivity.this, LoginActivity.class);
+        }
     }
 }

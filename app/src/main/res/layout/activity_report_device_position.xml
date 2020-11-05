@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activities.ReportDevicePositionActivity">
+
+    <!--#######################################################################################-->
+    <!--####################################### Toolbar #######################################-->
+    <!--#######################################################################################-->
+    <androidx.appcompat.widget.Toolbar
+        android:layout_height="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:id="@+id/toolbar"
+        android:background="@color/colorPrimary"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@id/toolbar"
+        android:gravity="center_horizontal">
+        <!--#######################################################################################-->
+        <!--######################################## Title ########################################-->
+        <!--#######################################################################################-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="30dp"
+            android:text="@string/str_current_position"
+            android:textSize="24dp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"/>
+
+        <!--#######################################################################################-->
+        <!--################################### GPS Coordinates ###################################-->
+        <!--#######################################################################################-->
+
+        <!--################################### Latitude  ###################################-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="20dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/str_latitude"
+                android:textSize="18dp"/>
+            <TextView
+                android:id="@+id/text_view_latitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"/>
+        </LinearLayout>
+        <!--################################### Longitude ###################################-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="20dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/str_longitude"
+                android:textSize="18dp"/>
+            <TextView
+                android:id="@+id/text_view_longitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"/>
+        </LinearLayout>
+        <!--################################### Altitude  ###################################-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="20dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/str_altitude"
+                android:textSize="18dp"/>
+            <TextView
+                android:id="@+id/text_view_altitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"/>
+        </LinearLayout>
+
+        <!--#######################################################################################-->
+        <!--################################## Reporting Message ##################################-->
+        <!--#######################################################################################-->
+        <TextView
+            android:id="@+id/text_view_reporting_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="30dp"
+            android:text="@string/str_reporting_position"
+            android:textSize="18dp"
+            android:textColor="@color/red"/>
+
+        <!--#######################################################################################-->
+        <!--#################################### Report Button ####################################-->
+        <!--#######################################################################################-->
+        <Button
+            android:id="@+id/button_report"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_button_green"
+            android:text="@string/str_start_reporting"
+            android:textColor="#79C160"
+            android:textStyle="bold"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

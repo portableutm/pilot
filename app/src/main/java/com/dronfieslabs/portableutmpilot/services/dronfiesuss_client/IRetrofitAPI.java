@@ -21,6 +21,9 @@ interface IRetrofitAPI {
     @POST("position")
     Call<Object> sendPosition(@Header("auth") String authToken, @Body Position position);
 
+    @POST("paraglidingposition")
+    Call<Object> sendParaglidingPosition(@Header("auth") String authToken, @Body ParaglidingPosition position);
+
     @GET("operation/owner")
     Call<Object> getOperations(@Header("auth") String authToken);
 

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activities.LoginActivity">
+
+    <!--##################################################################################-->
+    <!--##################################### Header #####################################-->
+    <!--##################################################################################-->
+
+    <!--######################### Image #########################-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_weight="0"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary">
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/main_act_img"/>
+    </LinearLayout>
+    <!--######################### Logo  #########################-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_weight="0"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/logo_fondo_azul"/>
+    </LinearLayout>
+    <!--####################### Triangle  #######################-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="0"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/login_act_header"/>
+    </LinearLayout>
+
+    <!--##################################################################################-->
+    <!--############################### Email and Password ###############################-->
+    <!--##################################################################################-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_username"
+            android:textSize="12dp"
+            android:textColor="#AAAAAA"
+            android:textStyle="bold"
+            android:textAllCaps="true"/>
+        <EditText
+            android:id="@+id/edit_text_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/str_password"
+            android:textSize="12dp"
+            android:textColor="#AAAAAA"
+            android:textStyle="bold"
+            android:textAllCaps="true"/>
+        <EditText
+            android:id="@+id/edit_text_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"/>
+    </LinearLayout>
+
+    <!--##################################################################################-->
+    <!--######################## Dron operator or Paragliding pilot ########################-->
+    <!--##################################################################################-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:orientation="horizontal"
+        android:padding="20dp">
+        <TextView
+            android:id="@+id/text_view_drone_operator"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:background="@drawable/i_am_a_dron_operator_background_active"
+            android:text="@string/str_i_am_a_drone_operator"
+            android:textSize="12dp"
+            android:textColor="@color/white"/>
+        <TextView
+            android:id="@+id/text_view_paraglinding_pilot"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:background="@drawable/i_am_a_paragliding_pilot_background"
+            android:text="@string/str_i_am_a_paragliding_pilot"
+            android:textSize="12dp"/>
+    </LinearLayout>
+
+    <!--##################################################################################-->
+    <!--################################## Login Button ##################################-->
+    <!--##################################################################################-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+        <Button
+            android:id="@+id/button_sign_in"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_button_color_primary"
+            android:text="@string/str_sign_in"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <!--##################################################################################-->
+    <!--##################################### Footer #####################################-->
+    <!--##################################################################################-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:orientation="vertical"
+        android:padding="20dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:text="@string/question_account"
+                android:textColor="#AAAAAA"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textSize="12dp"/>
+            <TextView
+                android:id="@+id/text_view_sign_up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/str_sign_up"
+                android:textColor="@color/colorPrimary"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textSize="12dp"/>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/text_view_skip_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:text="@string/str_skip_login"
+            android:textColor="#AAAAAA"
+            android:textSize="12dp"/>
+    </LinearLayout>
+
+</LinearLayout>

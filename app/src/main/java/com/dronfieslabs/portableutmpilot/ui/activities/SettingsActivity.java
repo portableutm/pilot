@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -30,6 +31,7 @@ import com.dronfieslabs.portableutmpilot.BuildConfig;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.DronfiesUssServices;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.ICompletitionCallback;
+import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 
 import java.util.Locale;
@@ -39,6 +41,7 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView textViewUTMEndpoint;
     private TextView textViewUsername;
     private TextView textViewPassword;
+    private TextView textViewUserType;
 
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
@@ -70,12 +73,14 @@ public class SettingsActivity extends AppCompatActivity {
         textViewUTMEndpoint = findViewById(R.id.text_view_utm_endpoint);
         textViewUsername = findViewById(R.id.text_view_username);
         textViewPassword = findViewById(R.id.text_view_password);
+        textViewUserType = findViewById(R.id.text_view_user_type);
 
         // set UTM values
         switchCompatUTMEnable.setChecked(SharedPreferencesUtils.getUTMEnable(this));
         textViewUTMEndpoint.setText(SharedPreferencesUtils.getUTMEndpoint(this));
         textViewUsername.setText(SharedPreferencesUtils.getUsername(this));
         textViewPassword.setText(SharedPreferencesUtils.getPassword(this));
+        updateUserType();
 
         setCurrentLanguage();
     }
@@ -216,6 +221,50 @@ public class SettingsActivity extends AppCompatActivity {
             .show();
     }
 
+    public void onClickEditUserType(View view){
+        final AlertDialog[] alertDialog = {null};
+
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        float weight = 1.0f;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+        linearLayout.setPadding(45, 10,50,10);
+        linearLayout.setLayoutParams(param);
+
+        final Button buttonDroneOperator = new Button(this);
+        buttonDroneOperator.setText(R.string.str_drone_operator);
+        buttonDroneOperator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferencesUtils.updateUserIsDroneOperator(SettingsActivity.this, true);
+                updateUserType();
+                alertDialog[0].dismiss();
+            }
+        });
+        linearLayout.addView(buttonDroneOperator);
+
+        final Button buttonParaglidingPilot = new Button(this);
+        buttonParaglidingPilot.setText(R.string.str_paragliding_pilot);
+        buttonParaglidingPilot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferencesUtils.updateUserIsDroneOperator(SettingsActivity.this, false);
+                updateUserType();
+                alertDialog[0].dismiss();
+            }
+        });
+        linearLayout.addView(buttonParaglidingPilot);
+        int dp20 = UIGenericUtils.ConvertDPToPX(this, 20);
+        linearLayout.setPadding(dp20, dp20, dp20, dp20);
+
+        alertDialog[0] = new AlertDialog.Builder(this)
+                .setTitle(R.string.str_change_user_type)
+                .setView(linearLayout)
+                .show();
+    }
+
     public void onClickEditUTMEndpoint(View view){
         final LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -345,5 +394,13 @@ public class SettingsActivity extends AppCompatActivity {
         }
         res.updateConfiguration(conf, dm);
         SharedPreferencesUtils.updateAppLocale(this, localeCode);
+    }
+
+    private void updateUserType(){
+        if(SharedPreferencesUtils.getUserIsDroneOperator(this)){
+            textViewUserType.setText(R.string.str_drone_operator);
+        }else{
+            textViewUserType.setText(R.string.str_paragliding_pilot);
+        }
     }
 }

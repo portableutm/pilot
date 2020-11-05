@@ -98,6 +98,12 @@ public class DronfiesUssServices {
         });
     }
 
+    public String login_sync(String username, String password) throws Exception{
+        Response<String> response = api.login(new User(username, password)).execute();
+        authToken = response.body();
+        return authToken;
+    }
+
     // When we add an operation, the droneDescription is ignored. This field is used when we get the operations from the backend
     public void addOperation(com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation operation, final ICompletitionCallback<String> callback){
         api.addOperation(authToken, transformOperation(operation)).enqueue(new Callback<Object>() {
@@ -142,6 +148,37 @@ public class DronfiesUssServices {
                 operationId
         );
         api.sendPosition(authToken, position).enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                if(!response.isSuccessful()){
+                    callback.onResponse(null, response.code() + " ("+response.getClass()+")");
+                    return;
+                }
+                // we update the authToken everytime a service responds succesfully
+                //DronfiesUssServices.this.authToken = response.headers().get("token");
+
+                callback.onResponse(response.body().toString() + " ("+response.getClass()+")", null);
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                callback.onResponse(null, t.getMessage());
+            }
+        });
+    }
+
+    public void sendParaglidingPosition(double lon, double lat, double alt, final ICompletitionCallback<String> callback){
+        Date now = new Date();
+        String timeSent = new SimpleDateFormat("yyyy-MM-dd").format(now) + "T" + new SimpleDateFormat("HH:mm:ss.SSS").format(now) + "Z";
+        ParaglidingPosition position = new ParaglidingPosition(
+                (int)Math.round(alt),
+                new Location(
+                        "Point",
+                        new double[]{lon, lat}
+                ),
+                timeSent
+        );
+        api.sendParaglidingPosition(authToken, position).enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
                 if(!response.isSuccessful()){

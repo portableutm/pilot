@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 ext.versionMajor = 1
-ext.versionMinor = 12
+ext.versionMinor = 14
 ext.versionPatch = 6
 ext.versionClassifier = null
 ext.isSnapshot = false
@@ -170,6 +170,9 @@ dependencies {
 
     implementation 'com.zhihu.android:matisse:0.4.3'
     implementation 'androidx.cardview:cardview:1.0.0'
+
+    // dependency to add gifs to the app
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
 
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.0'
 }
