@@ -258,35 +258,19 @@ public class ReportDevicePositionActivity extends AppCompatActivity {
                                 @Override
                                 public void onResponse(String s, String errorMessage) {
                                     if(errorMessage != null){
-                                        // if there is an error reporting position, we stop reporting and notify the error to the user
-                                        stopReportingAndNotifyErrorToTheUser(errorMessage);
+                                        mTextViewReportingMessage.setText(errorMessage);
+                                        return;
                                     }
+                                    mTextViewReportingMessage.setText(getString(R.string.str_reporting_position));
                                 }
                             });
                         }catch(final Exception ex){
-                            // if there is an error reporting position, we stop reporting and notify the error to the user
-                            stopReportingAndNotifyErrorToTheUser(ex.getMessage());
+                            mTextViewReportingMessage.setText(ex.getMessage());
                         }
                     }
                 }
             }
         });
         mReportingThread.start();
-    }
-
-    private void stopReportingAndNotifyErrorToTheUser(final String errorMessage){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mIsReporting = false;
-                updateButtonReport();
-                UIGenericUtils.ShowErrorAlertWithOkButton(
-                        ReportDevicePositionActivity.this,
-                        getString(R.string.str_error_reporting_position),
-                        errorMessage,
-                        getString(R.string.str_it_is_understood),
-                        null);
-            }
-        });
     }
 }
