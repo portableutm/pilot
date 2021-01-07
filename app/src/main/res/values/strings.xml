@@ -75,7 +75,6 @@
     <string name="str_delete">Delete</string>
     <string name="str_delete_operation">Delete operation</string>
     <string name="str_delete_point">Delete point</string>
-    <string name="str_description">Description</string>
     <string name="str_dont_quit">Don\'t quit</string>
     <string name="str_drone">Drone</string>
     <string name="str_drone_not_connected">Drone not connected</string>
@@ -106,6 +105,7 @@
     <string name="str_maximum_altitude">Maximum Altitude</string>
     <string name="str_meters">Meters</string>
     <string name="str_model">Model</string>
+    <string name="str_name">Name</string>
     <string name="str_no">No</string>
     <string name="str_no_drones">No Drones</string>
     <string name="str_operation_added">Operation Added</string>

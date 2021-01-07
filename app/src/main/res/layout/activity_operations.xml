@@ -39,9 +39,9 @@
                 </LinearLayout>
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_load_more"
-                    android:layout_width="wrap_content"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
+                    android:layout_margin="20dp"
                     android:text="@string/str_load_more"
                     style="@style/RaisedButton"/>
             </LinearLayout>

@@ -312,8 +312,11 @@ public class AddOperationActivity extends AppCompatActivity {
         linearLayout.setPadding(50, 50,50,50);
         linearLayout.setLayoutParams(param);
 
+        LinearLayout.LayoutParams buttonParam = new LinearLayout.LayoutParams(width, height, weight);
+        buttonParam.setMargins(0,0,0,50);
         Button buttonDefineManually = new Button(new ContextThemeWrapper(this, R.style.RaisedButton), null, 0);
         buttonDefineManually.setText(R.string.str_define_manually);
+        buttonDefineManually.setLayoutParams(buttonParam);
         linearLayout.addView(buttonDefineManually);
         buttonDefineManually.setOnClickListener(new View.OnClickListener() {
             @Override
