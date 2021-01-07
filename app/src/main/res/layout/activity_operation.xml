@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:textColor="@color/colorPrimaryDark"
-                    android:text="@string/str_description"/>
+                    android:text="@string/str_name"/>
                 <TextView
                     android:id="@+id/textview_description_value"
                     android:layout_width="wrap_content"
