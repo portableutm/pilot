@@ -234,6 +234,9 @@ public class OperationsActivity extends AppCompatActivity {
         }else if(operation.getState() == Operation.EnumOperationState.CLOSED){
             stateColor = grey;
             stateDrawableId = R.drawable.ic_done_black_24dp;
+        }else if(operation.getState() == Operation.EnumOperationState.PENDING){
+            stateColor = yellow;
+            stateDrawableId = R.drawable.ic_baseline_access_time_24;
         }
 
 

@@ -6,7 +6,7 @@ import java.util.List;
 public class Operation {
 
     public enum EnumOperationState{
-        PROPOSED, NOT_ACCEPTED, ACCEPTED, NONCONFORMING, ACTIVATED, ROGUE, CLOSED
+        PROPOSED, NOT_ACCEPTED, ACCEPTED, NONCONFORMING, ACTIVATED, ROGUE, CLOSED, PENDING
     }
 
     private String id;
