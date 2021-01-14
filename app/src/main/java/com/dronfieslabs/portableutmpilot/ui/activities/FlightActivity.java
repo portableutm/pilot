@@ -442,7 +442,7 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
                         if(droneIsInsidePolygon(lat, lon, alt)){
                             // calculate distance between dron and the polygon sides
                             final double minDistanceBetweenDronePositionAnPolygonSidesInMeters = getMinDistanceBetweenPointAndVolumeSides(lat, lon, alt, mOperationPolygonMercator, mOperationMaxAltitude);
-                            if (minDistanceBetweenDronePositionAnPolygonSidesInMeters < 20) {
+                            if (minDistanceBetweenDronePositionAnPolygonSidesInMeters < 10) {
                                 mDroneCurrentPosition = EnumDronePosition.INSIDE_OPERATION_CLOSE_TO_THE_EDGE;
                             }else{
                                 mDroneCurrentPosition = EnumDronePosition.INSIDE_OPERATION_FAR_FROM_THE_EDGE;
