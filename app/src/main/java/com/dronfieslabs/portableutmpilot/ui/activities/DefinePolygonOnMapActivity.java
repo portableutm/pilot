@@ -8,12 +8,14 @@ import android.graphics.Color;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.DronfiesUssServices;
+import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.RestrictedFlightVolume;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.GPSCoordinates;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.ICompletitionCallback;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation;
@@ -32,6 +34,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -76,7 +79,7 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         map = googleMap;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -145,6 +148,29 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
             public void onMarkerDragEnd(Marker marker) {
             }
         });
+
+        // draw restricted flight volumes
+        final DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(DefinePolygonOnMapActivity.this));
+        if(dronfiesUssServices == null){
+            // if we couldn't connect to the utm, we didn't draw the rfvs
+            return;
+        }
+        if(!dronfiesUssServices.isAuthenticated()){
+            String username = SharedPreferencesUtils.getUsername(this);
+            String password = SharedPreferencesUtils.getPassword(this);
+            dronfiesUssServices.login(username, password, new ICompletitionCallback<String>() {
+                @Override
+                public void onResponse(String s, String errorMessage) {
+                if(errorMessage != null){
+                    // if we couldn't connect to the utm, we didn't draw the rfvs
+                    return;
+                }
+                drawRFVs(dronfiesUssServices, googleMap);
+                }
+            });
+        }else{
+            drawRFVs(dronfiesUssServices, googleMap);
+        }
     }
 
     private void updatePolygon() {
@@ -280,5 +306,34 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
                 this,
                 getString(R.string.str_instructions),
                 getString(R.string.miscellaneous_def_polygon_instructions));
+    }
+
+    private void drawRFVs(final DronfiesUssServices dronfiesUssServices, final GoogleMap googleMap){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RestrictedFlightVolume> listRFVs = null;
+                try {
+                    listRFVs = dronfiesUssServices.getRestrictedFlightVolumes();
+                } catch (Exception e) {
+                    // if we couldn't get the rfvs, we do not draw them
+                    return;
+                }
+                for(final RestrictedFlightVolume rfv : listRFVs){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            googleMap.addPolygon(
+                                new PolygonOptions()
+                                    .addAll(rfv.getPolygon())
+                                    .fillColor(Color.argb(64, 255, 0, 0))
+                                    .strokeColor(Color.rgb(255, 0, 0))
+                                    .strokeWidth(3f)
+                            );
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 }

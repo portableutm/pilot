@@ -21,15 +21,20 @@ import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.djiwrapper.DJISDKHelper;
 import com.dronfieslabs.portableutmpilot.djiwrapper.DJISDKHelperObserver;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.DronfiesUssServices;
+import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.RestrictedFlightVolume;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.ICompletitionCallback;
 import com.dronfieslabs.portableutmpilot.services.geometry.GeometryUtils;
 import com.dronfieslabs.portableutmpilot.services.geometry.MercatorProjection;
 import com.dronfieslabs.portableutmpilot.services.geometry.Point;
 import com.dronfieslabs.portableutmpilot.services.geometry.Polygon;
 import com.dronfieslabs.portableutmpilot.services.geometry.Segment;
+import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
+import com.dronfieslabs.portableutmpilot.ui.utils.UIGoogleMapsUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -220,8 +225,32 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
 
-    private void onMapReady2(@NonNull final DJIMap map){
-        map.setMapType(DJIMap.MapType.SATELLITE);
+    private void onMapReady2(@NonNull final DJIMap djiMap){
+        djiMap.setMapType(DJIMap.MapType.SATELLITE);
+
+        // draw restricted flight volumes
+        final DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(FlightActivity.this));
+        if(dronfiesUssServices == null){
+            // if we couldn't connect to the utm, we didn't draw the rfvs
+            return;
+        }
+        if(!dronfiesUssServices.isAuthenticated()){
+            String username = SharedPreferencesUtils.getUsername(this);
+            String password = SharedPreferencesUtils.getPassword(this);
+            dronfiesUssServices.login(username, password, new ICompletitionCallback<String>() {
+                @Override
+                public void onResponse(String s, String errorMessage) {
+                    if(errorMessage != null){
+                        // if we couldn't connect to the utm, we didn't draw the rfvs
+                        return;
+                    }
+                    drawRFVs(dronfiesUssServices, djiMap);
+                }
+            });
+        }else{
+            drawRFVs(dronfiesUssServices, djiMap);
+        }
+
         // if operation received, draw polygon
         if(mOperationId != null && mOperationPolygon != null && mOperationPolygon.size() > 2){
             DJIPolygonOptions polygonOptions = new DJIPolygonOptions();
@@ -232,7 +261,7 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
             for(LatLng latLng : mOperationPolygon){
                 polygonOptions.add(new DJILatLng(latLng.latitude, latLng.longitude));
             }
-            map.addPolygon(polygonOptions);
+            djiMap.addPolygon(polygonOptions);
         }
     }
 
@@ -504,6 +533,43 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
             mMediaPlayerBeep2.seekTo(0);
             mMediaPlayerBeep2.start();
         }
+    }
+
+    private void drawRFVs(final DronfiesUssServices dronfiesUssServices, final DJIMap djiMap){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<RestrictedFlightVolume> listRFVs = null;
+                try {
+                    listRFVs = dronfiesUssServices.getRestrictedFlightVolumes();
+                } catch (Exception e) {
+                    // if we couldn't get the rfvs, we do not draw them
+                    return;
+                }
+                for(final RestrictedFlightVolume rfv : listRFVs){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            djiMap.addPolygon(
+                                new DJIPolygonOptions()
+                                    .addAll(convertToDJIPolygon(rfv.getPolygon()))
+                                    .fillColor(Color.argb(64, 255, 0, 0))
+                                    .strokeColor(Color.rgb(255, 0, 0))
+                                    .strokeWidth(3f)
+                            );
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    private List<DJILatLng> convertToDJIPolygon(List<LatLng> polygon){
+        List<DJILatLng> ret = new ArrayList<>();
+        for(LatLng latLng : polygon){
+            ret.add(new DJILatLng(latLng.latitude, latLng.longitude));
+        }
+        return ret;
     }
 
 }

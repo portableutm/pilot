@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.GPSCoordinates;
 import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.ICompletitionCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -265,6 +267,17 @@ public class DronfiesUssServices {
         return ret;
     }
 
+    public List<RestrictedFlightVolume> getRestrictedFlightVolumes() throws Exception {
+        String responseBody = api.getRestrictedFlightVolumes(authToken).execute().body().string();
+        JSONArray jsonArrayRFVs = new JSONArray(responseBody);
+        List<RestrictedFlightVolume> ret = new ArrayList<>();
+        for(int i = 0; i  < jsonArrayRFVs.length(); i++){
+            JSONObject jsonObject = jsonArrayRFVs.getJSONObject(i);
+            ret.add(parseRFV(jsonObject));
+        }
+        return ret;
+    }
+
     //----------------------------------------------------------------------------------------------------
     //----------------------------------------- PRIVATE METHODS  -----------------------------------------
     //----------------------------------------------------------------------------------------------------
@@ -440,6 +453,21 @@ public class DronfiesUssServices {
             owner = getStringValueFromJSONObject(jsonObjectVehicle.getJSONObject("owner"), "username");
         }
         return new Vehicle(uvin, date, nNumber, faaNumber, vehicleName, manufacturer, model, vehicleClass, registeredBy, owner);
+    }
+
+    private RestrictedFlightVolume parseRFV(JSONObject jsonObjectRFV) throws Exception{
+        String id = getStringValueFromJSONObject(jsonObjectRFV, "id");
+        int minAltitude = Integer.parseInt(getStringValueFromJSONObject(jsonObjectRFV, "min_altitude"));
+        int maxAltitude = Integer.parseInt(getStringValueFromJSONObject(jsonObjectRFV, "max_altitude"));
+        String comments = getStringValueFromJSONObject(jsonObjectRFV, "comments");
+        List<LatLng> polygon = new ArrayList<>();
+        JSONArray jsonArrayCoordinates = (JSONArray) jsonObjectRFV.getJSONObject("geography").getJSONArray("coordinates").get(0);
+        for(int i = 0; i < jsonArrayCoordinates.length(); i++){
+            double lat = ((JSONArray)jsonArrayCoordinates.get(i)).getDouble(1);
+            double lng = ((JSONArray)jsonArrayCoordinates.get(i)).getDouble(0);
+            polygon.add(new LatLng(lat, lng));
+        }
+        return new RestrictedFlightVolume(id, polygon, minAltitude, maxAltitude, comments);
     }
 
     private String getStringValueFromJSONObject(JSONObject jsonObject, String key) throws Exception {
