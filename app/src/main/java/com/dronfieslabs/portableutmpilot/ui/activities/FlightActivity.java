@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -58,6 +59,11 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
     // consts
     private DecimalFormat dfInteger = new DecimalFormat("###,##0");
     private DecimalFormat dfDecimal = new DecimalFormat("###,##0.0");
+    private enum EnumDronePosition{
+        INSIDE_OPERATION_FAR_FROM_THE_EDGE,
+        INSIDE_OPERATION_CLOSE_TO_THE_EDGE,
+        OUTSIDE_OPERATION
+    }
 
     // state
     private String mOperationId = null;
@@ -72,11 +78,11 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
     // we try to send the position to the UTM each 3 seconds, so we need this variable to know when was the last time we sent it
     private long mLastPositionSentTimestamp = -1;
     // alarm
+    private EnumDronePosition mDroneLastPosition;
+    private EnumDronePosition mDroneCurrentPosition;
     private ValueAnimator mValueAnimatorAlarm;
-    private boolean mDroneInsideOperationPolygon = true;
-    private Thread mThreadAlarmSound;
-    private MediaPlayer mMediaPlayerBeep;
-    private MediaPlayer mMediaPlayerBeep2;
+    private MediaPlayer mMediaPlayerBeepBuffer;
+    private MediaPlayer mMediaPlayerBeepOutside;
 
     // views
     private RelativeLayout mRelativeLayoutFullscreenMapFPV;
@@ -89,6 +95,7 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
     private TextView mTextViewHorizontalSpeed;
     private TextView mTextViewVerticalSpeed;
     private RelativeLayout mRelativeLayoutAlarm;
+    private Button mButtonDismissAlarm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,19 +139,19 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         mValueAnimatorAlarm.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                if(mDroneInsideOperationPolygon){
-                    mRelativeLayoutAlarm.setBackgroundColor(Color.argb((int)animation.getAnimatedValue(), 255, 255,0));
-                }else{
+                if(mDroneCurrentPosition == EnumDronePosition.OUTSIDE_OPERATION){
                     mRelativeLayoutAlarm.setBackgroundColor(Color.argb((int)animation.getAnimatedValue(), 255, 0,0));
+                }else{
+                    mRelativeLayoutAlarm.setBackgroundColor(Color.argb((int)animation.getAnimatedValue(), 255, 255,0));
                 }
             }
         });
         mValueAnimatorAlarm.setRepeatCount(ValueAnimator.INFINITE);
         mValueAnimatorAlarm.setRepeatMode(ValueAnimator.RESTART);
-        mMediaPlayerBeep = MediaPlayer.create(this, R.raw.beep);
-        mMediaPlayerBeep.setLooping(true);
-        mMediaPlayerBeep2 = MediaPlayer.create(this, R.raw.beep2);
-        mMediaPlayerBeep2.setLooping(true);
+        mMediaPlayerBeepBuffer = MediaPlayer.create(this, R.raw.beep);
+        mMediaPlayerBeepBuffer.setLooping(true);
+        mMediaPlayerBeepOutside = MediaPlayer.create(this, R.raw.beep2);
+        mMediaPlayerBeepOutside.setLooping(true);
 
         // views binding
         mRelativeLayoutFullscreenMapFPV = findViewById(R.id.relative_layout_fullscreen_map_fpv);
@@ -170,6 +177,13 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
             }
         });
         mRelativeLayoutAlarm = findViewById(R.id.relative_layout_alarm);
+        mButtonDismissAlarm = findViewById(R.id.button_dismiss_alarm);
+        mButtonDismissAlarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickDismissAlarm();
+            }
+        });
 
         // execute onProductConnected, in case the product was connected before the user enter to the activity
         onProductConnected();
@@ -180,6 +194,7 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         mMapWidget.onResume();
         setFullscreenAndScreenAlwaysOn();
         setFlightControllerStateCallback();
+        mDroneLastPosition = null;
         // subscribe to productConnect and productDisconnect methods
         DJISDKHelper.getInstance().addObserver(this);
         super.onResume();
@@ -193,7 +208,9 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         try{
             mAircraftConnected.getFlightController().setStateCallback(null);
         }catch(Exception ex){}
-        ifPlayingPauseBothBeeps();
+        // if playing, stop both beeps
+        stopBeep(mMediaPlayerBeepBuffer);
+        stopBeep(mMediaPlayerBeepOutside);
         super.onPause();
     }
 
@@ -203,7 +220,9 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         try{
             mAircraftConnected.getFlightController().setStateCallback(null);
         }catch(Exception ex){}
-        ifPlayingPauseBothBeeps();
+        // if playing, stop both beeps
+        stopBeep(mMediaPlayerBeepBuffer);
+        stopBeep(mMediaPlayerBeepOutside);
         super.onDestroy();
     }
 
@@ -286,6 +305,12 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         }
     }
 
+    private void onClickDismissAlarm(){
+        stopBeep(mMediaPlayerBeepBuffer);
+        stopValueAnimatorAlarm();
+        changeDismissButtonVisibility(View.INVISIBLE);
+    }
+
     @Override
     public void onProductConnected() {
         setFlightControllerStateCallback();
@@ -358,55 +383,6 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         return GeometryUtils.isInside(mOperationPolygonMercator, point) && alt <= mOperationMaxAltitude;
     }
 
-    /*private void startSound(){
-        if(mDroneInsideOperationPolygon){
-            if(mMediaPlayerBeep2.isPlaying()){
-                mMedia
-            }
-        }else{
-
-        }
-        if(mMediaPlayerBeep.isPlaying()){
-            return;
-        }
-        mMediaPlayerBeep.seekTo(0);
-        mMediaPlayerBeep.start();
-        if(mThreadAlarmSound != null){
-            return;
-        }
-        mThreadAlarmSound = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    ToneGenerator toneGenerator = new ToneGenerator(0,ToneGenerator.MAX_VOLUME);
-                    while(true){
-                        if(mDroneInsideOperationPolygon){
-                            toneGenerator.startTone(ToneGenerator.TONE_DTMF_0, 500);
-                            Thread.sleep(1000);
-                        }else{
-                            toneGenerator.startTone(ToneGenerator.TONE_DTMF_0, 250);
-                            Thread.sleep(500);
-                        }
-                    }
-                }catch (Exception ex){}
-            }
-        });
-        mThreadAlarmSound.start();
-    }*/
-
-    /*private void stopSound(){
-        if(!mMediaPlayerBeep.isPlaying()){
-            return;
-        }
-        mMediaPlayerBeep.pause();
-        if(mThreadAlarmSound != null){
-            try{
-                mThreadAlarmSound.interrupt();
-                mThreadAlarmSound = null;
-            }catch(Exception ex){
-            }
-        }
-    }*/
 
     private void setFlightControllerStateCallback(){
         mAircraftConnected = DJISDKHelper.getAircraftInstance();
@@ -448,9 +424,6 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
                     if(alt < 0) alt = 0;
                     double heading = flightControllerState.getAircraftHeadDirection();
 
-                    // update mDroneInsideOperationPolygon variable
-                    mDroneInsideOperationPolygon = droneIsInsidePolygon(lat, lon, alt);
-
                     long now = new Date().getTime();
                     if((now - mLastPositionSentTimestamp)/1000 >= 3){
                         mLastPositionSentTimestamp = now;
@@ -462,76 +435,129 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
                         }catch(Exception ex){}
                     }
 
+
+
                     if(mOperationPolygon != null && mOperationPolygon.size() > 2) {
-                        // verify if the drone is inside the polygon
-                        if (mDroneInsideOperationPolygon) {
-                            ifPlayingPauseBeep2();
+                        // calculate drone current position
+                        if(droneIsInsidePolygon(lat, lon, alt)){
                             // calculate distance between dron and the polygon sides
                             final double minDistanceBetweenDronePositionAnPolygonSidesInMeters = getMinDistanceBetweenPointAndVolumeSides(lat, lon, alt, mOperationPolygonMercator, mOperationMaxAltitude);
                             if (minDistanceBetweenDronePositionAnPolygonSidesInMeters < 20) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if(!mValueAnimatorAlarm.isRunning()){
-                                            mValueAnimatorAlarm.start();
-                                        }
-                                    }
-                                });
-                                ifNotPlayingStartBeep();
-                            }else {
-                                if(mValueAnimatorAlarm.isRunning()){
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mValueAnimatorAlarm.cancel();
-                                            mRelativeLayoutAlarm.setBackgroundColor(Color.argb(0, 0, 0,0));
-                                        }
-                                    });
-                                }
-                                ifPlayingPauseBothBeeps();
+                                mDroneCurrentPosition = EnumDronePosition.INSIDE_OPERATION_CLOSE_TO_THE_EDGE;
+                            }else{
+                                mDroneCurrentPosition = EnumDronePosition.INSIDE_OPERATION_FAR_FROM_THE_EDGE;
                             }
-                        } else {
-                            if(!mValueAnimatorAlarm.isRunning()){
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mValueAnimatorAlarm.start();
-                                    }
-                                });
-                            }
-                            ifPlayingPauseBeep();
-                            ifNotPlayingStartBeep2();
+                        }else{
+                            mDroneCurrentPosition = EnumDronePosition.OUTSIDE_OPERATION;
                         }
+
+                        // if mDroneLastPosition is null, it means it is the first time this method is executed
+                        // if mDroneLastPosition is null and mDroneCurrentPosition is INSIDE_OPERATION_CLOSE_TO_THE_EDGE
+                        // we have to play beep buffer and show dismiss button
+                        if(mDroneLastPosition == null && mDroneCurrentPosition == EnumDronePosition.INSIDE_OPERATION_CLOSE_TO_THE_EDGE){
+                            playBeep(mMediaPlayerBeepBuffer);
+                            startValueAnimatorAlarm();
+                            changeDismissButtonVisibility(View.VISIBLE);
+                        }
+                        // if mDroneLastPosition is null and mDroneCurrentPosition is OUTSIDE_OPERATION
+                        // we have to play beep outside
+                        else if(mDroneLastPosition == null && mDroneCurrentPosition == EnumDronePosition.INSIDE_OPERATION_CLOSE_TO_THE_EDGE){
+                            playBeep(mMediaPlayerBeepOutside);
+                            startValueAnimatorAlarm();
+                        }
+                        // if mDroneLastPosition is INSIDE_OPERATION_FAR_FROM_THE_EDGE and mDroneCurrentPosition is INSIDE_OPERATION_CLOSE_TO_THE_EDGE
+                        // we have to play beep buffer and show dismiss button
+                        else if(mDroneLastPosition == EnumDronePosition.INSIDE_OPERATION_FAR_FROM_THE_EDGE && mDroneCurrentPosition == EnumDronePosition.INSIDE_OPERATION_CLOSE_TO_THE_EDGE){
+                            playBeep(mMediaPlayerBeepBuffer);
+                            startValueAnimatorAlarm();
+                            changeDismissButtonVisibility(View.VISIBLE);
+                        }
+                        // if mDroneLastPosition is INSIDE_OPERATION_FAR_FROM_THE_EDGE and mDroneCurrentPosition is OUTSIDE_OPERATION
+                        // we have to play beep outside
+                        else if(mDroneLastPosition == EnumDronePosition.INSIDE_OPERATION_FAR_FROM_THE_EDGE && mDroneCurrentPosition == EnumDronePosition.OUTSIDE_OPERATION){
+                            playBeep(mMediaPlayerBeepOutside);
+                            startValueAnimatorAlarm();
+                        }
+                        // if mDroneLastPosition is INSIDE_OPERATION_CLOSE_TO_THE_EDGE and mDroneCurrentPosition is INSIDE_OPERATION_FAR_FROM_THE_EDGE
+                        // we have to stop beep buffer and hide dismiss button
+                        else if(mDroneLastPosition == EnumDronePosition.INSIDE_OPERATION_CLOSE_TO_THE_EDGE && mDroneCurrentPosition == EnumDronePosition.INSIDE_OPERATION_FAR_FROM_THE_EDGE){
+                            stopBeep(mMediaPlayerBeepBuffer);
+                            stopValueAnimatorAlarm();
+                            changeDismissButtonVisibility(View.INVISIBLE);
+                        }
+                        // if mDroneLastPosition is INSIDE_OPERATION_CLOSE_TO_THE_EDGE and mDroneCurrentPosition is OUTSIDE_OPERATION
+                        // we have to stop beep buffer, play beep outside and hide dismiss button
+                        else if(mDroneLastPosition == EnumDronePosition.INSIDE_OPERATION_CLOSE_TO_THE_EDGE && mDroneCurrentPosition == EnumDronePosition.OUTSIDE_OPERATION){
+                            stopBeep(mMediaPlayerBeepBuffer);
+                            playBeep(mMediaPlayerBeepOutside);
+                            startValueAnimatorAlarm();
+                            changeDismissButtonVisibility(View.INVISIBLE);
+                        }
+                        // if mDroneLastPosition is OUTSIDE_OPERATION and mDroneCurrentPosition is INSIDE_OPERATION_CLOSE_TO_THE_EDGE
+                        // we have to stop beep outside, play beep buffer and show dismiss button
+                        else if(mDroneLastPosition == EnumDronePosition.OUTSIDE_OPERATION && mDroneCurrentPosition == EnumDronePosition.INSIDE_OPERATION_CLOSE_TO_THE_EDGE){
+                            stopBeep(mMediaPlayerBeepOutside);
+                            playBeep(mMediaPlayerBeepBuffer);
+                            startValueAnimatorAlarm();
+                            changeDismissButtonVisibility(View.VISIBLE);
+                        }
+                        // if mDroneLastPosition is OUTSIDE_OPERATION and mDroneCurrentPosition is INSIDE_OPERATION_FAR_FROM_THE_EDGE
+                        // we have to stop beep outside
+                        else if(mDroneLastPosition == EnumDronePosition.OUTSIDE_OPERATION && mDroneCurrentPosition == EnumDronePosition.INSIDE_OPERATION_FAR_FROM_THE_EDGE){
+                            stopBeep(mMediaPlayerBeepOutside);
+                            stopValueAnimatorAlarm();
+                        }
+
+                        // update mDroneLastPosition
+                        mDroneLastPosition = mDroneCurrentPosition;
                     }
                 }
             }
         });
     }
 
-    private void ifPlayingPauseBeep2(){
-        if(mMediaPlayerBeep2.isPlaying()) mMediaPlayerBeep2.pause();
+    private void changeDismissButtonVisibility(final int visibility){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mButtonDismissAlarm.setVisibility(visibility);
+            }
+        });
     }
 
-    private void ifPlayingPauseBeep(){
-        if(mMediaPlayerBeep.isPlaying()) mMediaPlayerBeep.pause();
-    }
-
-    private void ifNotPlayingStartBeep(){
-        if(!mMediaPlayerBeep.isPlaying()){
-            mMediaPlayerBeep.seekTo(0);
-            mMediaPlayerBeep.start();
+    private void playBeep(final MediaPlayer mediaPlayer){
+        if(!mediaPlayer.isPlaying()){
+            mediaPlayer.seekTo(0);
+            mediaPlayer.start();
         }
     }
 
-    private void ifPlayingPauseBothBeeps(){
-        if(mMediaPlayerBeep.isPlaying()) mMediaPlayerBeep.pause();
-        if(mMediaPlayerBeep2.isPlaying()) mMediaPlayerBeep2.pause();
+    private void stopBeep(final MediaPlayer mediaPlayer){
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+        }
     }
 
-    private void ifNotPlayingStartBeep2(){
-        if(!mMediaPlayerBeep2.isPlaying()){
-            mMediaPlayerBeep2.seekTo(0);
-            mMediaPlayerBeep2.start();
+    private void startValueAnimatorAlarm(){
+        if(!mValueAnimatorAlarm.isRunning()){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mValueAnimatorAlarm.start();
+                }
+            });
+        }
+    }
+
+    private void stopValueAnimatorAlarm(){
+        if(mValueAnimatorAlarm.isRunning()){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mValueAnimatorAlarm.cancel();
+                    mRelativeLayoutAlarm.setBackgroundColor(Color.argb(0, 0, 0,0));
+                }
+            });
         }
     }
 

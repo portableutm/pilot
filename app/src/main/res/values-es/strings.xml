@@ -66,6 +66,7 @@
     <string name="str_delete">Borrar</string>
     <string name="str_delete_operation">Borrar operación</string>
     <string name="str_delete_point">Borrar punto</string>
+    <string name="srt_dismiss">Descartar</string>
     <string name="str_dont_quit">No salir</string>
     <string name="str_drone">Dron</string>
     <string name="str_drone_not_connected">Dron no conectado</string>
