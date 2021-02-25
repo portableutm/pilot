@@ -402,6 +402,7 @@ public class OperationsActivity extends AppCompatActivity {
                     intent.putExtra(OperationActivity.MAX_ALTITUDE_KEY, operation.getMaxAltitude() + " " + getString(R.string.str_meters));
                     intent.putExtra(OperationActivity.DRONE_KEY, operation.getDroneDescription());
                     intent.putExtra(OperationActivity.PILOT_KEY, operation.getPilotName());
+                    intent.putExtra(OperationActivity.CONTACT_PHONE_KEY, operation.getContactPhone());
                     intent.putExtra(OperationActivity.POLYGON_KEY, strPolygon);
                     startActivity(intent);
                 }

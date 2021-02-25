@@ -36,6 +36,7 @@ public class OperationActivity extends FragmentActivity implements OnMapReadyCal
     public static final String END_KEY = "END";
     public static final String MAX_ALTITUDE_KEY = "MAX_ALTITUDE";
     public static final String PILOT_KEY = "PILOT";
+    public static final String CONTACT_PHONE_KEY = "CONTACT_PHONE";
     public static final String DRONE_KEY = "DRONE";
     public static final String POLYGON_KEY = "POLYGON";
 
@@ -58,6 +59,7 @@ public class OperationActivity extends FragmentActivity implements OnMapReadyCal
         ((TextView)findViewById(R.id.textview_end_title)).append(":");
         ((TextView)findViewById(R.id.textview_max_altitude_title)).append(":");
         ((TextView)findViewById(R.id.textview_pilot_title)).append(":");
+        ((TextView)findViewById(R.id.textview_contact_phone_title)).append(":");
         ((TextView)findViewById(R.id.textview_drone_title)).append(":");
 
         // add operation data to the textviews
@@ -73,6 +75,7 @@ public class OperationActivity extends FragmentActivity implements OnMapReadyCal
         ((TextView)findViewById(R.id.textview_end_value)).setText(getIntent().getStringExtra(END_KEY));
         ((TextView)findViewById(R.id.textview_max_altitude_value)).setText(getIntent().getStringExtra(MAX_ALTITUDE_KEY));
         ((TextView)findViewById(R.id.textview_pilot_value)).setText(getIntent().getStringExtra(PILOT_KEY));
+        ((TextView)findViewById(R.id.textview_contact_phone_value)).setText(getIntent().getStringExtra(CONTACT_PHONE_KEY));
         ((TextView)findViewById(R.id.textview_drone_value)).setText(getIntent().getStringExtra(DRONE_KEY));
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
