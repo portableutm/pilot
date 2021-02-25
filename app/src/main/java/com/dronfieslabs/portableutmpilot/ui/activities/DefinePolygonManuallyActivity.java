@@ -104,9 +104,13 @@ public class DefinePolygonManuallyActivity extends AppCompatActivity {
             try{
                 pilotName = mReceivedData.split(mDataSeparator)[4];
             }catch (Exception ex){}
+            String contactPhone = "";
+            try{
+                contactPhone = mReceivedData.split(mDataSeparator)[5];
+            }catch (Exception ex){}
             String vehicleId = null;
             try{
-                vehicleId = mReceivedData.split(mDataSeparator)[5];
+                vehicleId = mReceivedData.split(mDataSeparator)[6];
             }catch(Exception ex){
                 UIGenericUtils.ShowToast(this, "Invalid drone id");
                 return;
@@ -118,7 +122,7 @@ public class DefinePolygonManuallyActivity extends AppCompatActivity {
             for(double[] latLng : mVertices){
                 polygon.add(new GPSCoordinates(latLng[0], latLng[1]));
             }
-            Operation operation = new Operation(null, description, polygon, startDatetime, endDatetime, maxAltitude, pilotName, vehicleId, null, null, owner, null);
+            Operation operation = new Operation(null, description, polygon, startDatetime, endDatetime, maxAltitude, pilotName, contactPhone, vehicleId, null, null, owner, null);
 
             // show progress bar while the operation is being executed
             final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);

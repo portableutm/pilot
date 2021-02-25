@@ -14,6 +14,9 @@
     </string>
     <string name="exc_msg_drone_not_selected">No ha seleccionado el dron que utilizará durante la operación</string>
     <string name="exc_msg_getting_operations_error">Error al traer operaciones</string>
+    <string name="exc_msg_invalid_operation_contact_phone">El telefono de contacto no puede contener la combinación de caracteres</string>
+    <string name="exc_msg_invalid_operation_contact_phone__2">El telefono de contacto esta vacio. Este campo es obligatorio</string>
+    <string name="exc_msg_invalid_operation_contact_phone__3">El telefono de contacto debe ser todos numeros</string>
     <string name="exc_msg_invalid_operation_datetime">Formato de fecha y hora inválido (dd/MM/yyyy HH:mm)</string>
     <string name="exc_msg_invalid_operation_description">La descripción no puede contener la combinación de caracteres</string>
     <string name="exc_msg_invalid_operation_description__2">La descripción debe tener entre 1 y 50 caracteres</string>
@@ -60,6 +63,7 @@
     <string name="str_change_username">Cambiar Nombre de Usuario</string>
     <string name="str_change_utm_endpoint">Cambiar UTM endpoint</string>
     <string name="str_confirm">Confirmar</string>
+    <string name="str_contact_phone">Telefono de contacto</string>
     <string name="str_current_position">Posición Actual</string>
     <string name="str_define_manually">Definir Manualmente</string>
     <string name="str_define_polygon">Definir Polígono</string>

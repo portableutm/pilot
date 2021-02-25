@@ -399,6 +399,7 @@ public class DronfiesUssServices {
             }
         }catch(Exception ex){}
         // return operation
+        //Log.d("tagj",jsonObject.toString());  // debug
         return new com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation(
                 id,
                 description,
@@ -407,6 +408,7 @@ public class DronfiesUssServices {
                 parseDate(strEffectiveTimeEnd),
                 maxAltitude,
                 pilotName,
+                null,
                 droneId,
                 droneDescription,
                 state,

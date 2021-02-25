@@ -266,6 +266,7 @@ public class AddOperationActivity extends AppCompatActivity {
         Date endDatetime = null;
         int maxAltitude = -1;
         String pilotName = null;
+        String contactPhone = null;
         try{
             description = getDescription();
             startDatetime = getStartDatetime();
@@ -285,6 +286,7 @@ public class AddOperationActivity extends AppCompatActivity {
             }
             maxAltitude = getMaxAltitude();
             pilotName = getPilotName();
+            contactPhone = getContactPhone();
             if(vehicleId == null){
                 throw new Exception(getString(R.string.exc_msg_drone_not_selected));
             }
@@ -300,6 +302,7 @@ public class AddOperationActivity extends AppCompatActivity {
                 sdf.format(endDatetime) + DATA_SEPARATOR +
                 maxAltitude + DATA_SEPARATOR +
                 pilotName + DATA_SEPARATOR +
+                contactPhone + DATA_SEPARATOR +
                 vehicleId;
 
         // show a dialog for the user to choose the method for defining the polygon
@@ -426,6 +429,25 @@ public class AddOperationActivity extends AppCompatActivity {
         if(retorno.length() < 1 || retorno.length() > 20){
             throw new Exception(getString(R.string.exc_msg_invalid_operation_pilot__2));
         }
+        return retorno;
+    }
+
+    private String getContactPhone() throws Exception {
+        String retorno = ((EditText)findViewById(R.id.edit_text_contact_phone)).getText().toString();
+        if(retorno.contains(DATA_SEPARATOR)){
+            throw new Exception(getText(R.string.exc_msg_invalid_operation_contact_phone) + " " + DATA_SEPARATOR);
+        }
+
+        if (retorno.length() < 1){
+            throw new Exception(getString(R.string.exc_msg_invalid_operation_contact_phone__2));
+        }
+
+        try {
+            int i = Integer.parseInt(retorno);
+        }catch (NumberFormatException nfe){
+            throw new Exception(getString(R.string.exc_msg_invalid_operation_contact_phone__3));
+        }
+
         return retorno;
     }
 

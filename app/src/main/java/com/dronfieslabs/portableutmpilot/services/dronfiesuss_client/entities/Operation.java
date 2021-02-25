@@ -16,6 +16,7 @@ public class Operation {
     private Date endDatetime;
     private int maxAltitude;
     private String pilotName;
+    private String contactPhone;
     private String droneId;
     private String droneDescription;
     private EnumOperationState state;
@@ -26,7 +27,7 @@ public class Operation {
     //--------------------------------------------- CONSTRUCTORS ---------------------------------------------
     //--------------------------------------------------------------------------------------------------------
 
-    public Operation(String id, String description, List<GPSCoordinates> polygon, Date startDatetime, Date endDatetime, int maxAltitude, String pilotName, String droneId, String droneDescription, EnumOperationState state, String owner, String flightComments) {
+    public Operation(String id, String description, List<GPSCoordinates> polygon, Date startDatetime, Date endDatetime, int maxAltitude, String pilotName,String contactPhone, String droneId, String droneDescription, EnumOperationState state, String owner, String flightComments) {
         this.id = id;
         this.description = description;
         this.polygon = polygon;
@@ -34,6 +35,7 @@ public class Operation {
         this.endDatetime = endDatetime;
         this.maxAltitude = maxAltitude;
         this.pilotName = pilotName;
+        this.contactPhone = contactPhone;
         this.droneId = droneId;
         this.droneDescription = droneDescription;
         this.state = state;
@@ -99,6 +101,14 @@ public class Operation {
 
     public void setPilotName(String pilotName) {
         this.pilotName = pilotName;
+    }
+
+    public String getContactPhone() {
+        return contactPhone;
+    }
+
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
     }
 
     public String getDroneId() {

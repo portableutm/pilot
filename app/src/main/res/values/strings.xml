@@ -23,6 +23,9 @@
     </string>
     <string name="exc_msg_drone_not_selected">You have not selected the drone you are going to use during the operation</string>
     <string name="exc_msg_getting_operations_error">Error getting operations</string>
+    <string name="exc_msg_invalid_operation_contact_phone">The contact phone can not contain the following combination of characters</string>
+    <string name="exc_msg_invalid_operation_contact_phone__2">The contact phone can not be empty. This field is required</string>
+    <string name="exc_msg_invalid_operation_contact_phone__3">The contact phone must be all numbers</string>
     <string name="exc_msg_invalid_operation_datetime">Datetime format is not valid (dd/MM/yyyy HH:mm)</string>
     <string name="exc_msg_invalid_operation_description">The description can not contain the following combination of characters</string>
     <string name="exc_msg_invalid_operation_description__2">The description must be between 1 and 50 characters</string>
@@ -69,6 +72,7 @@
     <string name="str_change_user_type">Change User Type</string>
     <string name="str_change_utm_endpoint">Change UTM endpoint</string>
     <string name="str_confirm">Confirm</string>
+    <string name="str_contact_phone">Contact phone</string>
     <string name="str_current_position">Current Position</string>
     <string name="str_define_manually">Define Manually</string>
     <string name="str_define_polygon">Define polygon</string>
