@@ -319,7 +319,9 @@ public class OperationsActivity extends AppCompatActivity {
                                             return;
                                         }
                                         // if operation was removed, delete view from the activity
-                                        mLinearLayoutOperations.removeView(linearLayoutRoot);
+                                            mLinearLayoutOperations.removeAllViews();
+                                            mOperationsLoaded = 0;
+                                            loadOperations();
                                             // show message indicating the operation was deleted
                                         UIGenericUtils.ShowAlert(OperationsActivity.this, "Operación Borrada", "La operación '"+operation.getDescription()+"' ha sido borrada correctamente");
                                         }
