@@ -68,6 +68,11 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     testOptions {
         unitTests.returnDefaultValues = true
     }
@@ -89,13 +94,33 @@ private String generateVersionName() {
     return versionName;
 }
 
+def githubProperties = new Properties()
+githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+
+repositories {
+    maven {
+        name = "GitHubPackages"
+        /*  Configure path to the library hosted on GitHub Packages Registry
+         *  Replace UserID with package owner userID and REPOSITORY with the repository name
+         *  e.g. "https://maven.pkg.github.com/enefce/AndroidLibraryForGitHubPackagesDemo"*/
+
+        url = uri("https://maven.pkg.github.com/portableutm/utm-android-sdk")
+        credentials {
+            username = githubProperties['gpr.usr']
+            password = githubProperties['gpr.key']
+        }
+    }
+}
+
 dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:1.0'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
 
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.multidex:multidex:2.0.0'

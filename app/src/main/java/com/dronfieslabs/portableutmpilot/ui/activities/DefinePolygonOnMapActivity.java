@@ -14,11 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.dronfieslabs.portableutmpilot.R;
-import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.DronfiesUssServices;
-import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.RestrictedFlightVolume;
-import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.GPSCoordinates;
-import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.ICompletitionCallback;
-import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation;
+import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
+import com.dronfies.portableutmandroidclienttest.RestrictedFlightVolume;
+import com.dronfies.portableutmandroidclienttest.entities.GPSCoordinates;
+import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
+import com.dronfies.portableutmandroidclienttest.entities.Operation;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGoogleMapsUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
@@ -242,42 +242,56 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
             final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
 
             // use DronfiesUssService to send the operation to the UTM
-            DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(this)).addOperation(operation, new ICompletitionCallback<String>() {
+            new Thread(new Runnable() {
                 @Override
-                public void onResponse(final String response, final String errorMessage) {
-                // on response, we remove the progress bar
-                mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
-                // then, we handle the response
-                if(errorMessage != null){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            UIGenericUtils.ShowAlert(DefinePolygonOnMapActivity.this, null, getString(R.string.str_error) + ": " + errorMessage);
-                        }
-                    });
-                    return;
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                    UIGenericUtils.ShowAlert(
-                        DefinePolygonOnMapActivity.this,
-                        getString(R.string.str_operation_added),
-                        getString(R.string.conf_msg_operation_added),
-                        new DialogInterface.OnDismissListener() {
+                public void run() {
+                    try {
+                        String error = DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(getApplicationContext())).addOperation_sync(operation);
+                        runOnUiThread(new Runnable() {
                             @Override
-                            public void onDismiss(DialogInterface dialog) {
-                            // go back to the OperationsActivity
-                            Intent intent = new Intent(DefinePolygonOnMapActivity.this, OperationsActivity.class);
-                            startActivity(intent);
+                            public void run() {
+                                mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
                             }
-                        }
-                    );
+                        });
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UIGenericUtils.ShowAlert(
+                                        DefinePolygonOnMapActivity.this,
+                                        getString(R.string.str_operation_added),
+                                        getString(R.string.conf_msg_operation_added),
+                                        new DialogInterface.OnDismissListener() {
+                                            @Override
+                                            public void onDismiss(DialogInterface dialog) {
+                                                // go back to the OperationsActivity
+                                                Intent intent = new Intent(DefinePolygonOnMapActivity.this, OperationsActivity.class);
+                                                startActivity(intent);
+                                            }
+                                        }
+                                );
+                            }
+                        });
+                        return;
+                    } catch (final Exception e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                            }
+                        });
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UIGenericUtils.ShowAlert(DefinePolygonOnMapActivity.this, null, getString(R.string.str_error) + ": " + e.getMessage());
+                            }
+                        });
+                        return;
                     }
-                });
-                return;
                 }
-            });
+
+            }).start();
+
+
         }
     }
 

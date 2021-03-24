@@ -21,8 +21,8 @@ import android.widget.Toast;
 
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.djiwrapper.DJISDKHelper;
-import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.DronfiesUssServices;
-import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.ICompletitionCallback;
+import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
+import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
 import com.dronfieslabs.portableutmpilot.ui.activities.FreeFlightActivity;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 

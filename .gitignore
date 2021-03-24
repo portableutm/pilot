@@ -60,3 +60,4 @@ Setup/app/release/
 .idea/
 release/output.json
 release/
+github.properties

@@ -19,10 +19,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dronfieslabs.portableutmpilot.R;
-import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.DronfiesUssServices;
-import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.GPSCoordinates;
-import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.ICompletitionCallback;
-import com.dronfieslabs.portableutmpilot.services.dronfiesuss_client.entities.Operation;
+import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
+import com.dronfies.portableutmandroidclienttest.entities.GPSCoordinates;
+import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
+import com.dronfies.portableutmandroidclienttest.entities.Operation;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 
@@ -128,43 +128,39 @@ public class DefinePolygonManuallyActivity extends AppCompatActivity {
             final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
 
             // use DronfiesUssService to send the operation to the UTM
-            DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(this)).addOperation(operation, new ICompletitionCallback<String>() {
-                @Override
-                public void onResponse(final String response, final String errorMessage) {
-                    // on response, we remove the progress bar
-                    mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
-                    // then, we handle the response
-                    if(errorMessage != null){
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                UIGenericUtils.ShowAlert(DefinePolygonManuallyActivity.this, null, getString(R.string.str_error) + ": " + errorMessage);
-                            }
-                        });
-                        return;
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            UIGenericUtils.ShowAlert(
-                                    DefinePolygonManuallyActivity.this,
-                                    getString(R.string.str_operation_added),
-                                    getString(R.string.conf_msg_operation_added),
-                                    new DialogInterface.OnDismissListener() {
-                                        @Override
-                                        public void onDismiss(DialogInterface dialog) {
-                                            // clear the activities stack and go back to the MainActivity
-                                            Intent intent = new Intent(DefinePolygonManuallyActivity.this, MainActivity.class);
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(intent);
-                                        }
+            try {
+                DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(this)).addOperation_sync(operation);
+                mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        UIGenericUtils.ShowAlert(
+                                DefinePolygonManuallyActivity.this,
+                                getString(R.string.str_operation_added),
+                                getString(R.string.conf_msg_operation_added),
+                                new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        // clear the activities stack and go back to the MainActivity
+                                        Intent intent = new Intent(DefinePolygonManuallyActivity.this, MainActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
                                     }
-                            );
-                        }
-                    });
-                    return;
-                }
-            });
+                                }
+                        );
+                    }
+                });
+                return;
+            } catch (final Exception e) {
+                mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        UIGenericUtils.ShowAlert(DefinePolygonManuallyActivity.this, null, getString(R.string.str_error) + ": " + e.getMessage());
+                    }
+                });
+                return;
+            }
         }
     }
 
