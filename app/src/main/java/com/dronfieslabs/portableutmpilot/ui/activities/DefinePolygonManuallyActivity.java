@@ -130,10 +130,10 @@ public class DefinePolygonManuallyActivity extends AppCompatActivity {
             // use DronfiesUssService to send the operation to the UTM
             try {
                 DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(this)).addOperation_sync(operation);
-                mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
                         UIGenericUtils.ShowAlert(
                                 DefinePolygonManuallyActivity.this,
                                 getString(R.string.str_operation_added),
@@ -156,6 +156,7 @@ public class DefinePolygonManuallyActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
                         UIGenericUtils.ShowAlert(DefinePolygonManuallyActivity.this, null, getString(R.string.str_error) + ": " + e.getMessage());
                     }
                 });

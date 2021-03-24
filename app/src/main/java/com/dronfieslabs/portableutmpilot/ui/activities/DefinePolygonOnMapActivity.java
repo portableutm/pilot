@@ -251,11 +251,6 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
                             @Override
                             public void run() {
                                 mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
-                            }
-                        });
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
                                 UIGenericUtils.ShowAlert(
                                         DefinePolygonOnMapActivity.this,
                                         getString(R.string.str_operation_added),
@@ -277,11 +272,6 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
                             @Override
                             public void run() {
                                 mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
-                            }
-                        });
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
                                 UIGenericUtils.ShowAlert(DefinePolygonOnMapActivity.this, null, getString(R.string.str_error) + ": " + e.getMessage());
                             }
                         });
