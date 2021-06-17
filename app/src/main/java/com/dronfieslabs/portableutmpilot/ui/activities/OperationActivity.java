@@ -88,7 +88,7 @@ public class OperationActivity extends FragmentActivity implements OnMapReadyCal
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-
+        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         // add the polygon to the map
         List<LatLng> polygon = parsePolygon(getIntent().getStringExtra(POLYGON_KEY));
         for(LatLng vertice : polygon){
