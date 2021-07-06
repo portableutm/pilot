@@ -13,7 +13,6 @@ public class SharedPreferencesUtils {
     private static final String PASSWORD_KEY = "PASSWORD";
     private static final String USER_IS_DRONE_OP_KEY = "USER_IS_DRONE_OP";
     private static final String APP_LOCALE_KEY = "APP_LOCALE";
-    private static final String DINACIA_BACKEND_ENDPOINT = "https://utm.dinacia.gub.uy:3000";
 
     // this method save into the sharedpreferences the string that represents the locale used by the app
     // this method do not update locale of the app
@@ -38,7 +37,7 @@ public class SharedPreferencesUtils {
 
     public static String getUTMEndpoint(Context context){
         SharedPreferences sharedPreferences = getSharedPreferences(context);
-        return sharedPreferences.getString(UTM_ENDPOINT_KEY, DINACIA_BACKEND_ENDPOINT);
+        return sharedPreferences.getString(UTM_ENDPOINT_KEY, "");
     }
 
     public static void updateUsername(Context context, String newUsername){

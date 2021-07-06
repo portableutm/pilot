@@ -22,6 +22,7 @@
         3) Open the application again
     </string>
     <string name="exc_msg_drone_not_selected">You have not selected the drone you are going to use during the operation</string>
+    <string name="exc_msg_error_getting_endpoints">There was an error trying to get the endpoints</string>
     <string name="exc_msg_getting_operations_error">Error getting operations</string>
     <string name="exc_msg_invalid_operation_contact_phone">The contact phone can not contain the following combination of characters</string>
     <string name="exc_msg_invalid_operation_contact_phone__2">The contact phone can not be empty. This field is required</string>
@@ -149,4 +150,6 @@
     <string name="str_version">Version</string>
     <string name="str_yes">Yes</string>
     <string name="str_login_failed">Login Failed</string>
+    <string name="str_connection_error">Connection Error</string>
+    <string name="str_select">Select</string>
 </resources>

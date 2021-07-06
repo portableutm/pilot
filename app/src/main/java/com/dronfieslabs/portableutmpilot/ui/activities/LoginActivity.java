@@ -3,19 +3,26 @@ package com.dronfieslabs.portableutmpilot.ui.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dronfies.portableutmandroidclienttest.Endpoint;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
+import com.dronfieslabs.portableutmpilot.ui.Constants;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.google.gson.Gson;
+
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -23,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean mDroneOperator = true;
 
     // views
+    private RelativeLayout mRelativeLayoutRoot;
     private EditText mEditTextUsername;
     private EditText mEditTextPassword;
     private TextView mTextViewDroneOperator;
@@ -37,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // views binding
+        mRelativeLayoutRoot = findViewById(R.id.relative_layout_root);
         mEditTextUsername = findViewById(R.id.edit_text_username);
         mEditTextPassword = findViewById(R.id.edit_text_password);
         mTextViewDroneOperator = findViewById(R.id.text_view_drone_operator);
@@ -93,39 +102,58 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void onClickSignIn(){
-        String utmEndpoint = SharedPreferencesUtils.getUTMEndpoint(this);
+        LinearLayout progressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
         final String username = mEditTextUsername.getText().toString();
         final String password = mEditTextPassword.getText().toString();
-        DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(utmEndpoint);
-        if(dronfiesUssServices == null){
-            Toast.makeText(this, "No se pudo establecer la conexión con el UTM", Toast.LENGTH_LONG).show();
-            return;
-        }
-        dronfiesUssServices.login(username, password, new ICompletitionCallback<String>() {
-            @Override
-            public void onResponse(String result, String errorMessage) {
-                if(errorMessage != null){
-                    if(errorMessage.equals("401")){
-                        Toast.makeText(LoginActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
-                        return;
-                    }else{
-                        Toast.makeText(LoginActivity.this, "Unable to connect to the UTM (error code: " + errorMessage + ")", Toast.LENGTH_LONG).show();
-                        return;
-                    }
+        String utmEndpoint = SharedPreferencesUtils.getUTMEndpoint(this);
+        if(utmEndpoint == null || utmEndpoint.trim().isEmpty()){
+            // we have to find the endpoint
+            new Thread(() -> {
+                DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(getResources().getString(R.string.portableUTMMainEndpoint));
+                try{
+                    String userEndpoint = dronfiesUssServices.getEndpoint(username);
+                    SharedPreferencesUtils.updateUTMEndpoint(this, userEndpoint);
+                    dronfiesUssServices = DronfiesUssServices.getInstance(userEndpoint);
+                    login(dronfiesUssServices, username, password, progressBar);
+                }catch (Exception ex){
+                    runOnUiThread(() -> {
+                        mRelativeLayoutRoot.removeView(progressBar);
+                        UIGenericUtils.ShowToast(LoginActivity.this, ex.getMessage());
+                    });
                 }
-                // save credentials and user type
-                SharedPreferencesUtils.updateUsername(LoginActivity.this, username);
-                SharedPreferencesUtils.updatePassword(LoginActivity.this, password);
-                SharedPreferencesUtils.updateUserIsDroneOperator(LoginActivity.this, mDroneOperator);
-                // go to main activity
-                UIGenericUtils.GoToActivity(LoginActivity.this, MainActivity.class);
+            }).start();
+        }else{
+            // we already have the endpoint, so we can login
+            DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(utmEndpoint);
+            if(dronfiesUssServices == null){
+                runOnUiThread(() -> mRelativeLayoutRoot.removeView(progressBar));
+                Toast.makeText(this, "No se pudo establecer la conexión con el UTM", Toast.LENGTH_LONG).show();
+                return;
             }
-        });
+            login(dronfiesUssServices, username, password, progressBar);
+        }
     }
 
     private void onClickSignUp(){
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://161.35.12.214/registration"));
-        startActivity(browserIntent);
+        new Thread(() -> {
+            try{
+                List<Endpoint> endpoints = DronfiesUssServices.getInstance(getResources().getString(R.string.portableUTMMainEndpoint)).getEndpoints();
+                if(endpoints == null || endpoints.isEmpty()){
+                    runOnUiThread(() -> {UIGenericUtils.ShowAlert(this, getString(R.string.str_connection_error),getString(R.string.exc_msg_error_getting_endpoints));});
+                    return;
+                }
+                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                String[] endpointsArray = new String[endpoints.size()];
+                for(int i = 0; i < endpoints.size(); i++){
+                    endpointsArray[i] = new Gson().toJson(endpoints.get(i));
+                }
+                intent.putExtra(Constants.UTM_ENDPOINTS_KEY, endpointsArray);
+                startActivity(intent);
+            }catch (Exception ex){
+                Log.d(LoginActivity.class.getName() + "_Logs", ex.getMessage(), ex);
+                runOnUiThread(() -> {UIGenericUtils.ShowToast(LoginActivity.this, getString(R.string.exc_msg_another_operation));});
+            }
+        }).start();
     }
 
     private void onClickSkipLogin(){
@@ -150,6 +178,30 @@ public class LoginActivity extends AppCompatActivity {
             mTextViewParaglidingPilot.setBackground(getDrawable(R.drawable.i_am_a_paragliding_pilot_background_active));
             mTextViewParaglidingPilot.setTextColor(getColor(R.color.white));
         }
+    }
+
+    private void login(DronfiesUssServices dronfiesUssServices, String username, String password, LinearLayout progressBar){
+        dronfiesUssServices.login(username, password, new ICompletitionCallback<String>() {
+            @Override
+            public void onResponse(String result, String errorMessage) {
+                runOnUiThread(() -> mRelativeLayoutRoot.removeView(progressBar));
+                if(errorMessage != null){
+                    if(errorMessage.equals("401")){
+                        Toast.makeText(LoginActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
+                        return;
+                    }else{
+                        Toast.makeText(LoginActivity.this, "Unable to connect to the UTM (error code: " + errorMessage + ")", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+                // save credentials and user type
+                SharedPreferencesUtils.updateUsername(LoginActivity.this, username);
+                SharedPreferencesUtils.updatePassword(LoginActivity.this, password);
+                SharedPreferencesUtils.updateUserIsDroneOperator(LoginActivity.this, mDroneOperator);
+                // go to main activity
+                UIGenericUtils.GoToActivity(LoginActivity.this, MainActivity.class);
+            }
+        });
     }
 
 }

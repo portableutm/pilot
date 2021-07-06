@@ -36,9 +36,13 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            resValue 'string', 'portableUTMMainEndpoint', '"https://utm.dronfieslabs.com:3000"'
         }
         debug {
             debuggable true
+
+            resValue 'string', 'portableUTMMainEndpoint', '"http://192.168.43.50:2999"'
         }
 
     }
@@ -116,7 +120,7 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:1.0'
+    implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:2.0'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })

@@ -4,12 +4,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AlertDialog.Builder;
+import androidx.core.content.ContextCompat;
+
+import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -27,6 +32,13 @@ public class UIGenericUtils {
     //--------------------------------------------------- PUBLIC METHODS  ---------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------
+
+    public static void SetDrawableIntoImageView(Context context, ImageView imageView, String drawableName){
+        Resources resources = context.getResources();
+        final int resourceId = resources.getIdentifier(drawableName, "drawable", context.getPackageName());
+        Drawable drawable = ContextCompat.getDrawable(context, resourceId);
+        imageView.setImageDrawable(drawable);
+    }
 
     public static int ConvertDPToPX(Context context, int dp){
         return (int)Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics()));

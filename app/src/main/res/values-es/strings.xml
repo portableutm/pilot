@@ -13,6 +13,7 @@
         3) Vuelva a abrir la aplicación
     </string>
     <string name="exc_msg_drone_not_selected">No ha seleccionado el dron que utilizará durante la operación</string>
+    <string name="exc_msg_error_getting_endpoints">Hubo un error al tratar de obtener los endpoints</string>
     <string name="exc_msg_getting_operations_error">Error al traer operaciones</string>
     <string name="exc_msg_invalid_operation_contact_phone">El telefono de contacto no puede contener la combinación de caracteres</string>
     <string name="exc_msg_invalid_operation_contact_phone__2">El telefono de contacto esta vacio. Este campo es obligatorio</string>
@@ -140,4 +141,6 @@
     <string name="str_yes">Si</string>
     <string name="str_login_failed">Login Failed</string>
     <string name="str_load_more">Cargar Más</string>
+    <string name="str_connection_error">Error de Conexión</string>
+    <string name="str_select">Seleccionar</string>
 </resources>
