@@ -1,15 +1,22 @@
 package com.dronfieslabs.portableutmpilot.ui.activities;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
@@ -19,15 +26,12 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
@@ -36,10 +40,10 @@ import com.dronfies.portableutmandroidclienttest.entities.GPSCoordinates;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
 import com.dronfies.portableutmandroidclienttest.entities.Operation;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
+import com.dronfieslabs.portableutmpilot.utils.FileUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -47,10 +51,13 @@ public class OperationsActivity extends AppCompatActivity {
 
     // const
     private static int OPERATIONS_PER_PAGE = 10;
+    private static int PICK_DAT_FILE_REQUEST = 1;
+    private static int REQUEST_PERMISSION = 2;
 
     // state
     private String nextAction = null;
     private int mOperationsLoaded = 0;
+    private String mLastOperationIdMenuOpened;
 
     // views
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -121,6 +128,50 @@ public class OperationsActivity extends AppCompatActivity {
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK){
+            if(requestCode == PICK_DAT_FILE_REQUEST){
+                if(data == null){
+                    //no data present
+                    return;
+                }
+
+                Uri selectedFileUri = data.getData();
+                LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
+                new Thread(() -> {
+                    try {
+                        DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(this)).uploadDatFile(mLastOperationIdMenuOpened, FileUtils.getFileFromUri(OperationsActivity.this, selectedFileUri).getAbsolutePath());
+                        runOnUiThread(() -> {
+                            mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                            UIGenericUtils.ShowToast(OperationsActivity.this, getString(R.string.str_dat_file_uploaded));
+                        });
+                    } catch (Exception ex) {
+                        Log.d("_Logs", ex.getMessage(), ex);
+                        runOnUiThread(() -> {
+                            mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                            UIGenericUtils.ShowAlert(OperationsActivity.this, getString(R.string.str_error), getString(R.string.str_error) + ": " + ex.getMessage());
+                        });
+                    }
+                }).start();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == REQUEST_PERMISSION){
+            for(int i = 0; i < permissions.length; i++){
+                if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                    return;
+                }
+            }
+            createIntentToLetTheUserSelectTheDatFile();
+        }
     }
 
 
@@ -284,62 +335,79 @@ public class OperationsActivity extends AppCompatActivity {
         imageButtonMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            PopupMenu popupMenu = new PopupMenu(OperationsActivity.this, v);
-            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem menuItem) {
-                    if(menuItem.getItemId() == R.id.item_borrar_operacion){
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                            UIGenericUtils.ShowConfirmationAlert(
-                                OperationsActivity.this,
-                                getString(R.string.str_delete_operation),
-                                getString(R.string.question_delete_operation, operation.getDescription()),
-                                getString(R.string.str_delete),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // show progress bar while deleting operation
-                                        final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
-                                        // delete the operation
-                                        DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(OperationsActivity.this)).deleteOperation(operation.getId(), new ICompletitionCallback<String>() {
-                                        @Override
-                                        public void onResponse(String s, final String errorMessage) {
-                                            // remove progress bar
-                                            mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
-                                            // handle response
-                                            if(errorMessage != null){
-                                            runOnUiThread(new Runnable() {
+                mLastOperationIdMenuOpened = operation.getId();
+                PopupMenu popupMenu = new PopupMenu(OperationsActivity.this, v);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        if(menuItem.getItemId() == R.id.item_borrar_operacion){
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                UIGenericUtils.ShowConfirmationAlert(
+                                    OperationsActivity.this,
+                                    getString(R.string.str_delete_operation),
+                                    getString(R.string.question_delete_operation, operation.getDescription()),
+                                    getString(R.string.str_delete),
+                                    new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // show progress bar while deleting operation
+                                                final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
+                                                // delete the operation
+                                                DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(OperationsActivity.this)).deleteOperation(operation.getId(), new ICompletitionCallback<String>() {
                                                 @Override
-                                                public void run() {
-                                                    UIGenericUtils.ShowAlert(OperationsActivity.this, "Error borrando operación","Error: " + errorMessage);
+                                                public void onResponse(String s, final String errorMessage) {
+                                                    // remove progress bar
+                                                    mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                                                    // handle response
+                                                    if(errorMessage != null){
+                                                        runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                UIGenericUtils.ShowAlert(OperationsActivity.this, "Error borrando operación","Error: " + errorMessage);
+                                                            }
+                                                        });
+                                                        return;
+                                                    }
+                                                    // if operation was removed, delete view from the activity
+                                                    mLinearLayoutOperations.removeAllViews();
+                                                    mOperationsLoaded = 0;
+                                                    loadOperations();
+                                                    // show message indicating the operation was deleted
+                                                    UIGenericUtils.ShowAlert(OperationsActivity.this, "Operación Borrada", "La operación '"+operation.getDescription()+"' ha sido borrada correctamente");
                                                 }
                                             });
-                                            return;
                                         }
-                                        // if operation was removed, delete view from the activity
-                                            mLinearLayoutOperations.removeAllViews();
-                                            mOperationsLoaded = 0;
-                                            loadOperations();
-                                            // show message indicating the operation was deleted
-                                        UIGenericUtils.ShowAlert(OperationsActivity.this, "Operación Borrada", "La operación '"+operation.getDescription()+"' ha sido borrada correctamente");
-                                        }
-                                    });
+                                    },
+                                    getString(R.string.str_cancel)
+                                );
+                                }
+                            });
+                            return true;
+                        }else if(menuItem.getItemId() == R.id.item_cargar_dat){
+                            UIGenericUtils.ShowConfirmationAlert(
+                                OperationsActivity.this,
+                                getString(R.string.str_load_dat_file),
+                                getString(R.string.miscellaneous_load_dat_file_message),
+                                getString(R.string.str_load_file),
+                                (dialogInterface,i) -> {
+                                    if (ActivityCompat.checkSelfPermission(OperationsActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                        ActivityCompat.requestPermissions(OperationsActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
+                                        return;
                                     }
+                                    createIntentToLetTheUserSelectTheDatFile();
                                 },
-                                getString(R.string.str_cancel)
+                                "Cancelar"
                             );
-                            }
-                        });
-                        return true;
-                    }else{
-                        return false;
+                            return true;
+                        }else{
+                            return false;
+                        }
                     }
-                }
-            });
-            popupMenu.inflate(R.menu.operation_menu);
-            popupMenu.show();
+                });
+                popupMenu.inflate(R.menu.operation_menu);
+                popupMenu.show();
             }
         });
         linearLayoutRoot.setGravity(Gravity.CENTER_VERTICAL);
@@ -411,5 +479,15 @@ public class OperationsActivity extends AppCompatActivity {
             }
         });
         return cardView;
+    }
+
+    private void createIntentToLetTheUserSelectTheDatFile(){
+        Intent intent = new Intent();
+        //sets the select file to all types of files
+        intent.setType("*/*");
+        //allows to select data and return it
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        //starts new activity to select file and return data
+        startActivityForResult(Intent.createChooser(intent,"Choose File to Upload.."),PICK_DAT_FILE_REQUEST);
     }
 }

@@ -3,4 +3,7 @@
     <item
         android:id="@+id/item_borrar_operacion"
         android:title="@string/str_delete"/>
+    <item
+        android:id="@+id/item_cargar_dat"
+        android:title="@string/str_load_dat_file"/>
 </menu>

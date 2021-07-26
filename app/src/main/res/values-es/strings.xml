@@ -43,6 +43,7 @@
         La primera opción es manualmente ingresar las coordenadas de los vértices del polígono.
         La segunda opción es dibujar el polígono sobre un mapa de GoogleMaps.
     </string>
+    <string name="miscellaneous_load_dat_file_message">Esta funcionalidad le permite cargar el archivo .DAT asociado a la operación en cuestión, para así extraer de él la telemetría registrada por el dron, y subirla al UTM.</string>
 
     <string name="question_account">¿No tienes una cuenta?</string>
     <string name="question_delete_operation">¿Está seguro que desea borrar la operación \'%s\'?</string>
@@ -66,6 +67,7 @@
     <string name="str_confirm">Confirmar</string>
     <string name="str_contact_phone">Telefono de contacto</string>
     <string name="str_current_position">Posición Actual</string>
+    <string name="str_dat_file_uploaded">Archivo Dat Subido!</string>
     <string name="str_define_manually">Definir Manualmente</string>
     <string name="str_define_polygon">Definir Polígono</string>
     <string name="str_delete">Borrar</string>
@@ -97,6 +99,8 @@
     <string name="str_it_is_understood">Entendido</string>
     <string name="str_language">Lenguaje</string>
     <string name="str_latitude">Latitud</string>
+    <string name="str_load_dat_file">Cargar Archivo .DAT</string>
+    <string name="str_load_file">Load File</string>
     <string name="str_longitude">Longitud</string>
     <string name="str_maximum_altitude">Altitud Máxima</string>
     <string name="str_meters">Metros</string>

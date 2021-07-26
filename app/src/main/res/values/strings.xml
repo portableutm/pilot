@@ -52,6 +52,7 @@
         The first option is to manually enter the coordinates of the vertices of the polygon.
         The second option is to draw the polygon on a GoogleMaps map.
     </string>
+    <string name="miscellaneous_load_dat_file_message">This functionality allows you to load the .DAT file associated with the operation in question, in order to extract from it the telemetry registered by the drone, and upload it to the UTM.</string>
 
     <string name="question_account">Don\'t you have an account?</string>
     <string name="question_delete_operation">Are you sure you want to delete the operation \'%s\'?</string>
@@ -106,6 +107,8 @@
     <string name="str_it_is_understood">It is understood</string>
     <string name="str_language">Language</string>
     <string name="str_latitude">Latitude</string>
+    <string name="str_load_dat_file">Load .DAT File</string>
+    <string name="str_load_file">Load File</string>
     <string name="str_load_more">Load More</string>
     <string name="str_longitude">Longitude</string>
     <string name="str_maximum_altitude">Maximum Altitude</string>
@@ -152,4 +155,5 @@
     <string name="str_login_failed">Login Failed</string>
     <string name="str_connection_error">Connection Error</string>
     <string name="str_select">Select</string>
+    <string name="str_dat_file_uploaded">Dat File Uploaded!</string>
 </resources>
