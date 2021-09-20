@@ -33,6 +33,7 @@ import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
 import java.util.Locale;
 
@@ -42,6 +43,9 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView textViewUsername;
     private TextView textViewPassword;
     private TextView textViewUserType;
+    private TextView textViewExpressRadius;
+    private TextView textViewExpressDuration;
+    private TextView textViewExpressVehicle;
 
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
@@ -75,12 +79,20 @@ public class SettingsActivity extends AppCompatActivity {
         textViewPassword = findViewById(R.id.text_view_password);
         textViewUserType = findViewById(R.id.text_view_user_type);
 
+        textViewExpressRadius = findViewById(R.id.text_view_express_radius);
+        textViewExpressDuration = findViewById(R.id.text_view_express_duration);
+        textViewExpressVehicle = findViewById(R.id.text_view_express_vehicle);
+
         // set UTM values
         switchCompatUTMEnable.setChecked(SharedPreferencesUtils.getUTMEnable(this));
         textViewUTMEndpoint.setText(SharedPreferencesUtils.getUTMEndpoint(this));
         textViewUsername.setText(SharedPreferencesUtils.getUsername(this));
         textViewPassword.setText(SharedPreferencesUtils.getPassword(this));
         updateUserType();
+
+        textViewExpressDuration.setText(String.valueOf(SharedPreferencesUtils.getExpressDuration(this)));
+        textViewExpressRadius.setText(String.valueOf(SharedPreferencesUtils.getExpressRadius(this)));
+        textViewExpressVehicle.setText(SharedPreferencesUtils.getExpressVehicle(this));
 
         setCurrentLanguage();
     }
@@ -126,7 +138,7 @@ public class SettingsActivity extends AppCompatActivity {
         String utmEndpoint = SharedPreferencesUtils.getUTMEndpoint(this);
         String username = SharedPreferencesUtils.getUsername(this);
         String password = SharedPreferencesUtils.getPassword(this);
-        DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(utmEndpoint);
+        DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getUnsafeInstanceDONOTUSE(utmEndpoint);
         if(dronfiesUssServices == null){
             Toast.makeText(this, "No se pudo establecer la conexión con el UTM", Toast.LENGTH_LONG).show();
             return;
@@ -166,7 +178,7 @@ public class SettingsActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     // if we change the username, we have to logout first (in case we can)
                     String utmEndpoint = textViewUTMEndpoint.getText().toString();
-                    DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(utmEndpoint);
+                    DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(utmEndpoint);
                     if(dronfiesUssServices != null){
                         dronfiesUssServices.logout();
                     }
@@ -204,7 +216,7 @@ public class SettingsActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     // if we change the password, we have to logout first
                     String utmEndpoint = textViewUTMEndpoint.getText().toString();
-                    DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(utmEndpoint);
+                    DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(utmEndpoint);
                     if(dronfiesUssServices != null){
                         dronfiesUssServices.logout();
                     }

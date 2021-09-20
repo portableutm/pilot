@@ -1,34 +1,33 @@
 {
   "project_info": {
-    "project_number": "553999867803",
-    "firebase_url": "https://dronfies-labs-station-pro.firebaseio.com",
-    "project_id": "dronfies-labs-station-pro",
-    "storage_bucket": "dronfies-labs-station-pro.appspot.com"
+    "project_number": "74763941516",
+    "project_id": "utm-pilot",
+    "storage_bucket": "utm-pilot.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:553999867803:android:89fcaa89a8e3a6c1",
+        "mobilesdk_app_id": "1:74763941516:android:7f1cab7cb31962510b6da9",
         "android_client_info": {
           "package_name": "com.dronfieslabs.portableutmpilot"
         }
       },
       "oauth_client": [
         {
-          "client_id": "553999867803-hcptgvur442t0662ihin634tgreet3n4.apps.googleusercontent.com",
+          "client_id": "74763941516-uq9pksia0aa4p6nc5f0ab6ia8ouqbc0q.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDJoBHx4xN_tJiGJVJIXORekF-1Iphgmbs"
+          "current_key": "AIzaSyCmS3uDkrfWGH8U57v7n-SIJkzI1LbsNhs"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "553999867803-hcptgvur442t0662ihin634tgreet3n4.apps.googleusercontent.com",
+              "client_id": "74763941516-uq9pksia0aa4p6nc5f0ab6ia8ouqbc0q.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

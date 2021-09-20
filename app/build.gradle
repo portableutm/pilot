@@ -8,7 +8,7 @@ ext.isSnapshot = false
 ext.minimumSdkVersion = 26
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
     buildToolsVersion '30.0.1'
     defaultConfig {
         applicationId "com.dronfieslabs.portableutmpilot"
@@ -118,9 +118,17 @@ repositories {
 
 dependencies {
 
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:28.3.1')
+
+    // Declare the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:3.0'
+    implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:3.4'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -167,7 +175,7 @@ dependencies {
          */
         exclude group: 'com.amap.api'
     })
-    implementation ('com.dji:dji-sdk:4.13.1', {
+    implementation ('com.dji:dji-sdk:4.15', {
         /**
          * Uncomment the "library-anti-distortion" if your app does not need Anti Distortion for Mavic 2 Pro and Mavic 2 Zoom.
          * Uncomment the "fly-safe-database" if you need database for release, or we will download it when DJISDKManager.getInstance().registerApp
@@ -183,7 +191,7 @@ dependencies {
          */
         exclude group: 'com.amap.api'
     })
-    compileOnly ('com.dji:dji-sdk-provided:4.13.1')
+    compileOnly ('com.dji:dji-sdk-provided:4.15')
 
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.core:core:1.0.0'
@@ -212,6 +220,7 @@ configurations {
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 //apply plugin: 'com.noveogroup.android.check'
 //

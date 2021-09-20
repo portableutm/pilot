@@ -42,6 +42,7 @@ import com.dronfies.portableutmandroidclienttest.entities.Operation;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.FileUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -144,7 +145,7 @@ public class OperationsActivity extends AppCompatActivity {
                 LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
                 new Thread(() -> {
                     try {
-                        DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(this)).uploadDatFile(mLastOperationIdMenuOpened, FileUtils.getFileFromUri(OperationsActivity.this, selectedFileUri).getAbsolutePath());
+                        UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(this)).uploadDatFile(mLastOperationIdMenuOpened, FileUtils.getFileFromUri(OperationsActivity.this, selectedFileUri).getAbsolutePath());
                         runOnUiThread(() -> {
                             mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
                             UIGenericUtils.ShowToast(OperationsActivity.this, getString(R.string.str_dat_file_uploaded));
@@ -201,7 +202,7 @@ public class OperationsActivity extends AppCompatActivity {
         // to refresh the operations list, we first remove all old operations
         //mLinearLayoutOperations.removeAllViews();
         try {
-            DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(this)).getOperations(OPERATIONS_PER_PAGE, mOperationsLoaded, new ICompletitionCallback<List<Operation>>() {
+           UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(this)).getOperations(OPERATIONS_PER_PAGE, mOperationsLoaded, new ICompletitionCallback<List<Operation>>() {
                 @Override
                 public void onResponse(final List<Operation> operations, final String errorMessage) {
                     // onResponse, we remove the progressbar from the activity
@@ -355,7 +356,7 @@ public class OperationsActivity extends AppCompatActivity {
                                                 // show progress bar while deleting operation
                                                 final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
                                                 // delete the operation
-                                                DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(OperationsActivity.this)).deleteOperation(operation.getId(), new ICompletitionCallback<String>() {
+                                                UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(OperationsActivity.this)).deleteOperation(operation.getId(), new ICompletitionCallback<String>() {
                                                 @Override
                                                 public void onResponse(String s, final String errorMessage) {
                                                     // remove progress bar

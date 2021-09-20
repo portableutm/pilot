@@ -20,6 +20,7 @@ import com.dronfies.portableutmandroidclienttest.Vehicle;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,7 @@ public class SelectDroneActivity extends AppCompatActivity {
         // before loading the drones, we show a progress bar
         final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
         try{
-            final DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(SelectDroneActivity.this));
+            final DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(SelectDroneActivity.this));
             final String username = SharedPreferencesUtils.getUsername(SelectDroneActivity.this);
             String password = SharedPreferencesUtils.getPassword(SelectDroneActivity.this);
             dronfiesUssServices.login(username, password, new ICompletitionCallback<String>() {

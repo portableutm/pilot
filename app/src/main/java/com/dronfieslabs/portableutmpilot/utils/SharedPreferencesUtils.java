@@ -13,6 +13,10 @@ public class SharedPreferencesUtils {
     private static final String PASSWORD_KEY = "PASSWORD";
     private static final String USER_IS_DRONE_OP_KEY = "USER_IS_DRONE_OP";
     private static final String APP_LOCALE_KEY = "APP_LOCALE";
+    private static final String EXPRESS_RADIUS = "EXPRESS_RADIUS";
+    private static final String EXPRESS_DURATION = "EXPRESS_DURATION";
+    private static final String EXPRESS_VEHICLE = "EXPRESS_VEHICLE";
+
 
     // this method save into the sharedpreferences the string that represents the locale used by the app
     // this method do not update locale of the app
@@ -87,6 +91,44 @@ public class SharedPreferencesUtils {
         SharedPreferences sharedPreferences = getSharedPreferences(context);
         return sharedPreferences.getBoolean(USER_IS_DRONE_OP_KEY, true);
     }
+
+    public static void updateExpressRadius(Context context, int newRadius){
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(EXPRESS_RADIUS, newRadius);
+        editor.commit();
+    }
+
+    public static int getExpressRadius(Context context){
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        return sharedPreferences.getInt(EXPRESS_RADIUS, 1);
+    }
+
+    public static void updateExpressDuration(Context context, int newDuration){
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(EXPRESS_DURATION, newDuration);
+        editor.commit();
+    }
+
+    public static int getExpressDuration(Context context){
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        return sharedPreferences.getInt(EXPRESS_DURATION, 1);
+    }
+
+    public static void updateExpressVehicle(Context context, String newVehicle){
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(EXPRESS_VEHICLE, newVehicle);
+        editor.commit();
+    }
+
+    public static String getExpressVehicle(Context context){
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        return sharedPreferences.getString(EXPRESS_VEHICLE, "6acf14ec-8e33-4d3d-a4d9-2fa5708dcb46");
+    }
+
+
 
     private static SharedPreferences getSharedPreferences(Context context){
         return context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);

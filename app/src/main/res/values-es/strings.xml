@@ -147,4 +147,9 @@
     <string name="str_load_more">Cargar Más</string>
     <string name="str_connection_error">Error de Conexión</string>
     <string name="str_select">Seleccionar</string>
+    <string name="str_express_operation">Operación Rápida</string>
+    <string name="str_express_radius">Radio Express (Km)</string>
+    <string name="str_express_duration">Duración Express (Horas)</string>
+    <string name="str_express_vehicle">Vehículo Express</string>
+
 </resources>

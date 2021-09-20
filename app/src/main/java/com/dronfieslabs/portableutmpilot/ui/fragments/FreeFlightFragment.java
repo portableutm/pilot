@@ -25,6 +25,7 @@ import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
 import com.dronfieslabs.portableutmpilot.ui.activities.FreeFlightActivity;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
 import java.util.Date;
 
@@ -171,7 +172,7 @@ public class FreeFlightFragment extends androidx.fragment.app.Fragment implement
                     if((now - mLastPositionSentTimestamp)/1000 >= 3){
                         mLastPositionSentTimestamp = now;
                         try{
-                            DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(FreeFlightFragment.this.getContext())).sendPosition(lon, lat, alt, heading, getOperationId(), new ICompletitionCallback<String>() {
+                            UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(FreeFlightFragment.this.getContext())).sendPosition(lon, lat, alt, heading, getOperationId(), new ICompletitionCallback<String>() {
                                 @Override
                                 public void onResponse(String s, String errorMessage) {}
                             });

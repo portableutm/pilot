@@ -25,6 +25,7 @@ import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
 import com.dronfies.portableutmandroidclienttest.entities.Operation;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -129,7 +130,7 @@ public class DefinePolygonManuallyActivity extends AppCompatActivity {
 
             // use DronfiesUssService to send the operation to the UTM
             try {
-                DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(this)).addOperation_sync(operation);
+                UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(this)).addOperation_sync(operation);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

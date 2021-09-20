@@ -248,7 +248,7 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         djiMap.setMapType(DJIMap.MapType.SATELLITE);
 
         // draw restricted flight volumes
-        final DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(FlightActivity.this));
+        final DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(FlightActivity.this));
         if(dronfiesUssServices == null){
             // if we couldn't connect to the utm, we didn't draw the rfvs
             return;
@@ -428,7 +428,7 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
                     if((now - mLastPositionSentTimestamp)/1000 >= 3){
                         mLastPositionSentTimestamp = now;
                         try{
-                            DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(FlightActivity.this)).sendPosition(lon, lat, alt, heading, mOperationId, new ICompletitionCallback<String>() {
+                            UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(FlightActivity.this)).sendPosition(lon, lat, alt, heading, mOperationId, new ICompletitionCallback<String>() {
                                 @Override
                                 public void onResponse(String s, String errorMessage) {}
                             });

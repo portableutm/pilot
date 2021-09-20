@@ -26,6 +26,7 @@ import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -250,7 +251,7 @@ public class ReportDevicePositionActivity extends AppCompatActivity {
                     }
                     if(mIsReporting){
                         try{
-                            DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(ReportDevicePositionActivity.this));
+                            DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(ReportDevicePositionActivity.this));
                             if(!dronfiesUssServices.isAuthenticated()){
                                 dronfiesUssServices.login_sync(SharedPreferencesUtils.getUsername(ReportDevicePositionActivity.this), SharedPreferencesUtils.getPassword(ReportDevicePositionActivity.this));
                             }

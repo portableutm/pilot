@@ -2,6 +2,7 @@ package com.dronfieslabs.portableutmpilot.ui.activities;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,12 +17,16 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.dronfies.portableutmandroidclienttest.ExpressOperationData;
+import com.dronfieslabs.portableutmpilot.IGenericCallback;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.Vehicle;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +51,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 onClickGoFly();
             }
+        });
+        final Button mButtonExpressOperation = findViewById(R.id.button_express_operation);
+        mButtonExpressOperation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { onClickMakeExpressOperation();}
         });
         mButtonOperations = findViewById(R.id.button_operations);
         mButtonOperations.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +94,68 @@ public class MainActivity extends AppCompatActivity {
     //-------------------------------------------------- EVENT HANDLERS --------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------------
+
+    private void onClickMakeExpressOperation(){
+        Context context = this;
+        DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getUnsafeInstanceDONOTUSE(SharedPreferencesUtils.getUTMEndpoint(MainActivity.this));
+        if(dronfiesUssServices == null){
+            UIGenericUtils.ShowAlert(context, getString(R.string.str_utm_connection_failed), getString(R.string.exc_msg_utm_connection_failed));
+            return;
+        }
+        UtilsOps.getLocation(context, new IGenericCallback<LatLng>() {
+            @Override
+            public void onResult(LatLng latLng, String errorMessage) {
+                //CREATES THE OPERATION//
+                int radius = SharedPreferencesUtils.getExpressRadius(context);
+                int duration = SharedPreferencesUtils.getExpressDuration(context);
+                String vehicleId = SharedPreferencesUtils.getExpressVehicle(context);
+                ExpressOperationData oper = new ExpressOperationData(latLng,radius,duration,vehicleId);
+                //*********************//
+                if(!dronfiesUssServices.isAuthenticated()){
+                    String username = SharedPreferencesUtils.getUsername(context);
+                    String password = SharedPreferencesUtils.getPassword(context);
+                    dronfiesUssServices.login(username, password, new ICompletitionCallback<String>() {
+                        @Override
+                        public void onResponse(String s, String errorMessage) {
+                            if(errorMessage != null){
+                                UIGenericUtils.ShowAlert(MainActivity.this, getString(R.string.str_login_failed), getString(R.string.exc_msg_auth_to_see_operations) + " ("+errorMessage+")");
+                                return;
+                            }
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            dronfiesUssServices.addExpressOperation_sync(oper);
+                                            UIGenericUtils.GoToActivity(MainActivity.this, OperationsActivity.class);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                }).start();
+                        }
+                    });
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                dronfiesUssServices.addExpressOperation_sync(oper);
+                                UIGenericUtils.GoToActivity(MainActivity.this, OperationsActivity.class);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }).start();
+                }
+            }
+        });
+
+        return;
+
+    }
+
 
     private void onClickGoFly(){
         boolean utmEnable = SharedPreferencesUtils.getUTMEnable(this);
@@ -148,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
     //--------------------------------------------------------------------------------------------------------------------
 
     private void goToOperationsActivity(final boolean nextGoToFreeFlight){
-        DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(MainActivity.this));
+        DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(MainActivity.this));
         if(dronfiesUssServices == null){
             UIGenericUtils.ShowAlert(this, getString(R.string.str_utm_connection_failed), getString(R.string.exc_msg_utm_connection_failed));
             return;

@@ -1,5 +1,7 @@
 package com.dronfieslabs.portableutmpilot.ui.activities;
 
+import static com.dronfieslabs.portableutmpilot.utils.UtilsOps.getDronfiesUssServices;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -20,6 +22,7 @@ import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
 import com.dronfieslabs.portableutmpilot.ui.Constants;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -109,11 +112,11 @@ public class LoginActivity extends AppCompatActivity {
         if(utmEndpoint == null || utmEndpoint.trim().isEmpty()){
             // we have to find the endpoint
             new Thread(() -> {
-                DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(getResources().getString(R.string.portableUTMMainEndpoint));
+                DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(getResources().getString(R.string.portableUTMMainEndpoint));
                 try{
                     String userEndpoint = dronfiesUssServices.getEndpoint(username);
                     SharedPreferencesUtils.updateUTMEndpoint(this, userEndpoint);
-                    dronfiesUssServices = DronfiesUssServices.getInstance(userEndpoint);
+                    dronfiesUssServices = UtilsOps.getDronfiesUssServices(userEndpoint);
                     login(dronfiesUssServices, username, password, progressBar);
                 }catch (Exception ex){
                     runOnUiThread(() -> {
@@ -124,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
             }).start();
         }else{
             // we already have the endpoint, so we can login
-            DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(utmEndpoint);
+            DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(utmEndpoint);
             if(dronfiesUssServices == null){
                 runOnUiThread(() -> mRelativeLayoutRoot.removeView(progressBar));
                 Toast.makeText(this, "No se pudo establecer la conexión con el UTM", Toast.LENGTH_LONG).show();
@@ -137,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
     private void onClickSignUp(){
         new Thread(() -> {
             try{
-                List<Endpoint> endpoints = DronfiesUssServices.getInstance(getResources().getString(R.string.portableUTMMainEndpoint)).getEndpoints();
+                List<Endpoint> endpoints = UtilsOps.getDronfiesUssServices(getResources().getString(R.string.portableUTMMainEndpoint)).getEndpoints();
                 if(endpoints == null || endpoints.isEmpty()){
                     runOnUiThread(() -> {UIGenericUtils.ShowAlert(this, getString(R.string.str_connection_error),getString(R.string.exc_msg_error_getting_endpoints));});
                     return;

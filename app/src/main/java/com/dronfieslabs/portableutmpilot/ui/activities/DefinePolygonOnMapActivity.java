@@ -22,6 +22,7 @@ import com.dronfies.portableutmandroidclienttest.entities.Operation;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGoogleMapsUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -151,7 +152,7 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
         });
 
         // draw restricted flight volumes
-        final DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(DefinePolygonOnMapActivity.this));
+        final DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(DefinePolygonOnMapActivity.this));
         if(dronfiesUssServices == null){
             // if we couldn't connect to the utm, we didn't draw the rfvs
             return;
@@ -247,7 +248,7 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
                 @Override
                 public void run() {
                     try {
-                        String error = DronfiesUssServices.getInstance(SharedPreferencesUtils.getUTMEndpoint(getApplicationContext())).addOperation_sync(operation);
+                        String error = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(getApplicationContext())).addOperation_sync(operation);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
