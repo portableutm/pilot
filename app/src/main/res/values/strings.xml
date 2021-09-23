@@ -160,4 +160,5 @@
     <string name="str_express_radius">Express radius (Km)</string>
     <string name="str_express_duration">Express duration (Hours)</string>
     <string name="str_express_vehicle">Express vehicle</string>
+    <string name="str_uvin" translatable="false">id</string>
 </resources>

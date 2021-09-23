@@ -6,6 +6,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dronfies.portableutmandroidclienttest.Vehicle;
 import com.dronfieslabs.portableutmpilot.BuildConfig;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
@@ -35,6 +38,7 @@ import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
+import java.util.List;
 import java.util.Locale;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -46,6 +50,13 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView textViewExpressRadius;
     private TextView textViewExpressDuration;
     private TextView textViewExpressVehicle;
+
+    public static final int REQUEST_CODE_SELECT_DRONE = 1;
+
+    // state
+    private String vehicleId = null;
+    private String vehicleName = null;
+
 
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
@@ -126,6 +137,19 @@ public class SettingsActivity extends AppCompatActivity {
         // we remove the settingsActivity from the stack of activities
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE_SELECT_DRONE){
+            if(resultCode == RESULT_OK){
+                vehicleId = data.getStringExtra(SelectDroneActivity.PARAM_VEHICLE_ID_KEY);
+                vehicleName = data.getStringExtra(SelectDroneActivity.PARAM_VEHICLE_NAME_KEY);
+                textViewExpressVehicle.setText(vehicleId);
+                SharedPreferencesUtils.updateExpressVehicle(this,vehicleId);
+            }
+        }
     }
 
     //-------------------------------------------------------------------------------------------------------------
@@ -371,6 +395,126 @@ public class SettingsActivity extends AppCompatActivity {
                 .show();
     }
 
+    public void onClickEditExpressRadius(View view){
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        float weight = 1.0f;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+        linearLayout.setPadding(45, 10,50,10);
+        linearLayout.setLayoutParams(param);
+        final EditText editTextExpressRadius = new EditText(this);
+        editTextExpressRadius.setText(textViewExpressRadius.getText());
+        linearLayout.addView(editTextExpressRadius);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.str_express_radius)
+                .setView(linearLayout)
+                .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        int newRadius = Integer.parseInt(editTextExpressRadius.getText().toString());
+                        SharedPreferencesUtils.updateExpressRadius(SettingsActivity.this, newRadius);
+                        textViewExpressRadius.setText(String.valueOf(newRadius));
+                    }
+                })
+                .setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
+    }
+
+    public void onClickEditExpressDuration(View view){
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        float weight = 1.0f;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+        linearLayout.setPadding(45, 10,50,10);
+        linearLayout.setLayoutParams(param);
+        final EditText editTextExpressDuration = new EditText(this);
+        editTextExpressDuration.setText(textViewExpressDuration.getText());
+        linearLayout.addView(editTextExpressDuration);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.str_express_duration)
+                .setView(linearLayout)
+                .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        int newDuration = Integer.parseInt(editTextExpressDuration.getText().toString());
+                        SharedPreferencesUtils.updateExpressDuration(SettingsActivity.this, newDuration);
+                        textViewExpressDuration.setText(String.valueOf(newDuration));
+                    }
+                })
+                .setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
+
+    }
+
+    public void onClickEditExpressVehicle(View view){
+//        final List<Vehicle>[] vehicles = new List[1];
+//        Thread th = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                DronfiesUssServices dronfies = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(SettingsActivity.this));
+//                try {
+//                     vehicles[0] = dronfies.getVehicles();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        });
+//        th.start();
+//        try {
+//            th.join();
+//            final AlertDialog[] alertDialog = {null};
+//
+//            final LinearLayout linearLayout = new LinearLayout(SettingsActivity.this);
+//            linearLayout.setOrientation(LinearLayout.VERTICAL);
+//            int width = LinearLayout.LayoutParams.MATCH_PARENT;
+//            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+//            float weight = 1.0f;
+//            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+//            linearLayout.setPadding(45, 10,50,10);
+//            linearLayout.setLayoutParams(param);
+//
+//            try {
+//
+//                for (int i = 0 ; i < vehicles[0].size(); i++) {
+//                    final Button button = new Button(SettingsActivity.this);
+//                    button.setText(vehicles[0].get(i).getVehicleName());
+//                    final int ii = i;
+//                    button.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            SharedPreferencesUtils.updateExpressVehicle(SettingsActivity.this, vehicles[0].get(ii).getUvin());
+//                            textViewExpressVehicle.setText(SharedPreferencesUtils.getExpressVehicle(SettingsActivity.this));
+//                            alertDialog[0].dismiss();
+//                        }
+//                    });
+//                    linearLayout.addView(button);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            int dp20 = UIGenericUtils.ConvertDPToPX(SettingsActivity.this, 20);
+//            linearLayout.setPadding(dp20, dp20, dp20, dp20);
+//
+//            alertDialog[0] = new AlertDialog.Builder(SettingsActivity.this)
+//                    .setTitle(R.string.str_express_vehicle)
+//                    .setView(linearLayout)
+//                    .show();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        onClickSelectDrone();
+    }
+
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
     //---------------------------------------------- PRIVATE METHODS ----------------------------------------------
@@ -415,4 +559,13 @@ public class SettingsActivity extends AppCompatActivity {
             textViewUserType.setText(R.string.str_paragliding_pilot);
         }
     }
+
+    private void onClickSelectDrone(){
+        Intent intent = new Intent(this, SelectDroneActivity.class);
+        if(vehicleId != null){
+            intent.putExtra(SelectDroneActivity.PARAM_VEHICLE_ID_KEY, vehicleId);
+        }
+        startActivityForResult(intent, REQUEST_CODE_SELECT_DRONE);
+    }
+
 }

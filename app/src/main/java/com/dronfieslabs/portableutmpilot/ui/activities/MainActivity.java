@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.dronfies.portableutmandroidclienttest.ExpressOperationData;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     // views
     private LinearLayout mLinearLayoutRoot;
     private Button mButtonOperations;
+    private RelativeLayout mRelativeLayoutRoot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // views binding
+        mRelativeLayoutRoot = findViewById(R.id.relative_layout_root);
         mLinearLayoutRoot = findViewById(R.id.linear_layout_root);
         final Button mButtonGoFly = findViewById(R.id.button_go_fly);
         mButtonGoFly.setOnClickListener(new View.OnClickListener() {
@@ -96,59 +99,63 @@ public class MainActivity extends AppCompatActivity {
     //--------------------------------------------------------------------------------------------------------------------
 
     private void onClickMakeExpressOperation(){
+        final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
         Context context = this;
         DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getUnsafeInstanceDONOTUSE(SharedPreferencesUtils.getUTMEndpoint(MainActivity.this));
         if(dronfiesUssServices == null){
             UIGenericUtils.ShowAlert(context, getString(R.string.str_utm_connection_failed), getString(R.string.exc_msg_utm_connection_failed));
             return;
         }
-        UtilsOps.getLocation(context, new IGenericCallback<LatLng>() {
-            @Override
-            public void onResult(LatLng latLng, String errorMessage) {
-                //CREATES THE OPERATION//
-                int radius = SharedPreferencesUtils.getExpressRadius(context);
-                int duration = SharedPreferencesUtils.getExpressDuration(context);
-                String vehicleId = SharedPreferencesUtils.getExpressVehicle(context);
-                ExpressOperationData oper = new ExpressOperationData(latLng,radius,duration,vehicleId);
-                //*********************//
-                if(!dronfiesUssServices.isAuthenticated()){
-                    String username = SharedPreferencesUtils.getUsername(context);
-                    String password = SharedPreferencesUtils.getPassword(context);
-                    dronfiesUssServices.login(username, password, new ICompletitionCallback<String>() {
-                        @Override
-                        public void onResponse(String s, String errorMessage) {
-                            if(errorMessage != null){
-                                UIGenericUtils.ShowAlert(MainActivity.this, getString(R.string.str_login_failed), getString(R.string.exc_msg_auth_to_see_operations) + " ("+errorMessage+")");
-                                return;
-                            }
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            dronfiesUssServices.addExpressOperation_sync(oper);
-                                            UIGenericUtils.GoToActivity(MainActivity.this, OperationsActivity.class);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-
+        UtilsOps.getLocation(context, (latLng, errorMessage) -> {
+            //CREATES THE OPERATION//
+            int radius = SharedPreferencesUtils.getExpressRadius(context);
+            int duration = SharedPreferencesUtils.getExpressDuration(context);
+            String vehicleId = SharedPreferencesUtils.getExpressVehicle(context);
+            ExpressOperationData oper = new ExpressOperationData(latLng,radius,duration,vehicleId);
+            //*********************//
+            if(!dronfiesUssServices.isAuthenticated()){
+                String username = SharedPreferencesUtils.getUsername(context);
+                String password = SharedPreferencesUtils.getPassword(context);
+                dronfiesUssServices.login(username, password, new ICompletitionCallback<String>() {
+                    @Override
+                    public void onResponse(String s, String errorMessage) {
+                        if(errorMessage != null){
+                            UIGenericUtils.ShowAlert(MainActivity.this, getString(R.string.str_login_failed), getString(R.string.exc_msg_auth_to_see_operations) + " ("+errorMessage+")");
+                            return;
+                        }
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        dronfiesUssServices.addExpressOperation_sync(oper);
+                                        runOnUiThread(() -> {
+                                            mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                                        });
+                                        UIGenericUtils.GoToActivity(MainActivity.this, OperationsActivity.class);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
-                                }).start();
-                        }
-                    });
-                }else{
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                dronfiesUssServices.addExpressOperation_sync(oper);
-                                UIGenericUtils.GoToActivity(MainActivity.this, OperationsActivity.class);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
 
+                                }
+                            }).start();
+                    }
+                });
+            }else{
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            dronfiesUssServices.addExpressOperation_sync(oper);
+                            runOnUiThread(() -> {
+                                mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                            });
+                            UIGenericUtils.GoToActivity(MainActivity.this, OperationsActivity.class);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    }).start();
-                }
+
+                    }
+                }).start();
             }
         });
 

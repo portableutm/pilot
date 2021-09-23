@@ -55,6 +55,16 @@
                 android:id="@+id/text_view_model"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+            <!--##################################################################################-->
+            <!--##################################### UVIN  #####################################-->
+            <!--##################################################################################-->
+
+            <TextView
+                android:id="@+id/text_view_uvin"
+                android:layout_width="match_parent"
+                android:textSize="12dp"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
     </LinearLayout>

@@ -110,6 +110,7 @@ public class SelectDroneActivity extends AppCompatActivity {
                                     ((TextView)cardView.findViewById(R.id.text_view_plate)).setText(getString(R.string.str_plate) + ": " + vehicle.getFaaNumber());
                                     ((TextView)cardView.findViewById(R.id.text_view_serial)).setText(getString(R.string.str_serial) + ": " + vehicle.getnNumber());
                                     ((TextView)cardView.findViewById(R.id.text_view_model)).setText(getString(R.string.str_model) + ": " + vehicle.getModel() + " ("+vehicle.getManufacturer()+")");
+                                    ((TextView)cardView.findViewById(R.id.text_view_uvin)).setText(getString(R.string.str_uvin) + ": " + vehicle.getUvin());
                                     if(vehicle.getVehicleClass() != null){
                                         if(vehicle.getVehicleClass().equals(Vehicle.EnumVehicleClass.MULTIROTOR)){
                                             ((ImageView)cardView.findViewById(R.id.image_view_icon)).setImageDrawable(getDrawable(R.drawable.ic_drone_32));
