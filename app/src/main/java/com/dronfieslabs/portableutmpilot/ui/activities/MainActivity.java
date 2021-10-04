@@ -167,43 +167,27 @@ public class MainActivity extends AppCompatActivity {
     private void onClickGoFly(){
         boolean utmEnable = SharedPreferencesUtils.getUTMEnable(this);
         if(!utmEnable){
-            if(SharedPreferencesUtils.getUserIsDroneOperator(this)){
-                // drone operator
-                UIGenericUtils.GoToActivity(this, FlightActivity.class);
-            }else{
-                // paragliding pilot
-                UIGenericUtils.ShowAlert(
-                        this,
-                        getString(R.string.str_utm_is_disabled),
-                        getString(R.string.exc_msg_paragliding_pilot_must_enable_utm)
-                );
-            }
+            UIGenericUtils.GoToActivity(this, FlightActivity.class);
         }else{
-            if(SharedPreferencesUtils.getUserIsDroneOperator(this)){
-                // drone operator
-                UIGenericUtils.ShowConfirmationAlert(
-                        this,
-                        getString(R.string.str_report_position),
-                        getString(R.string.question_report_position_free_flight),
-                        getString(R.string.str_yes),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                goToOperationsActivity(true);
-                            }
-                        },
-                        getString(R.string.str_no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                UIGenericUtils.GoToActivity(MainActivity.this, FlightActivity.class);
-                            }
+            UIGenericUtils.ShowConfirmationAlert(
+                    this,
+                    getString(R.string.str_report_position),
+                    getString(R.string.question_report_position_free_flight),
+                    getString(R.string.str_yes),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            goToOperationsActivity(true);
                         }
-                );
-            }else{
-                // paragliding pilot
-                UIGenericUtils.GoToActivity(MainActivity.this, ReportDevicePositionActivity.class);
-            }
+                    },
+                    getString(R.string.str_no),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            UIGenericUtils.GoToActivity(MainActivity.this, FlightActivity.class);
+                        }
+                    }
+            );
         }
     }
 

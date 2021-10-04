@@ -29,15 +29,10 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
-    // state
-    private boolean mDroneOperator = true;
-
     // views
     private RelativeLayout mRelativeLayoutRoot;
     private EditText mEditTextUsername;
     private EditText mEditTextPassword;
-    private TextView mTextViewDroneOperator;
-    private TextView mTextViewParaglidingPilot;
     private Button mButtonSignIn;
     private TextView mTextViewSignUp;
     private TextView mTextViewSkipLogin;
@@ -51,20 +46,6 @@ public class LoginActivity extends AppCompatActivity {
         mRelativeLayoutRoot = findViewById(R.id.relative_layout_root);
         mEditTextUsername = findViewById(R.id.edit_text_username);
         mEditTextPassword = findViewById(R.id.edit_text_password);
-        mTextViewDroneOperator = findViewById(R.id.text_view_drone_operator);
-        mTextViewDroneOperator.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickDroneOperator();
-            }
-        });
-        mTextViewParaglidingPilot = findViewById(R.id.text_view_paraglinding_pilot);
-        mTextViewParaglidingPilot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickParaglidingPilot();
-            }
-        });
         mButtonSignIn = findViewById(R.id.button_sign_in);
         mButtonSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,16 +74,6 @@ public class LoginActivity extends AppCompatActivity {
     //---------------------------------------- EVENT HANDLERS ----------------------------------------
     //------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------
-
-    private void onClickDroneOperator(){
-        mDroneOperator = true;
-        updateDroneParaglidingButtons();
-    }
-
-    private void onClickParaglidingPilot(){
-        mDroneOperator = false;
-        updateDroneParaglidingButtons();
-    }
 
     private void onClickSignIn(){
         LinearLayout progressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
@@ -169,20 +140,6 @@ public class LoginActivity extends AppCompatActivity {
     //------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------
 
-    private void updateDroneParaglidingButtons(){
-        if(mDroneOperator){
-            mTextViewDroneOperator.setBackground(getDrawable(R.drawable.i_am_a_dron_operator_background_active));
-            mTextViewDroneOperator.setTextColor(getColor(R.color.white));
-            mTextViewParaglidingPilot.setBackground(getDrawable(R.drawable.i_am_a_paragliding_pilot_background));
-            mTextViewParaglidingPilot.setTextColor(getColor(R.color.colorPrimary));
-        }else{
-            mTextViewDroneOperator.setBackground(getDrawable(R.drawable.i_am_a_dron_operator_background));
-            mTextViewDroneOperator.setTextColor(getColor(R.color.colorPrimary));
-            mTextViewParaglidingPilot.setBackground(getDrawable(R.drawable.i_am_a_paragliding_pilot_background_active));
-            mTextViewParaglidingPilot.setTextColor(getColor(R.color.white));
-        }
-    }
-
     private void login(DronfiesUssServices dronfiesUssServices, String username, String password, LinearLayout progressBar){
         dronfiesUssServices.login(username, password, new ICompletitionCallback<String>() {
             @Override
@@ -200,7 +157,6 @@ public class LoginActivity extends AppCompatActivity {
                 // save credentials and user type
                 SharedPreferencesUtils.updateUsername(LoginActivity.this, username);
                 SharedPreferencesUtils.updatePassword(LoginActivity.this, password);
-                SharedPreferencesUtils.updateUserIsDroneOperator(LoginActivity.this, mDroneOperator);
                 // go to main activity
                 UIGenericUtils.GoToActivity(LoginActivity.this, MainActivity.class);
             }

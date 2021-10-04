@@ -11,7 +11,6 @@ public class SharedPreferencesUtils {
     private static final String UTM_ENDPOINT_KEY = "UTM_ENDPOINT";
     private static final String USERNAME_KEY = "USERNAME";
     private static final String PASSWORD_KEY = "PASSWORD";
-    private static final String USER_IS_DRONE_OP_KEY = "USER_IS_DRONE_OP";
     private static final String APP_LOCALE_KEY = "APP_LOCALE";
     private static final String EXPRESS_RADIUS = "EXPRESS_RADIUS";
     private static final String EXPRESS_DURATION = "EXPRESS_DURATION";
@@ -78,18 +77,6 @@ public class SharedPreferencesUtils {
     public static boolean getUTMEnable(Context context){
         SharedPreferences sharedPreferences = getSharedPreferences(context);
         return sharedPreferences.getBoolean(UTM_ENABLE_KEY, true);
-    }
-
-    public static void updateUserIsDroneOperator(Context context, boolean isDroneOperator){
-        SharedPreferences sharedPreferences = getSharedPreferences(context);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(USER_IS_DRONE_OP_KEY, isDroneOperator);
-        editor.commit();
-    }
-
-    public static boolean getUserIsDroneOperator(Context context){
-        SharedPreferences sharedPreferences = getSharedPreferences(context);
-        return sharedPreferences.getBoolean(USER_IS_DRONE_OP_KEY, true);
     }
 
     public static void updateExpressRadius(Context context, int newRadius){

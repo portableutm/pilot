@@ -92,37 +92,6 @@
         </LinearLayout>
 
         <!--##################################################################################-->
-        <!--######################## Dron operator or Paragliding pilot ########################-->
-        <!--##################################################################################-->
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:orientation="horizontal"
-            android:padding="20dp">
-            <TextView
-                android:id="@+id/text_view_drone_operator"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/i_am_a_dron_operator_background_active"
-                android:text="@string/str_i_am_a_drone_operator"
-                android:textSize="12dp"
-                android:textColor="@color/white"/>
-            <TextView
-                android:id="@+id/text_view_paraglinding_pilot"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:background="@drawable/i_am_a_paragliding_pilot_background"
-                android:text="@string/str_i_am_a_paragliding_pilot"
-                android:textSize="12dp"/>
-        </LinearLayout>
-
-        <!--##################################################################################-->
         <!--################################## Login Button ##################################-->
         <!--##################################################################################-->
 
