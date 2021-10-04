@@ -38,11 +38,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             resValue 'string', 'portableUTMMainEndpoint', '"https://utm.dronfieslabs.com:3000"'
+            resValue 'string', 'portableUTMUserInstanceDefaultEndpoint', '""'
         }
         debug {
             debuggable true
 
             resValue 'string', 'portableUTMMainEndpoint', '"http://192.168.43.50:2999"'
+            resValue 'string', 'portableUTMUserInstanceDefaultEndpoint', '"http://192.168.250.109:2999"'
         }
 
     }

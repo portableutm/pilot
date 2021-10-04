@@ -3,6 +3,8 @@ package com.dronfieslabs.portableutmpilot.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.dronfieslabs.portableutmpilot.R;
+
 public class SharedPreferencesUtils {
 
     private static final String SHARED_PREFERENCES_NAME = "com.dronfieslabs.portableutmpilot.SHARED_PREFERENCES";
@@ -40,7 +42,8 @@ public class SharedPreferencesUtils {
 
     public static String getUTMEndpoint(Context context){
         SharedPreferences sharedPreferences = getSharedPreferences(context);
-        return sharedPreferences.getString(UTM_ENDPOINT_KEY, "");
+        String utmEndpointKeyDefaultValue = context.getResources().getString(R.string.portableUTMUserInstanceDefaultEndpoint);
+        return sharedPreferences.getString(UTM_ENDPOINT_KEY, utmEndpointKeyDefaultValue);
     }
 
     public static void updateUsername(Context context, String newUsername){
