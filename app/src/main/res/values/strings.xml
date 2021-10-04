@@ -48,9 +48,7 @@
 
     <string name="miscellaneous_def_polygon_instructions">1) Click on the map to define the polygon vertices.\n\n2) You can delete any polygon vertice clicking on it.\n\n3) You can move the vertices, if you press and hold on any of them.</string>
     <string name="miscellaneous_def_polygon_options">
-        You have two options to define the polygon where do you plan to fly.
-        The first option is to manually enter the coordinates of the vertices of the polygon.
-        The second option is to draw the polygon on a GoogleMaps map.
+        Draw the area where you will fly on the map or introduce the coordinates
     </string>
     <string name="miscellaneous_fly_or_report_pilot_position">
         If you want to use the app to fly the drone, please select the option \'Go Fly\'. On the other hand, if what you want is to just report to the UTM the pilot position, click the button \'Report Pilot Position\'.
@@ -78,6 +76,7 @@
     <string name="str_change_utm_endpoint">Change UTM endpoint</string>
     <string name="str_confirm">Confirm</string>
     <string name="str_contact_phone">Contact phone</string>
+    <string name="str_coordinates">Coordinates</string>
     <string name="str_current_position">Current Position</string>
     <string name="str_define_manually">Define Manually</string>
     <string name="str_define_polygon">Define polygon</string>
@@ -115,6 +114,7 @@
     <string name="str_load_file">Load File</string>
     <string name="str_load_more">Load More</string>
     <string name="str_longitude">Longitude</string>
+    <string name="str_map">Map</string>
     <string name="str_maximum_altitude">Maximum Altitude</string>
     <string name="str_meters">Meters</string>
     <string name="str_model">Model</string>

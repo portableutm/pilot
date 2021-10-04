@@ -39,9 +39,8 @@
 
     <string name="miscellaneous_def_polygon_instructions">1) Clickea sobre cualquier parte del mapa para definir los vértices del polígono.\n\n2) Puedes borrar cualquier vértice del polígono haciéndole click arriba.\n\n3) Puedes mover los vértices, si mantienes presionado sobre cualquiera de ellos.</string>
     <string name="miscellaneous_def_polygon_options">
-        Tienes dos opciones para definir el polígono dentro del cual planeas volar.
-        La primera opción es manualmente ingresar las coordenadas de los vértices del polígono.
-        La segunda opción es dibujar el polígono sobre un mapa de GoogleMaps.
+        Dibuja en el mapa el área donde planeas volar, o introduce las coordenadas
+        Draw the area where you will fly on the map or introduce the coordinates
     </string>
     <string name="miscellaneous_fly_or_report_pilot_position">
         Si deseas utilizar esta aplicación para volar el dron, presiona el botón \'Ir a Volar\'. De lo contrario si lo único que deseas es utilizar la aplicación para reportar al UTM la posición del piloto, selecciona la opción \'Reportar Posición del Piloto\'.
@@ -69,6 +68,7 @@
     <string name="str_change_utm_endpoint">Cambiar UTM endpoint</string>
     <string name="str_confirm">Confirmar</string>
     <string name="str_contact_phone">Telefono de contacto</string>
+    <string name="str_coordinates">Coordenadas</string>
     <string name="str_current_position">Posición Actual</string>
     <string name="str_dat_file_uploaded">Archivo Dat Subido!</string>
     <string name="str_define_manually">Definir Manualmente</string>
@@ -106,6 +106,7 @@
     <string name="str_load_dat_file">Cargar Archivo .DAT</string>
     <string name="str_load_file">Load File</string>
     <string name="str_longitude">Longitud</string>
+    <string name="str_map">Mapa</string>
     <string name="str_maximum_altitude">Altitud Máxima</string>
     <string name="str_meters">Metros</string>
     <string name="str_model">Modelo</string>

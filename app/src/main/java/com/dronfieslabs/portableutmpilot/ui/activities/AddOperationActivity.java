@@ -318,7 +318,7 @@ public class AddOperationActivity extends AppCompatActivity {
         LinearLayout.LayoutParams buttonParam = new LinearLayout.LayoutParams(width, height, weight);
         buttonParam.setMargins(0,0,0,50);
         Button buttonDefineManually = new Button(new ContextThemeWrapper(this, R.style.RaisedButton), null, 0);
-        buttonDefineManually.setText(R.string.str_define_manually);
+        buttonDefineManually.setText(R.string.str_coordinates);
         buttonDefineManually.setLayoutParams(buttonParam);
         linearLayout.addView(buttonDefineManually);
         buttonDefineManually.setOnClickListener(new View.OnClickListener() {
@@ -329,7 +329,7 @@ public class AddOperationActivity extends AppCompatActivity {
         });
 
         Button buttonGoogleMaps = new Button(new ContextThemeWrapper(this, R.style.RaisedButton), null, 0);
-        buttonGoogleMaps.setText(R.string.str_google_maps);
+        buttonGoogleMaps.setText(R.string.str_map);
         linearLayout.addView(buttonGoogleMaps);
         buttonGoogleMaps.setOnClickListener(new View.OnClickListener() {
             @Override
