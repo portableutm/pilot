@@ -26,6 +26,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,6 +46,7 @@ import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -188,6 +190,20 @@ public class OperationsActivity extends AppCompatActivity {
 
     public void onClickAddOperation(View view){
         UIGenericUtils.GoToActivity(OperationsActivity.this, AddOperationActivity.class);
+    }
+
+    public void onClickGoFly(Operation operation){
+        Intent intent = new Intent(OperationsActivity.this, FlightActivity.class);
+        intent.putExtra("OPERATION_ID", operation.getId());
+        intent.putExtra("OPERATION_MAX_ALTITUDE", operation.getMaxAltitude());
+        // we do not pass the last coordinate, because the first and the last coordinate of the polygon are the same
+        String[] vecPolygonCoordinates = new String[operation.getPolygon().size() - 1];
+        for(int i = 0; i < operation.getPolygon().size() - 1; i++){
+            GPSCoordinates gpsCoordinates = operation.getPolygon().get(i);
+            vecPolygonCoordinates[i] = gpsCoordinates.getLatitude() + ";" + gpsCoordinates.getLongitude();
+        }
+        intent.putExtra("OPERATION_POLYGON", vecPolygonCoordinates);
+        startActivity(intent);
     }
 
     //-------------------------------------------------------------------------------------------------------------
@@ -431,17 +447,8 @@ public class OperationsActivity extends AppCompatActivity {
                             UIGenericUtils.ShowAlert(OperationsActivity.this, getString(R.string.str_operation_is_not_activated), getString(R.string.exc_msg_operation_not_activated));
                             return;
                         }
-                        Intent intent = new Intent(OperationsActivity.this, FlightActivity.class);
-                        intent.putExtra("OPERATION_ID", operation.getId());
-                        intent.putExtra("OPERATION_MAX_ALTITUDE", operation.getMaxAltitude());
-                        // we do not pass the last coordinate, because the first and the last coordinate of the polygon are the same
-                        String[] vecPolygonCoordinates = new String[operation.getPolygon().size() - 1];
-                        for(int i = 0; i < operation.getPolygon().size() - 1; i++){
-                            GPSCoordinates gpsCoordinates = operation.getPolygon().get(i);
-                            vecPolygonCoordinates[i] = gpsCoordinates.getLatitude() + ";" + gpsCoordinates.getLongitude();
-                        }
-                        intent.putExtra("OPERATION_POLYGON", vecPolygonCoordinates);
-                        startActivity(intent);
+                        // we ask to the user if he wants to fly with this app, or if he just want to send to the utm the pilot position
+                        askToTheUserIfHeWantsToFlyTheDroneWithOurAppOrJustReportPilotPosition(operation);
                     }
                 }else{
                     // if next action is null, it means that the user wants to see the details of the operation
@@ -490,5 +497,50 @@ public class OperationsActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         //starts new activity to select file and return data
         startActivityForResult(Intent.createChooser(intent,"Choose File to Upload.."),PICK_DAT_FILE_REQUEST);
+    }
+
+    private void askToTheUserIfHeWantsToFlyTheDroneWithOurAppOrJustReportPilotPosition(Operation operation){
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        float weight = 1.0f;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+        linearLayout.setPadding(50, 50,50,50);
+        linearLayout.setLayoutParams(param);
+
+        LinearLayout.LayoutParams buttonParam = new LinearLayout.LayoutParams(width, height, weight);
+        buttonParam.setMargins(0,0,0,50);
+        Button buttonFly = new Button(new androidx.appcompat.view.ContextThemeWrapper(this, R.style.RaisedButton), null, 0);
+        buttonFly.setText(R.string.str_go_fly);
+        buttonFly.setLayoutParams(buttonParam);
+        linearLayout.addView(buttonFly);
+        buttonFly.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickGoFly(operation);
+            }
+        });
+
+        Button buttonPilotPosition = new Button(new androidx.appcompat.view.ContextThemeWrapper(this, R.style.RaisedButton), null, 0);
+        buttonPilotPosition.setText(R.string.str_report_pilot_position);
+        linearLayout.addView(buttonPilotPosition);
+        buttonPilotPosition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UIGenericUtils.GoToActivity(
+                        OperationsActivity.this,
+                        ReportDevicePositionActivity.class,
+                        Arrays.asList(Constants.OPERATION_ID_KEY),
+                        Arrays.asList(operation.getId())
+                );
+            }
+        });
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(R.string.str_fly_or_pilot_position)
+                .setMessage(getString(R.string.miscellaneous_fly_or_report_pilot_position))
+                .setView(linearLayout)
+                .show();
     }
 }

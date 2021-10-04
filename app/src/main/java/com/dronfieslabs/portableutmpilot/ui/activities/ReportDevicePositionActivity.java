@@ -55,6 +55,7 @@ public class ReportDevicePositionActivity extends AppCompatActivity {
     private boolean mIsReporting = false;
 
     // views
+    private TextView mTextViewOperationId;
     private TextView mTextViewLatitude;
     private TextView mTextViewLongitude;
     private TextView mTextViewAltitude;
@@ -77,6 +78,8 @@ public class ReportDevicePositionActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.str_report_position);
+        mTextViewOperationId = findViewById(R.id.text_view_operation_id);
+        mTextViewOperationId.setText(getIntent().getStringExtra(Constants.OPERATION_ID_KEY));
         mTextViewLatitude = findViewById(R.id.text_view_latitude);
         mTextViewLongitude = findViewById(R.id.text_view_longitude);
         mTextViewAltitude = findViewById(R.id.text_view_altitude);
@@ -255,7 +258,8 @@ public class ReportDevicePositionActivity extends AppCompatActivity {
                             if(!dronfiesUssServices.isAuthenticated()){
                                 dronfiesUssServices.login_sync(SharedPreferencesUtils.getUsername(ReportDevicePositionActivity.this), SharedPreferencesUtils.getPassword(ReportDevicePositionActivity.this));
                             }
-                            dronfiesUssServices.sendParaglidingPosition(mCurrentLongitude, mCurrentLatitude, mCurrentAltitude, new ICompletitionCallback<String>() {
+                            String operationId = mTextViewOperationId.getText().toString();
+                            dronfiesUssServices.sendPilotPosition(mCurrentLongitude, mCurrentLatitude, mCurrentAltitude, operationId, null, new ICompletitionCallback<String>() {
                                 @Override
                                 public void onResponse(String s, String errorMessage) {
                                     if(errorMessage != null){

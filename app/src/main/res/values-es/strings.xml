@@ -43,6 +43,9 @@
         La primera opción es manualmente ingresar las coordenadas de los vértices del polígono.
         La segunda opción es dibujar el polígono sobre un mapa de GoogleMaps.
     </string>
+    <string name="miscellaneous_fly_or_report_pilot_position">
+        Si deseas utilizar esta aplicación para volar el dron, presiona el botón \'Ir a Volar\'. De lo contrario si lo único que deseas es utilizar la aplicación para reportar al UTM la posición del piloto, selecciona la opción \'Reportar Posición del Piloto\'.
+    </string>
     <string name="miscellaneous_load_dat_file_message">Esta funcionalidad le permite cargar el archivo .DAT asociado a la operación en cuestión, para así extraer de él la telemetría registrada por el dron, y subirla al UTM.</string>
 
     <string name="question_account">¿No tienes una cuenta?</string>
@@ -85,6 +88,7 @@
     <string name="str_error">Error</string>
     <string name="str_error_reporting_position">Error Reporting Position</string>
     <string name="str_establish">Establecer</string>
+    <string name="str_fly_or_pilot_position">¿Volar o Posición del Piloto?</string>
     <string name="str_free_flight">Vuelo libre</string>
     <string name="str_go_fly">Ir a Volar</string>
     <string name="str_google_maps">Google Maps</string>
@@ -109,6 +113,7 @@
     <string name="str_no">No</string>
     <string name="str_no_drones">No Hay Drones</string>
     <string name="str_operation_added">Operación Agregada</string>
+    <string name="str_operation_id">ID de Operación</string>
     <string name="str_operation_is_not_activated">La Operación no está Activada</string>
     <string name="str_operations">Operaciones</string>
     <string name="str_paragliding_pilot">Piloto de Parapente</string>
@@ -117,6 +122,7 @@
     <string name="str_plate">Matrícula</string>
     <string name="str_polygon">Polígono</string>
     <string name="str_quit">Salir</string>
+    <string name="str_report_pilot_position">Reportar Posición del Piloto</string>
     <string name="str_report_position">Reportar posición</string>
     <string name="str_reporting_position">Reportando Posición</string>
     <string name="str_return">Volver</string>

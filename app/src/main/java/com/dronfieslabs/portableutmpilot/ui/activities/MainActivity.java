@@ -219,9 +219,11 @@ public class MainActivity extends AppCompatActivity {
         if(!dronfiesUssServices.isAuthenticated()){
             String username = SharedPreferencesUtils.getUsername(this);
             String password = SharedPreferencesUtils.getPassword(this);
+            final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
             dronfiesUssServices.login(username, password, new ICompletitionCallback<String>() {
                 @Override
                 public void onResponse(String s, String errorMessage) {
+                    mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
                     if(errorMessage != null){
                         UIGenericUtils.ShowAlert(MainActivity.this, getString(R.string.str_login_failed), getString(R.string.exc_msg_auth_to_see_operations) + " ("+errorMessage+")");
                         return;

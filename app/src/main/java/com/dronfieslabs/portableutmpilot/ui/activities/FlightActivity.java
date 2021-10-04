@@ -3,7 +3,9 @@ package com.dronfieslabs.portableutmpilot.ui.activities;
 import android.Manifest;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,12 +32,14 @@ import com.dronfieslabs.portableutmpilot.services.geometry.Point;
 import com.dronfieslabs.portableutmpilot.services.geometry.Polygon;
 import com.dronfieslabs.portableutmpilot.services.geometry.Segment;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
-import com.dronfieslabs.portableutmpilot.ui.utils.UIGoogleMapsUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
-import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -57,6 +61,7 @@ import dji.ux.widget.MapWidget;
 public class FlightActivity extends AppCompatActivity implements DJISDKHelperObserver {
 
     // consts
+    private static final int PERMISSIONS_FINE_LOCATION = 99;
     private DecimalFormat dfInteger = new DecimalFormat("###,##0");
     private DecimalFormat dfDecimal = new DecimalFormat("###,##0.0");
     private enum EnumDronePosition{
@@ -65,8 +70,16 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         OUTSIDE_OPERATION
     }
 
+    // services
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private LocationRequest mLocationRequest;
+    private LocationCallback mLocationCallback;
+
     // state
     private String mOperationId = null;
+    private Double mCurrentDeviceLatitude = null;
+    private Double mCurrentDeviceLongitude = null;
+    private Double mCurrentDeviceAltitude = null;
     private int mOperationMaxAltitude = 0;
     private List<LatLng> mOperationPolygon = null;
     private Polygon mOperationPolygonMercator = null;
@@ -187,6 +200,9 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
 
         // execute onProductConnected, in case the product was connected before the user enter to the activity
         onProductConnected();
+
+        initializeLocationRequest();
+        initializeFusedLocationProviderClient();
     }
 
     @Override
@@ -220,6 +236,7 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
         try{
             mAircraftConnected.getFlightController().setStateCallback(null);
         }catch(Exception ex){}
+        mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         // if playing, stop both beeps
         stopBeep(mMediaPlayerBeepBuffer);
         stopBeep(mMediaPlayerBeepOutside);
@@ -243,6 +260,19 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
     //---------------------------------------------- EVENT HANDLERS  ----------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case PERMISSIONS_FINE_LOCATION:
+                if(grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                    UIGenericUtils.ShowToast(this, getString(R.string.exc_msg_permission_not_granted));
+                    finish();
+                }
+                break;
+        }
+    }
 
     private void onMapReady2(@NonNull final DJIMap djiMap){
         djiMap.setMapType(DJIMap.MapType.SATELLITE);
@@ -433,9 +463,15 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
                                 public void onResponse(String s, String errorMessage) {}
                             });
                         }catch(Exception ex){}
+                        try{
+                            if(mCurrentDeviceLongitude != null && mCurrentDeviceLatitude != null && mCurrentDeviceAltitude != null){
+                                UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(FlightActivity.this)).sendPilotPosition(mCurrentDeviceLongitude, mCurrentDeviceLatitude, mCurrentDeviceAltitude, mOperationId, null, new ICompletitionCallback<String>() {
+                                    @Override
+                                    public void onResponse(String s, String errorMessage) {}
+                                });
+                            }
+                        }catch(Exception ex){}
                     }
-
-
 
                     if(mOperationPolygon != null && mOperationPolygon.size() > 2) {
                         // calculate drone current position
@@ -596,6 +632,36 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
             ret.add(new DJILatLng(latLng.latitude, latLng.longitude));
         }
         return ret;
+    }
+
+    private void initializeLocationRequest(){
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    private void initializeFusedLocationProviderClient(){
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            // user provided the permissions to use the location of the device
+            mLocationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                Location location = locationResult.getLastLocation();
+                mCurrentDeviceLatitude = location.getLatitude();
+                mCurrentDeviceLongitude = location.getLongitude();
+                mCurrentDeviceAltitude = location.getAltitude();
+                }
+            };
+            mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+        }else{
+            // permissions not granted yet
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_FINE_LOCATION);
+            }
+        }
     }
 
 }

@@ -48,9 +48,12 @@
 
     <string name="miscellaneous_def_polygon_instructions">1) Click on the map to define the polygon vertices.\n\n2) You can delete any polygon vertice clicking on it.\n\n3) You can move the vertices, if you press and hold on any of them.</string>
     <string name="miscellaneous_def_polygon_options">
-        You have to options to define the polygon where do you plan to fly.
+        You have two options to define the polygon where do you plan to fly.
         The first option is to manually enter the coordinates of the vertices of the polygon.
         The second option is to draw the polygon on a GoogleMaps map.
+    </string>
+    <string name="miscellaneous_fly_or_report_pilot_position">
+        If you want to use the app to fly the drone, please select the option \'Go Fly\'. On the other hand, if what you want is to just report to the UTM the pilot position, click the button \'Report Pilot Position\'.
     </string>
     <string name="miscellaneous_load_dat_file_message">This functionality allows you to load the .DAT file associated with the operation in question, in order to extract from it the telemetry registered by the drone, and upload it to the UTM.</string>
 
@@ -93,6 +96,7 @@
     <string name="str_error">Error</string>
     <string name="str_error_reporting_position">Error Reportando Posición</string>
     <string name="str_establish">Establish</string>
+    <string name="str_fly_or_pilot_position">Fly or Pilot Position?</string>
     <string name="str_free_flight">Free flight</string>
     <string name="str_go_fly">Go Fly</string>
     <string name="str_google_maps">Google Maps</string>
@@ -118,6 +122,7 @@
     <string name="str_no">No</string>
     <string name="str_no_drones">No Drones</string>
     <string name="str_operation_added">Operation Added</string>
+    <string name="str_operation_id">Operation ID</string>
     <string name="str_operation_is_not_activated">Operation is not Activated</string>
     <string name="str_operations">Operations</string>
     <string name="str_paragliding_pilot">Paragliding Pilot</string>
@@ -126,6 +131,7 @@
     <string name="str_plate">Plate</string>
     <string name="str_polygon">Polygon</string>
     <string name="str_quit">Quit</string>
+    <string name="str_report_pilot_position">Report Pilot Position</string>
     <string name="str_report_position">Report position</string>
     <string name="str_reporting_position">Reporting Position</string>
     <string name="str_return">Return</string>

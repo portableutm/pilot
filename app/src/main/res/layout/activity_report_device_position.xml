@@ -36,62 +36,64 @@
             android:textStyle="bold"/>
 
         <!--#######################################################################################-->
-        <!--################################### GPS Coordinates ###################################-->
+        <!--#################################### Info to Send  ####################################-->
         <!--#######################################################################################-->
-
-        <!--################################### Latitude  ###################################-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:padding="20dp">
+            <!--################################## OperationId ##################################-->
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:text="@string/str_operation_id"
+                android:textSize="12dp"/>
+            <TextView
+                android:id="@+id/text_view_operation_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:layout_marginBottom="20dp"/>
+
+            <!--################################### Latitude  ###################################-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="@string/str_latitude"
-                android:textSize="18dp"/>
+                android:textSize="12dp"/>
             <TextView
                 android:id="@+id/text_view_latitude"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18dp"/>
-        </LinearLayout>
-        <!--################################### Longitude ###################################-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="20dp">
+                android:textSize="16dp"
+                android:layout_marginBottom="20dp"/>
+
+            <!--################################### Longitude ###################################-->
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/str_longitude"
-                android:textSize="18dp"/>
+                android:textSize="12dp"/>
             <TextView
                 android:id="@+id/text_view_longitude"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18dp"/>
-        </LinearLayout>
-        <!--################################### Altitude  ###################################-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="20dp">
+                android:textSize="16dp"
+                android:layout_marginBottom="20dp"/>
+
+            <!--################################### Altitude  ###################################-->
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/str_altitude"
-                android:textSize="18dp"/>
+                android:textSize="12dp"/>
             <TextView
                 android:id="@+id/text_view_altitude"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18dp"/>
+                android:textSize="16dp"
+                android:layout_marginBottom="20dp"/>
         </LinearLayout>
 
         <!--#######################################################################################-->
