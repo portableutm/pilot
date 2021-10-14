@@ -81,19 +81,6 @@
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
                 android:layout_marginBottom="20dp"/>
-
-            <!--################################### Altitude  ###################################-->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/str_altitude"
-                android:textSize="12dp"/>
-            <TextView
-                android:id="@+id/text_view_altitude"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16dp"
-                android:layout_marginBottom="20dp"/>
         </LinearLayout>
 
         <!--#######################################################################################-->

@@ -109,9 +109,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void onClickSignUp(){
+        LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
         new Thread(() -> {
             try{
                 List<Endpoint> endpoints = UtilsOps.getDronfiesUssServices(getResources().getString(R.string.portableUTMMainEndpoint)).getEndpoints();
+                runOnUiThread(() -> mRelativeLayoutRoot.removeView(linearLayoutProgressBar));
                 if(endpoints == null || endpoints.isEmpty()){
                     runOnUiThread(() -> {UIGenericUtils.ShowAlert(this, getString(R.string.str_connection_error),getString(R.string.exc_msg_error_getting_endpoints));});
                     return;

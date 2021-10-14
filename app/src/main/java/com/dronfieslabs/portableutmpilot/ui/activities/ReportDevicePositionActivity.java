@@ -51,14 +51,12 @@ public class ReportDevicePositionActivity extends AppCompatActivity {
     // state
     private Double mCurrentLatitude = null;
     private Double mCurrentLongitude = null;
-    private Double mCurrentAltitude = null;
     private boolean mIsReporting = false;
 
     // views
     private TextView mTextViewOperationId;
     private TextView mTextViewLatitude;
     private TextView mTextViewLongitude;
-    private TextView mTextViewAltitude;
     private TextView mTextViewReportingMessage;
     private Button mButtonReport;
 
@@ -82,7 +80,6 @@ public class ReportDevicePositionActivity extends AppCompatActivity {
         mTextViewOperationId.setText(getIntent().getStringExtra(Constants.OPERATION_ID_KEY));
         mTextViewLatitude = findViewById(R.id.text_view_latitude);
         mTextViewLongitude = findViewById(R.id.text_view_longitude);
-        mTextViewAltitude = findViewById(R.id.text_view_altitude);
         mTextViewReportingMessage = findViewById(R.id.text_view_reporting_message);
         mButtonReport = findViewById(R.id.button_report);
         mButtonReport.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +93,8 @@ public class ReportDevicePositionActivity extends AppCompatActivity {
         initializeFusedLocationProviderClient();
         initializeValueAnimator();
         initializeReportingThread();
+
+        mButtonReport.performClick();
     }
 
     @Override
@@ -178,7 +177,6 @@ public class ReportDevicePositionActivity extends AppCompatActivity {
                     Location location = locationResult.getLastLocation();
                     mCurrentLatitude = location.getLatitude();
                     mCurrentLongitude = location.getLongitude();
-                    mCurrentAltitude = location.getAltitude();
                     updateCoordinatesViews();
                     if(mButtonReport.getVisibility() == View.INVISIBLE){
                         mButtonReport.setVisibility(View.VISIBLE);
@@ -197,15 +195,11 @@ public class ReportDevicePositionActivity extends AppCompatActivity {
     private void updateCoordinatesViews(){
         mTextViewLatitude.setText("-");
         mTextViewLongitude.setText("-");
-        mTextViewAltitude.setText("-");
         if(mCurrentLatitude != null){
             mTextViewLatitude.setText(mCurrentLatitude + " °");
         }
         if(mCurrentLongitude != null){
             mTextViewLongitude.setText(mCurrentLongitude + " °");
-        }
-        if(mCurrentAltitude != null){
-            mTextViewAltitude.setText(new DecimalFormat("0.00").format(mCurrentAltitude) + " m");
         }
     }
 
@@ -259,7 +253,7 @@ public class ReportDevicePositionActivity extends AppCompatActivity {
                                 dronfiesUssServices.login_sync(SharedPreferencesUtils.getUsername(ReportDevicePositionActivity.this), SharedPreferencesUtils.getPassword(ReportDevicePositionActivity.this));
                             }
                             String operationId = mTextViewOperationId.getText().toString();
-                            dronfiesUssServices.sendPilotPosition(mCurrentLongitude, mCurrentLatitude, mCurrentAltitude, operationId, null, new ICompletitionCallback<String>() {
+                            dronfiesUssServices.sendPilotPosition(mCurrentLongitude, mCurrentLatitude, 0, operationId, null, new ICompletitionCallback<String>() {
                                 @Override
                                 public void onResponse(String s, String errorMessage) {
                                     if(errorMessage != null){
