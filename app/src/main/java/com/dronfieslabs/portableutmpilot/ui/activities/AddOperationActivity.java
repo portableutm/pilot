@@ -272,7 +272,7 @@ public class AddOperationActivity extends AppCompatActivity {
             startDatetime = getStartDatetime();
             endDatetime = getEndDatetime();
             // to the utm backend, we need to pass utc time, so we adjust the startdatetime using the device timezone
-            int timeZoneOffsetInMilliseconds = Calendar.getInstance().getTimeZone().getRawOffset();
+            int timeZoneOffsetInMilliseconds = Calendar.getInstance().getTimeZone().getRawOffset() + Calendar.getInstance().getTimeZone().getDSTSavings();
             Calendar cal = Calendar.getInstance();
             cal.setTime(startDatetime);
             cal.add(Calendar.MILLISECOND, -timeZoneOffsetInMilliseconds);
