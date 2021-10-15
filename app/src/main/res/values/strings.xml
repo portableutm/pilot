@@ -166,5 +166,7 @@
     <string name="str_express_radius">Express radius (Km)</string>
     <string name="str_express_duration">Express duration (Hours)</string>
     <string name="str_express_vehicle">Express vehicle</string>
+    <string name="express_vehicle_not_selected_title">Vehicle not selected</string>
+    <string name="express_vehicle_not_selected">Please go to setting and select a vehicle under "Express vehicle" input</string>
     <string name="str_uvin" translatable="false">id</string>
 </resources>

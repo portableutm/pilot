@@ -106,11 +106,16 @@ public class MainActivity extends AppCompatActivity {
             UIGenericUtils.ShowAlert(context, getString(R.string.str_utm_connection_failed), getString(R.string.exc_msg_utm_connection_failed));
             return;
         }
+        String vehicleId = SharedPreferencesUtils.getExpressVehicle(context);
+        if(vehicleId == ""){
+            UIGenericUtils.ShowAlert(context, getString(R.string.express_vehicle_not_selected_title), getString(R.string.express_vehicle_not_selected));
+            mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+            return;
+        }
         UtilsOps.getLocation(context, (latLng, errorMessage) -> {
             //CREATES THE OPERATION//
             int radius = SharedPreferencesUtils.getExpressRadius(context);
             int duration = SharedPreferencesUtils.getExpressDuration(context);
-            String vehicleId = SharedPreferencesUtils.getExpressVehicle(context);
             ExpressOperationData oper = new ExpressOperationData(latLng,radius,duration,vehicleId);
             //*********************//
             if(!dronfiesUssServices.isAuthenticated()){
@@ -133,6 +138,10 @@ public class MainActivity extends AppCompatActivity {
                                         });
                                         UIGenericUtils.GoToActivity(MainActivity.this, OperationsActivity.class);
                                     } catch (Exception e) {
+                                        runOnUiThread(() -> {
+                                            UIGenericUtils.ShowAlert(context, getString(R.string.express_vehicle_not_selected_title), getString(R.string.express_vehicle_not_selected));
+                                            mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                                        });
                                         e.printStackTrace();
                                     }
 

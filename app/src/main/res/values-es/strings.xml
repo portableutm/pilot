@@ -158,5 +158,7 @@
     <string name="str_express_radius">Radio Express (Km)</string>
     <string name="str_express_duration">Duración Express (Horas)</string>
     <string name="str_express_vehicle">Vehículo Express</string>
+    <string name="express_vehicle_not_selected_title">Vehículo no seleccionado</string>
+    <string name="express_vehicle_not_selected">Por favor seleccione un vehículo en las opciones, en donde se indica \"Vehículo Express\"</string>
 
 </resources>

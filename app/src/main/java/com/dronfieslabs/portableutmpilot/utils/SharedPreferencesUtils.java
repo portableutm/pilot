@@ -115,7 +115,7 @@ public class SharedPreferencesUtils {
 
     public static String getExpressVehicle(Context context){
         SharedPreferences sharedPreferences = getSharedPreferences(context);
-        return sharedPreferences.getString(EXPRESS_VEHICLE, "6acf14ec-8e33-4d3d-a4d9-2fa5708dcb46");
+        return sharedPreferences.getString(EXPRESS_VEHICLE, "");
     }
 
 
