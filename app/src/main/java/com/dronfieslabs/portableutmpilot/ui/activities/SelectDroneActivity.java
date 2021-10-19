@@ -75,7 +75,7 @@ public class SelectDroneActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             try{
-                                List<Vehicle> listVehicles = dronfiesUssServices.getVehicles();
+                                List<Vehicle> listUserVehicles = dronfiesUssServices.getOperatorVehicles();
                                 // onResponse, we remove the progressbar from the activity
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -83,13 +83,6 @@ public class SelectDroneActivity extends AppCompatActivity {
                                         mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
                                     }
                                 });
-                                // get user vehicles
-                                List<Vehicle> listUserVehicles = new ArrayList<>();
-                                for(Vehicle vehicle : listVehicles){
-                                    if(vehicle.getOwner() != null && vehicle.getOwner().equals(username)){
-                                        listUserVehicles.add(vehicle);
-                                    }
-                                }
                                 if(listUserVehicles.isEmpty()){
                                     // user has no vehicles
                                     runOnUiThread(new Runnable() {
