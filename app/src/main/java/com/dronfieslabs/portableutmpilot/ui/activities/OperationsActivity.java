@@ -240,7 +240,7 @@ public class OperationsActivity extends AppCompatActivity {
                             continue;
                         }*/
                         // adjust operation startdatetime and enddatetime with device timezone
-                        int timezoneOffsetInMilliseconds = Calendar.getInstance().getTimeZone().getRawOffset();
+                        int timezoneOffsetInMilliseconds = Calendar.getInstance().getTimeZone().getRawOffset() + Calendar.getInstance().getTimeZone().getDSTSavings();
                         Calendar cal = Calendar.getInstance();
                         cal.setTime(operation.getStartDatetime());
                         cal.add(Calendar.MILLISECOND, timezoneOffsetInMilliseconds);
