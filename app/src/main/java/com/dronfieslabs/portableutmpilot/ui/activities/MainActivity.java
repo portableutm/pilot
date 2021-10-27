@@ -178,25 +178,7 @@ public class MainActivity extends AppCompatActivity {
         if(!utmEnable){
             UIGenericUtils.GoToActivity(this, FlightActivity.class);
         }else{
-            UIGenericUtils.ShowConfirmationAlert(
-                    this,
-                    getString(R.string.str_report_position),
-                    getString(R.string.question_report_position_free_flight),
-                    getString(R.string.str_yes),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            goToOperationsActivity(true);
-                        }
-                    },
-                    getString(R.string.str_no),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            UIGenericUtils.GoToActivity(MainActivity.this, FlightActivity.class);
-                        }
-                    }
-            );
+            goToOperationsActivity(true);
         }
     }
 
