@@ -54,6 +54,7 @@
         If you want to use the app to fly the drone, please select the option \'Go Fly\'. On the other hand, if what you want is to just report to the UTM the pilot position, click the button \'Report Pilot Position\'.
     </string>
     <string name="miscellaneous_load_dat_file_message">This functionality allows you to load the .DAT file associated with the operation in question, in order to extract from it the telemetry registered by the drone, and upload it to the UTM.</string>
+    <string name="miscellaneous_select_utm_to_register">Select the UTM in which you want to register</string>
 
     <string name="question_account">Don\'t you have an account?</string>
     <string name="question_delete_operation">Are you sure you want to delete the operation \'%s\'?</string>

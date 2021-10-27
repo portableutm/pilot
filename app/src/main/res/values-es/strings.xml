@@ -46,6 +46,7 @@
         Si deseas utilizar esta aplicación para volar el dron, presiona el botón \'Ir a Volar\'. De lo contrario si lo único que deseas es utilizar la aplicación para reportar al UTM la posición del piloto, selecciona la opción \'Reportar Posición del Piloto\'.
     </string>
     <string name="miscellaneous_load_dat_file_message">Esta funcionalidad le permite cargar el archivo .DAT asociado a la operación en cuestión, para así extraer de él la telemetría registrada por el dron, y subirla al UTM.</string>
+    <string name="miscellaneous_select_utm_to_register">Selecciona el UTM en el que te quieres registrar</string>
 
     <string name="question_account">¿No tienes una cuenta?</string>
     <string name="question_delete_operation">¿Está seguro que desea borrar la operación \'%s\'?</string>

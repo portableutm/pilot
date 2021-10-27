@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="@color/colorPrimary"
-        android:text="Select the instance in which you want to register"
+        android:text="@string/miscellaneous_select_utm_to_register"
         android:textSize="50dp"
         android:layout_marginBottom="50dp"/>
     <LinearLayout
