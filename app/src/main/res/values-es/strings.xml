@@ -167,4 +167,6 @@
     <string name="str_tracker">Tracker</string>
     <string name="str_instant_request">Solicitud rápida</string>
     <string name="str_dji_drone">Dron DJI</string>
+    <string name="str_fly_or_pilot_position">¿Volar o Posición del Piloto?</string>
+    <string name="miscellaneous_fly_or_report_pilot_position">Si deseas utilizar esta aplicación para volar el dron, presiona el botón \'Ir a Volar\'. De lo contrario si lo único que deseas es utilizar la aplicación para reportar al UTM la posición del piloto, selecciona la opción \'Reportar Posición del Piloto\'.</string>
 </resources>
