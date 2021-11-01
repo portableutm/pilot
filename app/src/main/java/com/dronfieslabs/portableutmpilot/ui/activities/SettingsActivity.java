@@ -20,29 +20,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dronfies.portableutmandroidclienttest.Vehicle;
 import com.dronfieslabs.portableutmpilot.BuildConfig;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
-import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
-import java.util.List;
 import java.util.Locale;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    private ScrollView scrollViewRoot;
     private TextView textViewUTMEndpoint;
     private TextView textViewUsername;
     private TextView textViewPassword;
@@ -84,6 +82,11 @@ public class SettingsActivity extends AppCompatActivity {
                 SharedPreferencesUtils.updateUTMEnable(SettingsActivity.this, isChecked);
             }
         });
+        scrollViewRoot = findViewById(R.id.scroll_view_root);
+        if(getIntent().getBooleanExtra(Constants.SCROLL_TO_BOTTOM_KEY, false)){
+            scrollViewRoot.post(() -> scrollViewRoot.fullScroll(View.FOCUS_DOWN));
+        }
+
         textViewUTMEndpoint = findViewById(R.id.text_view_utm_endpoint);
         textViewUsername = findViewById(R.id.text_view_username);
         textViewPassword = findViewById(R.id.text_view_password);
@@ -159,7 +162,7 @@ public class SettingsActivity extends AppCompatActivity {
         String utmEndpoint = SharedPreferencesUtils.getUTMEndpoint(this);
         String username = SharedPreferencesUtils.getUsername(this);
         String password = SharedPreferencesUtils.getPassword(this);
-        DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getUnsafeInstanceDONOTUSE(utmEndpoint);
+        DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(utmEndpoint);
         if(dronfiesUssServices == null){
             Toast.makeText(this, "No se pudo establecer la conexión con el UTM", Toast.LENGTH_LONG).show();
             return;
@@ -361,7 +364,7 @@ public class SettingsActivity extends AppCompatActivity {
         editTextExpressRadius.setText(textViewExpressRadius.getText());
         linearLayout.addView(editTextExpressRadius);
         new AlertDialog.Builder(this)
-                .setTitle(R.string.str_express_radius)
+                .setTitle(R.string.str_radius_km)
                 .setView(linearLayout)
                 .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -390,7 +393,7 @@ public class SettingsActivity extends AppCompatActivity {
         editTextExpressDuration.setText(textViewExpressDuration.getText());
         linearLayout.addView(editTextExpressDuration);
         new AlertDialog.Builder(this)
-                .setTitle(R.string.str_express_duration)
+                .setTitle(R.string.str_duration_hours)
                 .setView(linearLayout)
                 .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {

@@ -1,37 +1,26 @@
 package com.dronfieslabs.portableutmpilot.ui.activities;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.Color;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ContextThemeWrapper;
+
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.dronfies.portableutmandroidclienttest.ExpressOperationData;
-import com.dronfieslabs.portableutmpilot.IGenericCallback;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
-import com.dronfies.portableutmandroidclienttest.Vehicle;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
                 onClickGoFly();
             }
         });
-        final Button mButtonExpressOperation = findViewById(R.id.button_express_operation);
-        mButtonExpressOperation.setOnClickListener(new View.OnClickListener() {
+        final Button mButtonInstantRequest = findViewById(R.id.button_instant_request);
+        mButtonInstantRequest.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { onClickMakeExpressOperation();}
+            public void onClick(View v) { onClickInstantRequest();}
         });
         mButtonOperations = findViewById(R.id.button_operations);
         mButtonOperations.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         mButtonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickSettings();
+                onClickSettings(false);
             }
         });
     }
@@ -98,29 +87,27 @@ public class MainActivity extends AppCompatActivity {
     //--------------------------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------------
 
-    private void onClickMakeExpressOperation(){
-        final LinearLayout linearLayoutProgressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
-        Context context = this;
-        DronfiesUssServices dronfiesUssServices = DronfiesUssServices.getUnsafeInstanceDONOTUSE(SharedPreferencesUtils.getUTMEndpoint(MainActivity.this));
+    private void onClickInstantRequest(){
+        AlertDialog alertDialog = showDialogSayingToTheUserHeHasToWait30Seconds();
+        DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(MainActivity.this));
         if(dronfiesUssServices == null){
-            UIGenericUtils.ShowAlert(context, getString(R.string.str_utm_connection_failed), getString(R.string.exc_msg_utm_connection_failed));
+            UIGenericUtils.ShowAlert(MainActivity.this, getString(R.string.str_utm_connection_failed), getString(R.string.exc_msg_utm_connection_failed));
             return;
         }
-        String vehicleId = SharedPreferencesUtils.getExpressVehicle(context);
+        String vehicleId = SharedPreferencesUtils.getExpressVehicle(this);
         if(vehicleId == ""){
-            UIGenericUtils.ShowAlert(context, getString(R.string.express_vehicle_not_selected_title), getString(R.string.express_vehicle_not_selected));
-            mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
-            return;
+            alertDialog.dismiss();
+            showDialogExplainingToTheUserHeHasToSelectAVehicleToUseThisFeature();
         }
-        UtilsOps.getLocation(context, (latLng, errorMessage) -> {
+        UtilsOps.getLocation(MainActivity.this, (latLng, errorMessage) -> {
             //CREATES THE OPERATION//
-            int radius = SharedPreferencesUtils.getExpressRadius(context);
-            int duration = SharedPreferencesUtils.getExpressDuration(context);
+            int radius = SharedPreferencesUtils.getExpressRadius(MainActivity.this);
+            int duration = SharedPreferencesUtils.getExpressDuration(MainActivity.this);
             ExpressOperationData oper = new ExpressOperationData(latLng,radius,duration,vehicleId);
             //*********************//
             if(!dronfiesUssServices.isAuthenticated()){
-                String username = SharedPreferencesUtils.getUsername(context);
-                String password = SharedPreferencesUtils.getPassword(context);
+                String username = SharedPreferencesUtils.getUsername(MainActivity.this);
+                String password = SharedPreferencesUtils.getPassword(MainActivity.this);
                 dronfiesUssServices.login(username, password, new ICompletitionCallback<String>() {
                     @Override
                     public void onResponse(String s, String errorMessage) {
@@ -128,50 +115,37 @@ public class MainActivity extends AppCompatActivity {
                             UIGenericUtils.ShowAlert(MainActivity.this, getString(R.string.str_login_failed), getString(R.string.exc_msg_auth_to_see_operations) + " ("+errorMessage+")");
                             return;
                         }
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        dronfiesUssServices.addExpressOperation_sync(oper);
-                                        runOnUiThread(() -> {
-                                            mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
-                                        });
-                                        UIGenericUtils.GoToActivity(MainActivity.this, OperationsActivity.class);
-                                    } catch (Exception e) {
-                                        runOnUiThread(() -> {
-                                            UIGenericUtils.ShowAlert(context, getString(R.string.express_vehicle_not_selected_title), getString(R.string.express_vehicle_not_selected));
-                                            mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
-                                        });
-                                        e.printStackTrace();
-                                    }
-
-                                }
-                            }).start();
+                        onClickInstantRequest_2ndPart(dronfiesUssServices, oper, alertDialog);
                     }
                 });
             }else{
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            dronfiesUssServices.addExpressOperation_sync(oper);
-                            runOnUiThread(() -> {
-                                mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
-                            });
-                            UIGenericUtils.GoToActivity(MainActivity.this, OperationsActivity.class);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }).start();
+                onClickInstantRequest_2ndPart(dronfiesUssServices, oper, alertDialog);
             }
         });
-
-        return;
-
     }
 
+    private void onClickInstantRequest_2ndPart(DronfiesUssServices dronfiesUssServices, ExpressOperationData operation, AlertDialog alertDialog){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    dronfiesUssServices.addExpressOperation_sync(operation);
+                    // we need to wait 30 seconds to let the backend create the operation
+                    Thread.sleep(30000);
+                    runOnUiThread(() -> {
+                        alertDialog.dismiss();
+                    });
+                    UIGenericUtils.GoToActivity(MainActivity.this, OperationsActivity.class);
+                } catch (Exception e) {
+                    runOnUiThread(() -> {
+                        alertDialog.dismiss();
+                        UIGenericUtils.ShowAlert(MainActivity.this, getString(R.string.express_vehicle_not_selected_title), getString(R.string.express_vehicle_not_selected));
+                    });
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 
     private void onClickGoFly(){
         boolean utmEnable = SharedPreferencesUtils.getUTMEnable(this);
@@ -186,11 +160,14 @@ public class MainActivity extends AppCompatActivity {
         goToOperationsActivity(false);
     }
 
-    private void onClickSettings(){
+    private void onClickSettings(boolean scrollDownSettingsActivity){
         Intent intent = new Intent(this, SettingsActivity.class);
         // we have to clear the activities stack before going to the settings activity
         // this is because in settings activity we can change important settings (like app language),
         // and we can't leave on the stack old activities after an important configuration change
+        if(scrollDownSettingsActivity){
+            intent.putExtra(Constants.SCROLL_TO_BOTTOM_KEY, true);
+        }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
@@ -200,6 +177,42 @@ public class MainActivity extends AppCompatActivity {
     //------------------------------------------------- PRIVATE METHODS  -------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------------
+
+    private AlertDialog showDialogSayingToTheUserHeHasToWait30Seconds(){
+        AlertDialog alertDialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(R.string.str_creating_operation)
+                .setMessage(R.string.miscellaneous_wait_until_op_created)
+                .setCancelable(false)
+                .create();
+
+        alertDialog.show();
+
+        return alertDialog;
+    }
+
+    private void showDialogExplainingToTheUserHeHasToSelectAVehicleToUseThisFeature(){
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        float weight = 1.0f;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+        linearLayout.setPadding(50, 50,50,50);
+        linearLayout.setLayoutParams(param);
+
+        Button button = new Button(new ContextThemeWrapper(this, R.style.RaisedButton), null, 0);
+        button.setText(getString(R.string.str_settings));
+        button.setOnClickListener(view -> onClickSettings(true));
+        linearLayout.addView(button);
+
+        AlertDialog alertDialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.express_vehicle_not_selected_title))
+                .setMessage(getString(R.string.express_vehicle_not_selected))
+                .setView(linearLayout)
+                .create();
+
+        alertDialog.show();
+    }
 
     private void goToOperationsActivity(final boolean nextGoToFreeFlight){
         DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(MainActivity.this));

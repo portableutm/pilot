@@ -50,11 +50,12 @@
     <string name="miscellaneous_def_polygon_options">
         Draw the area where you will fly on the map or introduce the coordinates
     </string>
-    <string name="miscellaneous_fly_or_report_pilot_position">
-        If you want to use the app to fly the drone, please select the option \'Go Fly\'. On the other hand, if what you want is to just report to the UTM the pilot position, click the button \'Report Pilot Position\'.
-    </string>
+    <string name="miscellaneous_info_dji_drone">Report live to the UTM using this app to fly the drone</string>
+    <string name="miscellaneous_info_pilot">Report live to the UTM the device position as information of the pilot position</string>
+    <string name="miscellaneous_info_tracker">Report live to the UTM using a Dronfies EASYID device</string>
     <string name="miscellaneous_load_dat_file_message">This functionality allows you to load the .DAT file associated with the operation in question, in order to extract from it the telemetry registered by the drone, and upload it to the UTM.</string>
     <string name="miscellaneous_select_utm_to_register">Select the UTM in which you want to register</string>
+    <string name="miscellaneous_wait_until_op_created">Wait while the operation is created. This process usually takes about 30 seconds.</string>
 
     <string name="question_account">Don\'t you have an account?</string>
     <string name="question_delete_operation">Are you sure you want to delete the operation \'%s\'?</string>
@@ -75,9 +76,11 @@
     <string name="str_change_username">Change Username</string>
     <string name="str_change_user_type">Change User Type</string>
     <string name="str_change_utm_endpoint">Change UTM endpoint</string>
+    <string name="str_choose_transmission_system">Choose transmission system</string>
     <string name="str_confirm">Confirm</string>
     <string name="str_contact_phone">Contact phone</string>
     <string name="str_coordinates">Coordinates</string>
+    <string name="str_creating_operation">Creating Operation</string>
     <string name="str_current_position">Current Position</string>
     <string name="str_define_manually">Define Manually</string>
     <string name="str_define_polygon">Define polygon</string>
@@ -96,7 +99,6 @@
     <string name="str_error">Error</string>
     <string name="str_error_reporting_position">Error Reportando Posición</string>
     <string name="str_establish">Establish</string>
-    <string name="str_fly_or_pilot_position">Fly or Pilot Position?</string>
     <string name="str_free_flight">Free flight</string>
     <string name="str_go_fly">Go Fly</string>
     <string name="str_google_maps">Google Maps</string>
@@ -163,11 +165,14 @@
     <string name="str_connection_error">Connection Error</string>
     <string name="str_select">Select</string>
     <string name="str_dat_file_uploaded">Dat File Uploaded!</string>
-    <string name="str_express_operation">Express Operation</string>
-    <string name="str_express_radius">Express radius (Km)</string>
-    <string name="str_express_duration">Express duration (Hours)</string>
-    <string name="str_express_vehicle">Express vehicle</string>
+    <string name="str_radius_km">Radius (Km)</string>
+    <string name="str_duration_hours">Duration (Hours)</string>
+    <string name="str_vehicle">Vehicle</string>
     <string name="express_vehicle_not_selected_title">Vehicle not selected</string>
     <string name="express_vehicle_not_selected">Please go to setting and select a vehicle under "Express vehicle" input</string>
     <string name="str_uvin" translatable="false">id</string>
+    <string name="str_tracker">Tracker</string>
+    <string name="str_dji_drone">DJI Drone</string>
+    <string name="str_instant_request">Instant Request</string>
+
 </resources>

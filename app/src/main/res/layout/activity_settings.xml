@@ -12,6 +12,7 @@
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <ScrollView
+        android:id="@+id/scroll_view_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar">
@@ -208,8 +209,17 @@
                 android:background="@color/gray_light"/>
 
             <!--########################################################################################-->
-            <!--######################################## About  ########################################-->
+            <!--################################### Instant Request  ###################################-->
             <!--########################################################################################-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:text="@string/str_instant_request"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -225,7 +235,7 @@
                     android:id="@+id/tv_express_radius_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/str_express_radius"
+                    android:text="@string/str_radius_km"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
 
@@ -252,7 +262,7 @@
                     android:id="@+id/tv_express_duration_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/str_express_duration"
+                    android:text="@string/str_duration_hours"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
 
@@ -279,9 +289,9 @@
                     android:id="@+id/tv_express_vehicle_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/str_express_vehicle"
+                    android:text="@string/str_vehicle"
                     android:textColor="@color/black"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"/>
 
                 <TextView
                     android:id="@+id/text_view_express_vehicle"
@@ -297,6 +307,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/gray_light" />
+
+
+            <!--########################################################################################-->
+            <!--######################################## About  ########################################-->
+            <!--########################################################################################-->
 
             <TextView
                 android:layout_width="wrap_content"

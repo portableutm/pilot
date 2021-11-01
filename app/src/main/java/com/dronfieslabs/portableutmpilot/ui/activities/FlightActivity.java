@@ -132,12 +132,11 @@ public class FlightActivity extends AppCompatActivity implements DJISDKHelperObs
 
         // initialize state
         try{
-            mOperationId = getIntent().getStringExtra("OPERATION_ID");
-            mOperationMaxAltitude = getIntent().getIntExtra("OPERATION_MAX_ALTITUDE", 0);
-            mOperationId = getIntent().getStringExtra("OPERATION_ID");
+            mOperationId = getIntent().getStringExtra(Constants.OPERATION_ID_KEY);
+            mOperationMaxAltitude = getIntent().getIntExtra(Constants.OPERATION_MAX_ALTITUDE_KEY, 0);
             mOperationPolygon = new ArrayList<>();
             List<Point> listVertices = new ArrayList<>();
-            for(String str : getIntent().getStringArrayExtra("OPERATION_POLYGON")){
+            for(String str : getIntent().getStringArrayExtra(Constants.OPERATION_POLYGON_KEY)){
                 double lat = Double.parseDouble(str.split(";")[0]);
                 double lng = Double.parseDouble(str.split(";")[1]);
                 mOperationPolygon.add(new LatLng(lat, lng));

@@ -42,11 +42,14 @@
         Dibuja en el mapa el área donde planeas volar, o introduce las coordenadas
         Draw the area where you will fly on the map or introduce the coordinates
     </string>
-    <string name="miscellaneous_fly_or_report_pilot_position">
-        Si deseas utilizar esta aplicación para volar el dron, presiona el botón \'Ir a Volar\'. De lo contrario si lo único que deseas es utilizar la aplicación para reportar al UTM la posición del piloto, selecciona la opción \'Reportar Posición del Piloto\'.
-    </string>
+    <string name="miscellaneous_info_dji_drone">Reportar en vivo al UTM utilizando esta app como app de vuelo</string>
+    <string name="miscellaneous_info_pilot">Reportar al UTM la posición de este dispositivo como información de ubicación del piloto</string>
+    <string name="miscellaneous_info_tracker">Reportar en vivo al UTM utilizando el dispositivo Dronfies EASYID</string>
     <string name="miscellaneous_load_dat_file_message">Esta funcionalidad le permite cargar el archivo .DAT asociado a la operación en cuestión, para así extraer de él la telemetría registrada por el dron, y subirla al UTM.</string>
     <string name="miscellaneous_select_utm_to_register">Selecciona el UTM en el que te quieres registrar</string>
+    <string name="miscellaneous_wait_until_op_created">Espere mientras se crea la operación. Este proceso suele tardar unos 30 segundos.</string>
+
+
 
     <string name="question_account">¿No tienes una cuenta?</string>
     <string name="question_delete_operation">¿Está seguro que desea borrar la operación \'%s\'?</string>
@@ -67,9 +70,11 @@
     <string name="str_change_user_type">Cambiar Tipo de Usuario</string>
     <string name="str_change_username">Cambiar Nombre de Usuario</string>
     <string name="str_change_utm_endpoint">Cambiar UTM endpoint</string>
+    <string name="str_choose_transmission_system">Elija el sistema de transmisión</string>
     <string name="str_confirm">Confirmar</string>
     <string name="str_contact_phone">Telefono de contacto</string>
     <string name="str_coordinates">Coordenadas</string>
+    <string name="str_creating_operation">Creando Operación</string>
     <string name="str_current_position">Posición Actual</string>
     <string name="str_dat_file_uploaded">Archivo Dat Subido!</string>
     <string name="str_define_manually">Definir Manualmente</string>
@@ -89,7 +94,6 @@
     <string name="str_error">Error</string>
     <string name="str_error_reporting_position">Error Reporting Position</string>
     <string name="str_establish">Establecer</string>
-    <string name="str_fly_or_pilot_position">¿Volar o Posición del Piloto?</string>
     <string name="str_free_flight">Vuelo libre</string>
     <string name="str_go_fly">Ir a Volar</string>
     <string name="str_google_maps">Google Maps</string>
@@ -155,11 +159,12 @@
     <string name="str_load_more">Cargar Más</string>
     <string name="str_connection_error">Error de Conexión</string>
     <string name="str_select">Seleccionar</string>
-    <string name="str_express_operation">Operación Rápida</string>
-    <string name="str_express_radius">Radio Express (Km)</string>
-    <string name="str_express_duration">Duración Express (Horas)</string>
-    <string name="str_express_vehicle">Vehículo Express</string>
+    <string name="str_radius_km">Radio (Km)</string>
+    <string name="str_duration_hours">Duración (Horas)</string>
+    <string name="str_vehicle">Vehículo</string>
     <string name="express_vehicle_not_selected_title">Vehículo no seleccionado</string>
     <string name="express_vehicle_not_selected">Por favor seleccione un vehículo en las opciones, en donde se indica \"Vehículo Express\"</string>
-
+    <string name="str_tracker">Tracker</string>
+    <string name="str_instant_request">Solicitud rápida</string>
+    <string name="str_dji_drone">Dron DJI</string>
 </resources>

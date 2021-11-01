@@ -93,12 +93,12 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-            final MarkerOptions markerOptions = new MarkerOptions().position(latLng).draggable(true);
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(UIGoogleMapsUtils.GetMarkerBitmap(polygonColorRGB)));
-            markerOptions.anchor(0.5f, 0.5f);
-            mListMarkers.add(map.addMarker(markerOptions));
-            mListPolygonCoordinates.add(latLng);
-            updatePolygon();
+                final MarkerOptions markerOptions = new MarkerOptions().position(latLng).draggable(true);
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(UIGoogleMapsUtils.GetMarkerBitmap(polygonColorRGB)));
+                markerOptions.anchor(0.5f, 0.5f);
+                mListMarkers.add(map.addMarker(markerOptions));
+                mListPolygonCoordinates.add(latLng);
+                updatePolygon();
             }
         });
 
