@@ -176,5 +176,14 @@
     <string name="str_instant_request">Instant Request</string>
     <string name="str_fly_or_pilot_position">Fly or Pilot Position?</string>
     <string name="miscellaneous_fly_or_report_pilot_position">If you want to use the app to fly the drone, please select the option \'Go FLy\'. On the other hand, if what you want is just report to the UTM the pilot position, click the button \'Report Pilot Position\'.</string>
+    <string name="title_activity_test">Test</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
 </resources>
