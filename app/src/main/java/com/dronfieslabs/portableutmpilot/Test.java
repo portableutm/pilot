@@ -170,6 +170,7 @@ public class Test extends AppCompatActivity {
         });
     }
 
+
     /* ============================ Thread to Create Bluetooth Connection =================================== */
     public static class CreateConnectThread extends Thread {
 
