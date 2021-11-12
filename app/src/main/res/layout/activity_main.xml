@@ -101,6 +101,16 @@
                 android:textSize="20sp" />
 
             <Button
+                android:id="@+id/button_test"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/rounded_button_white"
+                android:text="@string/str_tracker"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <Button
                 android:id="@+id/button_settings"
                 android:layout_width="200dp"
                 android:layout_height="60dp"
@@ -110,15 +120,6 @@
                 android:textColor="@color/white"
                 android:textSize="20sp"/>
 
-            <Button
-                android:id="@+id/button_test"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/rounded_button_white"
-                android:text="TEST"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
         </LinearLayout>
 
         <!--##################################################################################-->

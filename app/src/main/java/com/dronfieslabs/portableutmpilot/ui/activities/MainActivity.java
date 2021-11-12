@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UIGenericUtils.GoToActivity(MainActivity.this, Test.class);
+                UIGenericUtils.GoToActivity(MainActivity.this, TrackerActivity.class);
             }
         });
     }

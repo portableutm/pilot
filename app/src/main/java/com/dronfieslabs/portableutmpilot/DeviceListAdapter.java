@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dronfieslabs.portableutmpilot.ui.activities.TrackerActivity;
+
 import java.util.List;
 
 public class DeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -52,7 +54,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         itemHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context,Test.class);
+                Intent intent = new Intent(context, TrackerActivity.class);
                 // Send device details to the MainActivity
                 intent.putExtra("deviceName", deviceInfoModel.getDeviceName());
                 intent.putExtra("deviceAddress",deviceInfoModel.getDeviceHardwareAddress());

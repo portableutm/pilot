@@ -50,6 +50,8 @@
             android:label="@string/title_activity_test"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SelectDeviceActivity"/>
+        <activity android:name=".ui.activities.TrackerActivity"/>
+
 
         <activity android:name=".ui.activities.SignUpActivity" />
         <activity

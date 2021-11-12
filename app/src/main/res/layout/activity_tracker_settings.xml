@@ -24,25 +24,6 @@
         <!--************************* PLATE NUMBER  *************************-->
         <!--*****************************************************************-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Plate Number"
-                android:textSize="12dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="12345678"
-                android:textSize="16dp" />
-        </LinearLayout>
-
         <!--************************* UTM ENDPOINT  *************************-->
         <!--*****************************************************************-->
         <LinearLayout
@@ -76,13 +57,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Latitude"
+                android:text="Username"
                 android:textSize="12dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="-34.1568135"
+                android:text="piloto"
                 android:textSize="16dp" />
         </LinearLayout>
 
@@ -95,37 +76,19 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Longitude"
+                android:text="Password"
                 android:textSize="12dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="-56.3958667"
+                android:text="piloto"
                 android:textSize="16dp" />
         </LinearLayout>
 
 
         <!--**************************** STATUS  ****************************-->
         <!--*****************************************************************-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Status"
-                android:textSize="12dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="NOT SENDING"
-                android:textSize="16dp" />
-        </LinearLayout>
 
         <!--************************* GO FLY BUTTON *************************-->
         <!--*****************************************************************-->
@@ -136,12 +99,12 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_go_fly"
+                android:id="@+id/button_save_settings"
                 style="@style/RaisedButton"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:text="@string/str_go_fly" />
+                android:text="@string/str_save" />
 
         </LinearLayout>
 
@@ -149,26 +112,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_connect"
-                style="@style/RaisedButton"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:text="select tracker" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_connect2"
-                style="@style/RaisedButton"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:layout_weight="1"
-                android:text="Tracker settings" />
-
-        </LinearLayout>
+            android:orientation="horizontal"/>
 
     </LinearLayout>
 
