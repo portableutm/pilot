@@ -4,17 +4,25 @@
     package="com.dronfieslabs.portableutmpilot">
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:name=".SetupApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
-        <activity android:name=".ui.activities.SignUpActivity"></activity>
+        <activity
+            android:name=".ui.activities.FlyWithTrackerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/LightStyle" />
+        <activity
+            android:name=".ui.activities.TrackerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/LightStyle" />
+        <activity android:name=".ui.activities.SignUpActivity" />
         <activity
             android:name=".ui.activities.ReportDevicePositionActivity"
             android:screenOrientation="portrait"
@@ -78,7 +86,7 @@
             android:theme="@style/LightStyle" /> <!-- GOOGLE MAPS SDK -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDt0p1-KH8EX7BdR3eukNwV6E1GnzMRp8w" />
+            android:value="AIzaSyCfnW6QqkMAL5X1r-cVH7wLTom1UaQbqVQ" />
         <meta-data
             android:name="com.dji.sdk.API_KEY"
             android:value="b54e4588dded80d19e600cc0" />
@@ -95,12 +103,11 @@
         android:required="false" />
     <uses-feature
         android:name="android.hardware.usb.host"
-        android:required="false" />
-
+        android:required="false" /> <!-- <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> -->
     <uses-feature
         android:name="android.hardware.usb.accessory"
         android:required="true" />
-    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
