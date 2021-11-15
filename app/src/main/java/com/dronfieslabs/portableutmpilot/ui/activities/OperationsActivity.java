@@ -7,8 +7,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -26,16 +28,18 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import com.dronfieslabs.portableutmpilot.IGenericCallback;
 import com.dronfieslabs.portableutmpilot.R;
-import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.NoAuthenticatedException;
 import com.dronfies.portableutmandroidclienttest.entities.GPSCoordinates;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
@@ -192,18 +196,25 @@ public class OperationsActivity extends AppCompatActivity {
         UIGenericUtils.GoToActivity(OperationsActivity.this, AddOperationActivity.class);
     }
 
-    public void onClickGoFly(Operation operation){
-        Intent intent = new Intent(OperationsActivity.this, FlightActivity.class);
-        intent.putExtra("OPERATION_ID", operation.getId());
-        intent.putExtra("OPERATION_MAX_ALTITUDE", operation.getMaxAltitude());
-        // we do not pass the last coordinate, because the first and the last coordinate of the polygon are the same
-        String[] vecPolygonCoordinates = new String[operation.getPolygon().size() - 1];
-        for(int i = 0; i < operation.getPolygon().size() - 1; i++){
-            GPSCoordinates gpsCoordinates = operation.getPolygon().get(i);
-            vecPolygonCoordinates[i] = gpsCoordinates.getLatitude() + ";" + gpsCoordinates.getLongitude();
+    public void onClickDrone(Operation operation){
+        goToActivityPassingOperationData(FlightActivity.class, operation);
+    }
+
+    public void onClickFlyWithTracker(Operation operation){
+        if(!areWeConnectedToATracker()){
+            connectToTrackerAndGoToFlyWithTrackerActivity(operation);
+        }else{
+            goToActivityPassingOperationData(FlyWithTrackerActivity.class, operation);
         }
-        intent.putExtra("OPERATION_POLYGON", vecPolygonCoordinates);
-        startActivity(intent);
+    }
+
+    public void onClickReportPilotPosition(Operation operation){
+        UIGenericUtils.GoToActivity(
+            OperationsActivity.this,
+            ReportDevicePositionActivity.class,
+            Arrays.asList(Constants.OPERATION_ID_KEY),
+            Arrays.asList(operation.getId())
+        );
     }
 
     //-------------------------------------------------------------------------------------------------------------
@@ -211,6 +222,86 @@ public class OperationsActivity extends AppCompatActivity {
     //---------------------------------------------- PRIVATE METHODS ----------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
+
+    private void connectToTrackerAndGoToFlyWithTrackerActivity(Operation operation){
+        final AlertDialog[] alertDialog = {null};
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height);
+        linearLayout.setPadding(50, 50,50,50);
+        linearLayout.setLayoutParams(param);
+
+        ProgressBar progressBar = new ProgressBar(this);
+        LinearLayout.LayoutParams lyParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lyParams.gravity = Gravity.CENTER;
+        progressBar.setLayoutParams(lyParams);
+        linearLayout.addView(progressBar);
+
+        alertDialog[0] = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Select Tracker")
+                .setMessage("Wait a moment while the device discovers the trackers near around")
+                .setView(linearLayout)
+                .show();
+
+        new Thread(() -> {
+            try{
+                Thread.sleep(5000);
+            }catch (Exception ex){}
+            runOnUiThread(() -> {
+                linearLayout.removeView(progressBar);
+                alertDialog[0].setMessage("Select from the list the tracker you want to connect");
+                Button buttonTracker = new Button(new androidx.appcompat.view.ContextThemeWrapper(this, R.style.FlatButton), null, 0);
+                String tracker = "A5-335-229";
+                buttonTracker.setText("Tracker " + tracker);
+                buttonTracker.setOnClickListener(view -> {
+                    alertDialog[0].dismiss();
+                    onClickTracker(tracker, operation);
+                });
+                linearLayout.addView(buttonTracker);
+            });
+        }).start();
+    }
+
+    private void onClickTracker(String tracker, Operation operation){
+        // show alert dialog asking for the user to wait while we connect with the tracker
+        final AlertDialog[] alertDialog = {null};
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height);
+        linearLayout.setPadding(50, 50,50,50);
+        linearLayout.setLayoutParams(param);
+
+        ProgressBar progressBar = new ProgressBar(this);
+        LinearLayout.LayoutParams lyParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lyParams.gravity = Gravity.CENTER;
+        progressBar.setLayoutParams(lyParams);
+        linearLayout.addView(progressBar);
+
+        alertDialog[0] = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Connecting to Tracker")
+                .setMessage(String.format("Wait a moment while the device connects with the tracker '%s'", tracker))
+                .setView(linearLayout)
+                .show();
+
+        // we wait 5 seconds, we dismiss the alert dialog, and then we show a message to the user indicating the tracker is connected to the device
+        new Thread(() -> {
+            try{
+                Thread.sleep(5000);
+            }catch (Exception ex){}
+            runOnUiThread(() -> {
+                alertDialog[0].dismiss();
+                goToActivityPassingOperationData(FlyWithTrackerActivity.class, operation);
+            });
+        }).start();
+    }
+
+    private boolean areWeConnectedToATracker(){
+        return false;
+    }
 
     private void loadOperations(){
         // before loading the operations, we show a progress bar
@@ -448,7 +539,7 @@ public class OperationsActivity extends AppCompatActivity {
                             return;
                         }
                         // we ask to the user if he wants to fly with this app, or if he just want to send to the utm the pilot position
-                        askToTheUserIfHeWantsToFlyTheDroneWithOurAppOrJustReportPilotPosition(operation);
+                        openTrackerDronePilotAlertDialog(operation);
                     }
                 }else{
                     // if next action is null, it means that the user wants to see the details of the operation
@@ -499,7 +590,7 @@ public class OperationsActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent,"Choose File to Upload.."),PICK_DAT_FILE_REQUEST);
     }
 
-    private void askToTheUserIfHeWantsToFlyTheDroneWithOurAppOrJustReportPilotPosition(Operation operation){
+    private void openTrackerDronePilotAlertDialog(Operation operation){
         final LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
@@ -509,38 +600,91 @@ public class OperationsActivity extends AppCompatActivity {
         linearLayout.setPadding(50, 50,50,50);
         linearLayout.setLayoutParams(param);
 
-        LinearLayout.LayoutParams buttonParam = new LinearLayout.LayoutParams(width, height, weight);
-        buttonParam.setMargins(0,0,0,50);
-        Button buttonFly = new Button(new androidx.appcompat.view.ContextThemeWrapper(this, R.style.RaisedButton), null, 0);
-        buttonFly.setText(R.string.str_go_fly);
-        buttonFly.setLayoutParams(buttonParam);
-        linearLayout.addView(buttonFly);
-        buttonFly.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickGoFly(operation);
-            }
-        });
-
-        Button buttonPilotPosition = new Button(new androidx.appcompat.view.ContextThemeWrapper(this, R.style.RaisedButton), null, 0);
-        buttonPilotPosition.setText(R.string.str_report_pilot_position);
-        linearLayout.addView(buttonPilotPosition);
-        buttonPilotPosition.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UIGenericUtils.GoToActivity(
-                        OperationsActivity.this,
-                        ReportDevicePositionActivity.class,
-                        Arrays.asList(Constants.OPERATION_ID_KEY),
-                        Arrays.asList(operation.getId())
-                );
-            }
-        });
-
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle(R.string.str_fly_or_pilot_position)
-                .setMessage(getString(R.string.miscellaneous_fly_or_report_pilot_position))
+        AlertDialog alertDialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.str_choose_transmission_system))
                 .setView(linearLayout)
-                .show();
+                .create();
+
+        TextView textViewInfo = new TextView(this);
+
+        addOptionToTheDialog(
+                alertDialog,
+                linearLayout,
+                getString(R.string.str_tracker).toUpperCase(),
+                textViewInfo,
+                getString(R.string.miscellaneous_info_tracker),
+                (s1, s2) -> onClickFlyWithTracker(operation)
+        );
+        addOptionToTheDialog(
+                alertDialog,
+                linearLayout,
+                getString(R.string.str_dji_drone).toUpperCase(),
+                textViewInfo,
+                getString(R.string.miscellaneous_info_dji_drone),
+                (s1, s2) -> onClickDrone(operation)
+        );
+        addOptionToTheDialog(
+                alertDialog,
+                linearLayout,
+                getString(R.string.str_pilot).toUpperCase(),
+                textViewInfo,
+                getString(R.string.miscellaneous_info_pilot),
+                (s1, s2) -> onClickReportPilotPosition(operation)
+        );
+
+        linearLayout.addView(textViewInfo);
+
+        alertDialog.show();
+    }
+
+    private void addOptionToTheDialog(AlertDialog alertDialog, LinearLayout linearLayout, String optionText, TextView textViewInfo, String info, IGenericCallback callback){
+        RelativeLayout relativeLayoutOption = new RelativeLayout(this);
+        int dp50 = UIGenericUtils.ConvertDPToPX(this, 50);
+        int dp20 = UIGenericUtils.ConvertDPToPX(this, 20);
+        RelativeLayout.LayoutParams lyParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lyParams.setMargins(0, 0, 0, dp20);
+        relativeLayoutOption.setLayoutParams(lyParams);
+        relativeLayoutOption.setPadding(dp20, 0, dp20, 0);
+        relativeLayoutOption.setBackgroundColor(getColor(R.color.colorPrimary));
+        relativeLayoutOption.setBackground(getDrawable(R.drawable.rounded_button_color_primary_filled));
+
+        TextView textViewOption = new TextView(this);
+        RelativeLayout.LayoutParams lyParamsOption = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp50);
+        textViewOption.setLayoutParams(lyParamsOption);
+        textViewOption.setGravity(Gravity.CENTER);
+        textViewOption.setText(optionText);
+        textViewOption.setTypeface(textViewOption.getTypeface(), Typeface.BOLD);
+        textViewOption.setTextColor(getColor(R.color.white));
+        textViewOption.setOnClickListener(view -> {
+            alertDialog.dismiss();
+            callback.onResult("", "");
+        });
+        relativeLayoutOption.addView(textViewOption);
+
+        ImageView imageViewInfo = new ImageView(this);
+        RelativeLayout.LayoutParams lyParamsInfo = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp50);
+        lyParamsInfo.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        imageViewInfo.setLayoutParams(lyParamsInfo);
+        imageViewInfo.setImageDrawable(getDrawable(R.drawable.ic_baseline_info_24_white));
+        imageViewInfo.setOnClickListener(view -> {
+            textViewInfo.setText(info);
+        });
+        relativeLayoutOption.addView(imageViewInfo);
+
+        linearLayout.addView(relativeLayoutOption);
+    }
+
+    private void goToActivityPassingOperationData(Class activityClass, Operation operation){
+        Intent intent = new Intent(OperationsActivity.this, activityClass);
+        intent.putExtra(Constants.OPERATION_ID_KEY, operation.getId());
+        intent.putExtra(Constants.OPERATION_MAX_ALTITUDE_KEY, operation.getMaxAltitude());
+        // we do not pass the last coordinate, because the first and the last coordinate of the polygon are the same
+        String[] vecPolygonCoordinates = new String[operation.getPolygon().size() - 1];
+        for(int i = 0; i < operation.getPolygon().size() - 1; i++){
+            GPSCoordinates gpsCoordinates = operation.getPolygon().get(i);
+            vecPolygonCoordinates[i] = gpsCoordinates.getLatitude() + ";" + gpsCoordinates.getLongitude();
+        }
+        intent.putExtra(Constants.OPERATION_POLYGON_KEY, vecPolygonCoordinates);
+        startActivity(intent);
     }
 }

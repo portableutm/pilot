@@ -43,16 +43,15 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
-
         <activity
-            android:name=".Test"
-            android:exported="true"
-            android:label="@string/title_activity_test"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SelectDeviceActivity"/>
-        <activity android:name=".ui.activities.TrackerActivity"/>
-
-
+            android:name=".ui.activities.FlyWithTrackerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/LightStyle" />
+        <activity
+            android:name=".ui.activities.TrackerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/LightStyle" />
         <activity android:name=".ui.activities.SignUpActivity" />
         <activity
             android:name=".ui.activities.ReportDevicePositionActivity"
@@ -117,7 +116,7 @@
             android:theme="@style/LightStyle" /> <!-- GOOGLE MAPS SDK -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDt0p1-KH8EX7BdR3eukNwV6E1GnzMRp8w" />
+            android:value="AIzaSyCfnW6QqkMAL5X1r-cVH7wLTom1UaQbqVQ" />
         <meta-data
             android:name="com.dji.sdk.API_KEY"
             android:value="b54e4588dded80d19e600cc0" />
