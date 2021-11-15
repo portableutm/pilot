@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
+        android:extractNativeLibs="true"
         tools:replace="android:icon">
         <activity android:name=".ui.activities.SignUpActivity"></activity>
         <activity
