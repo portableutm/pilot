@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         if(vehicleId == ""){
             alertDialog.dismiss();
             showDialogExplainingToTheUserHeHasToSelectAVehicleToUseThisFeature();
+            return;
         }
         UtilsOps.getLocation(MainActivity.this, (latLng, errorMessage) -> {
             //CREATES THE OPERATION//
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     runOnUiThread(() -> {
                         alertDialog.dismiss();
-                        UIGenericUtils.ShowAlert(MainActivity.this, getString(R.string.express_vehicle_not_selected_title), getString(R.string.express_vehicle_not_selected));
+                        UIGenericUtils.ShowToast(MainActivity.this, String.format("Exception: %s", e.getMessage()));
                     });
                     e.printStackTrace();
                 }
