@@ -16,6 +16,7 @@ import com.dronfies.portableutmandroidclienttest.ExpressOperationData;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
+import com.dronfieslabs.portableutmpilot.Test;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
@@ -61,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onClickSettings(false);
+            }
+        });
+
+        //TODO: THIS IS A TEST BUTTON
+        Button test = findViewById(R.id.button_test);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UIGenericUtils.GoToActivity(MainActivity.this, TrackerActivity.class);
             }
         });
     }
