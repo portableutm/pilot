@@ -44,7 +44,7 @@
         android:usesCleartextTraffic="true"
         android:extractNativeLibs="true"
         tools:replace="android:icon">
-        <activity
+        
         <activity android:name=".SelectDeviceActivity"/>
             android:name=".ui.activities.FlyWithTrackerActivity"
             android:screenOrientation="portrait"
