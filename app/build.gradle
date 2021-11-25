@@ -140,6 +140,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
 
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:3.6'
