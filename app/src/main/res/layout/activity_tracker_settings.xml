@@ -5,7 +5,7 @@
     android:id="@+id/relative_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.TrackerActivity">
+    tools:context=".ui.activities.TrackerSettingsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -95,6 +95,25 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_vehicle"
+                android:textSize="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NombreDelVehiculo"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -106,13 +125,22 @@
                 android:layout_margin="20dp"
                 android:text="@string/str_save" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_connect"
+                style="@style/RaisedButton"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_weight="1"
+                android:text="@string/str_tracker" />
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal" />
 
     </LinearLayout>
 

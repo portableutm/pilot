@@ -11,7 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.dronfieslabs.portableutmpilot.ui.activities.TrackerActivity;
+import com.dronfieslabs.portableutmpilot.ui.activities.TrackerSettingsActivity;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class SelectDeviceActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-        Intent a = new Intent(this ,TrackerActivity.class);
+        Intent a = new Intent(this , TrackerSettingsActivity.class);
         startActivity(a);
         finish();
     }

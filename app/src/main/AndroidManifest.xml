@@ -43,13 +43,12 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
-        <activity
         <activity android:name=".SelectDeviceActivity"/>
             android:name=".ui.activities.FlyWithTrackerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LightStyle" />
         <activity
-            android:name=".ui.activities.TrackerActivity"
+            android:name=".ui.activities.TrackerSettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LightStyle" />
         <activity android:name=".ui.activities.SignUpActivity" />

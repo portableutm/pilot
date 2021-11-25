@@ -1,36 +1,43 @@
-package com.dronfieslabs.portableutmpilot;
+package com.dronfieslabs.portableutmpilot.ui.activities;
 
-import androidx.appcompat.app.AlertDialog;
+import static android.content.ContentValues.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.dronfieslabs.portableutmpilot.R;
+import com.dronfieslabs.portableutmpilot.SelectDeviceActivity;
+import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-import static android.content.ContentValues.TAG;
+public class TrackerSettingsActivity extends AppCompatActivity {
 
-public class Test extends AppCompatActivity {
+    private RelativeLayout mRelativeLayoutRoot;
+    private LinearLayout progressBar;
+    private Button mButtonConnect;
+    private Button mButtonSave;
 
     private String deviceName = null;
     private String deviceAddress;
@@ -45,28 +52,24 @@ public class Test extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_tracker_settings);
 
-        // UI Initialization
-        final Button buttonConnect = findViewById(R.id.buttonConnect);
-        final Toolbar toolbar = findViewById(R.id.toolbar);
-        final ProgressBar progressBar = findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
-        final TextView textViewInfo = findViewById(R.id.textViewInfo);
-        final Button buttonToggle = findViewById(R.id.buttonToggle);
-        buttonToggle.setEnabled(false);
-        final ImageView imageView = findViewById(R.id.imageView);
-        imageView.setBackgroundColor(Color.rgb(100, 100, 50));
+        mRelativeLayoutRoot = findViewById(R.id.relative_root);
+        mButtonConnect = findViewById(R.id.button_connect);
+        mButtonSave = findViewById(R.id.button_save_settings);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.str_tracker);
+
 
         // If a bluetooth device has been selected from SelectDeviceActivity
         deviceName = getIntent().getStringExtra("deviceName");
-        if (deviceName != null){
+        if (deviceName != null) {
             // Get the device address to make BT Connection
             deviceAddress = getIntent().getStringExtra("deviceAddress");
-            // Show progree and connection status
+            // Show progress and connection status
             toolbar.setSubtitle("Connecting to " + deviceName + "...");
-            progressBar.setVisibility(View.VISIBLE);
-            buttonConnect.setEnabled(false);
+            progressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
 
             /*
             This is the most important piece of code. When "deviceName" is found
@@ -74,31 +77,24 @@ public class Test extends AppCompatActivity {
             selected device (see the thread code below)
              */
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            if(bluetoothAdapter == null)
-            {
+            if (bluetoothAdapter == null) {
                 //Show a message that the device has no bluetooth adapter
                 Toast.makeText(getApplicationContext(), "Bluetooth Device Not Available", Toast.LENGTH_LONG).show();
-            }
-            else
-            {
-                if (bluetoothAdapter.isEnabled())
-                {
-                    createConnectThread = new CreateConnectThread(bluetoothAdapter,deviceAddress);
+            } else {
+                if (bluetoothAdapter.isEnabled()) {
+                    createConnectThread = new CreateConnectThread(bluetoothAdapter, deviceAddress);
                     createConnectThread.start();
-                }
-                else
-                {
+                } else {
                     //Ask to the user turn the bluetooth on
                     Intent turnBTon = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(turnBTon,1);
+                    startActivityForResult(turnBTon, 1);
                 }
             }
 
         }
-
-        /*
-        Second most important piece of Code. GUI Handler
-         */
+        /**
+         GUI Handler
+         **/
         handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg){
@@ -107,14 +103,11 @@ public class Test extends AppCompatActivity {
                         switch(msg.arg1){
                             case 1:
                                 toolbar.setSubtitle("Connected to " + deviceName);
-                                progressBar.setVisibility(View.GONE);
-                                buttonConnect.setEnabled(true);
-                                buttonToggle.setEnabled(true);
+                                mRelativeLayoutRoot.removeView(progressBar);
                                 break;
                             case -1:
                                 toolbar.setSubtitle("Device fails to connect");
-                                progressBar.setVisibility(View.GONE);
-                                buttonConnect.setEnabled(true);
+                                mRelativeLayoutRoot.removeView(progressBar);
                                 break;
                         }
                         break;
@@ -123,12 +116,10 @@ public class Test extends AppCompatActivity {
                         String arduinoMsg = msg.obj.toString(); // Read message from Arduino
                         switch (arduinoMsg.toLowerCase()){
                             case "led is turned on":
-                                imageView.setBackgroundColor(Color.rgb(0, 200, 50));
-                                textViewInfo.setText("Arduino Message : " + arduinoMsg);
+
                                 break;
                             case "led is turned off":
-                                imageView.setBackgroundColor(Color.rgb(100, 100, 50));
-                                textViewInfo.setText("Arduino Message : " + arduinoMsg);
+
                                 break;
                         }
                         break;
@@ -137,39 +128,50 @@ public class Test extends AppCompatActivity {
         };
 
         // Select Bluetooth Device
-        buttonConnect.setOnClickListener(new View.OnClickListener() {
+        mButtonConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Move to adapter list
-                Intent intent = new Intent(Test.this, SelectDeviceActivity.class);
+                Intent intent = new Intent(TrackerSettingsActivity.this, SelectDeviceActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
+                finish();
             }
         });
 
-        // Button to ON/OFF LED on Arduino Board
-        buttonToggle.setOnClickListener(new View.OnClickListener() {
+        // Save settings in the tracker
+        mButtonSave.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View view) {
-                String cmdText = null;
-                String btnState = buttonToggle.getText().toString().toLowerCase();
-                switch (btnState){
-                    case "turn on":
-                        buttonToggle.setText("Turn Off");
-                        // Command to turn on LED on Arduino. Must match with the command in Arduino code
-                        cmdText = "<turn on>";
-                        break;
-                    case "turn off":
-                        buttonToggle.setText("Turn On");
-                        // Command to turn off LED on Arduino. Must match with the command in Arduino code
-                        cmdText = "<turn off>";
-                        break;
-                }
-                // Send command to Arduino board
-                connectedThread.write(cmdText);
+            public void onClick(View view){
+                connectedThread.write("Hola");
             }
         });
+
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.back_toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.item_back){
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    //-------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------
+    //---------------------------------------------- ONCLICK METHODS ----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------
+
+    private void onClickGoFly(){
+        UIGenericUtils.GoToActivity(this, FlyWithTrackerActivity.class);
+    }
 
     /* ============================ Thread to Create Bluetooth Connection =================================== */
     public static class CreateConnectThread extends Thread {
@@ -272,7 +274,7 @@ public class Test extends AppCompatActivity {
                     String readMessage;
                     if (buffer[bytes] == '\n'){
                         readMessage = new String(buffer,0,bytes);
-                        Log.e("Arduino Message",readMessage);
+                        Log.e("Tracker Message",readMessage);
                         handler.obtainMessage(MESSAGE_READ,readMessage).sendToTarget();
                         bytes = 0;
                     } else {
@@ -306,13 +308,10 @@ public class Test extends AppCompatActivity {
     /* ============================ Terminate Connection at BackPress ====================== */
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         // Terminate Bluetooth Connection and close app
         if (createConnectThread != null){
             createConnectThread.cancel();
         }
-        Intent a = new Intent(Intent.ACTION_MAIN);
-        a.addCategory(Intent.CATEGORY_HOME);
-        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(a);
     }
 }

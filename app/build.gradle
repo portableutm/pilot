@@ -5,7 +5,7 @@ ext.versionMinor = 16
 ext.versionPatch = 0
 ext.versionClassifier = null
 ext.isSnapshot = false
-ext.minimumSdkVersion = 24
+ext.minimumSdkVersion = 26
 
 android {
     compileSdkVersion 30
@@ -142,7 +142,7 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:3.6'
+    implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:3.7'
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
     implementation 'androidx.navigation:navigation-ui:2.3.5'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {

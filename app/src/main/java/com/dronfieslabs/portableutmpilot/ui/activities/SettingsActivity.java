@@ -33,6 +33,7 @@ import com.dronfieslabs.portableutmpilot.BuildConfig;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
+import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
@@ -469,6 +470,9 @@ public class SettingsActivity extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
         onClickSelectDrone();
+    }
+    public void onClickTrackerSettings(View view) {
+        UIGenericUtils.GoToActivity(SettingsActivity.this, TrackerSettingsActivity.class);
     }
 
     //-------------------------------------------------------------------------------------------------------------
