@@ -1,20 +1,19 @@
 package com.dronfieslabs.portableutmpilot.ui.activities;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.dronfieslabs.portableutmpilot.R;
+import com.dronfieslabs.portableutmpilot.djiwrapper.DJISDKHelper;
 import com.dronfieslabs.portableutmpilot.services.geometry.MercatorProjection;
 import com.dronfieslabs.portableutmpilot.services.geometry.Point;
+import com.dronfieslabs.portableutmpilot.services.geometry.Polygon;
+import com.dronfieslabs.portableutmpilot.ui.utils.Alarm;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,26 +26,26 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FlyWithTrackerActivity extends AppCompatActivity {
 
     private enum EnumTrackerStatus {DISCONNECTED, CONNECTED, SENDING_POSITION}
 
-    private List<LatLng> TRACKER_POSITIONS = Arrays.asList(
-            new LatLng(-34.911982, -56.159723),
-            new LatLng(-34.912039, -56.159430),
-            new LatLng(-34.911835, -56.159377)
-    );
-
     // state
     private EnumTrackerStatus mTrackerStatus;
+    private int mOperationMaxAltitude;
     private List<LatLng> mOperationPolygon;
+    private Polygon mOperationPolygonMercator;
 
     // views
     private GoogleMap mMap;
     private Marker mMarkerTracker;
+    private RelativeLayout mRelativeLayoutAlarm;
+    private Button mButtonDismissAlarm;
+
+    // other variables
+    private Alarm mAlarm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +54,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
 
         // init state
         mTrackerStatus = EnumTrackerStatus.DISCONNECTED;
+        mOperationMaxAltitude = getIntent().getIntExtra(Constants.OPERATION_MAX_ALTITUDE_KEY, 0);
         mOperationPolygon = new ArrayList<>();
         List<Point> listVertices = new ArrayList<>();
         for(String str : getIntent().getStringArrayExtra(Constants.OPERATION_POLYGON_KEY)){
@@ -63,6 +63,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
             mOperationPolygon.add(new LatLng(lat, lng));
             listVertices.add(Point.newPoint(MercatorProjection.convertLngToX(lng), MercatorProjection.convertLatToY(lat)));
         }
+        mOperationPolygonMercator = Polygon.newPolygon(listVertices);
 
         // views binding
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -73,6 +74,35 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
                 onMapReady2(googleMap);
             }
         });
+        mRelativeLayoutAlarm = findViewById(R.id.relative_layout_alarm);
+        mButtonDismissAlarm = findViewById(R.id.button_dismiss_alarm);
+        mButtonDismissAlarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickDismissAlarm();
+            }
+        });
+        ((Button)findViewById(R.id.button_right)).setOnClickListener(view -> onClickDirectionButton(0));
+        ((Button)findViewById(R.id.button_down)).setOnClickListener(view -> onClickDirectionButton(1));
+        ((Button)findViewById(R.id.button_left)).setOnClickListener(view -> onClickDirectionButton(2));
+        ((Button)findViewById(R.id.button_up)).setOnClickListener(view -> onClickDirectionButton(3));
+
+        // alarm
+        mAlarm = new Alarm(this, mRelativeLayoutAlarm, mButtonDismissAlarm, mOperationPolygonMercator, mOperationMaxAltitude);
+    }
+
+    @Override
+    protected void onPause() {
+        // if playing, stop both beeps
+        mAlarm.stopBeep();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        // if playing, stop both beeps
+        mAlarm.stopBeep();
+        super.onDestroy();
     }
 
 
@@ -82,6 +112,34 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
 
+    private void onClickDismissAlarm(){
+        mAlarm.dismiss();
+    }
+
+    private void onClickDirectionButton(int direction){
+        switch (direction){
+            case 0:
+                mMarkerTracker.setPosition(new LatLng(mMarkerTracker.getPosition().latitude, mMarkerTracker.getPosition().longitude + 0.0001));
+                break;
+            case 1:
+                mMarkerTracker.setPosition(new LatLng(mMarkerTracker.getPosition().latitude - 0.0001, mMarkerTracker.getPosition().longitude));
+                break;
+            case 2:
+                mMarkerTracker.setPosition(new LatLng(mMarkerTracker.getPosition().latitude, mMarkerTracker.getPosition().longitude - 0.0001));
+                break;
+            case 3:
+                mMarkerTracker.setPosition(new LatLng(mMarkerTracker.getPosition().latitude + 0.0001, mMarkerTracker.getPosition().longitude));
+                break;
+            default:
+                UIGenericUtils.ShowToast(this, "UNKOWN");
+        }
+
+        double trackerLat = mMarkerTracker.getPosition().latitude;
+        double trackerLng = mMarkerTracker.getPosition().longitude;
+        double trackerAlt = 50;
+
+        mAlarm.updateVehiclePosition(trackerLat, trackerLng, trackerAlt);
+    }
 
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
@@ -108,6 +166,9 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
             final LatLngBounds latLngBounds = getPolygonLatLngBounds(mOperationPolygon);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 200));
         });
+
+        // draw the tracker
+        mMarkerTracker = mMap.addMarker(new MarkerOptions().position(getPolygonCenter(mOperationPolygon)));
     }
 
     private LatLngBounds getPolygonLatLngBounds(final List<LatLng> polygon) {
@@ -118,20 +179,13 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
         return centerBuilder.build();
     }
 
-    private void startShowingTrackerPosition(){
-        new Thread(() -> {
-            final int[] index = {0};
-            while(true){
-                runOnUiThread(() -> {
-                    if(mMarkerTracker != null) mMarkerTracker.remove();
-                    MarkerOptions markerOptions = new MarkerOptions().position(TRACKER_POSITIONS.get(index[0]));
-                    mMarkerTracker = mMap.addMarker(markerOptions);
-                });
-                try{
-                    Thread.sleep(5000);
-                }catch (Exception ex){}
-                index[0] = (index[0]+1)%TRACKER_POSITIONS.size();
-            }
-        }).start();
+    private LatLng getPolygonCenter(List<LatLng> polygon){
+        double totalLat = 0;
+        double totalLng = 0;
+        for(LatLng vertex : polygon){
+            totalLat += vertex.latitude;
+            totalLng += vertex.longitude;
+        }
+        return new LatLng(totalLat/polygon.size(), totalLng/polygon.size());
     }
 }

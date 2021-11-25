@@ -13,4 +13,58 @@
         tools:context=".ui.activities.FlyWithTrackerActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
+    <Button
+        android:id="@+id/button_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="RIGHT"/>
+    <Button
+        android:id="@+id/button_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="DOWN"/>
+    <Button
+        android:id="@+id/button_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:text="LEFT"/>
+    <Button
+        android:id="@+id/button_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="UP"/>
+
+
+
+    <!--#######################################################################################-->
+    <!--######################################## Alarm ########################################-->
+    <!--#######################################################################################-->
+    <RelativeLayout
+        android:id="@+id/relative_layout_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </RelativeLayout>
+
+    <!--#######################################################################################-->
+    <!--################################ Dismiss Alarm Button  ################################-->
+    <!--#######################################################################################-->
+
+    <Button
+        android:id="@+id/button_dismiss_alarm"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="40dp"
+        android:visibility="invisible"
+        android:text="@string/srt_dismiss"
+        style="@style/RaisedButton"/>
+
 </RelativeLayout>
