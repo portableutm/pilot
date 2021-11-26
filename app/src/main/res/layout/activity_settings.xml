@@ -324,10 +324,9 @@
                 android:padding="20dp">
 
                 <TextView
-                    android:id="@+id/tv_express_vehicle_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/str_tracker"
+                    android:text="@string/str_tracker_settings"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
 

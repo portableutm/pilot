@@ -2,6 +2,8 @@ package com.dronfieslabs.portableutmpilot.ui.activities;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
@@ -9,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,13 +22,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.SelectDeviceActivity;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
+import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,18 +45,27 @@ public class TrackerSettingsActivity extends AppCompatActivity {
 
     private RelativeLayout mRelativeLayoutRoot;
     private LinearLayout progressBar;
-    private Button mButtonConnect;
     private Button mButtonSave;
+    private TextView mEndpoint;
+    private TextView mUsername;
+    private TextView mPassword;
+    private TextView mVehicle;
+    private TextView mVehicleUvin;
+
+    private String vehicleId = null;
+    private String vehicleName = null;
 
     private String deviceName = null;
     private String deviceAddress;
     public static Handler handler;
     public static BluetoothSocket mmSocket;
-    public static ConnectedThread connectedThread;
+    public static ConnectedThread connectedThread = null;
     public static CreateConnectThread createConnectThread;
 
     private final static int CONNECTING_STATUS = 1; // used in bluetooth handler to identify message status
     private final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
+
+    public static final int REQUEST_CODE_SELECT_DRONE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +73,19 @@ public class TrackerSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tracker_settings);
 
         mRelativeLayoutRoot = findViewById(R.id.relative_root);
-        mButtonConnect = findViewById(R.id.button_connect);
         mButtonSave = findViewById(R.id.button_save_settings);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.str_tracker);
+        mEndpoint = findViewById(R.id.endpoint_tracker_input);
+        mUsername = findViewById(R.id.username_tracker_input);
+        mPassword = findViewById(R.id.password_tracker_input);
+        mVehicle = findViewById(R.id.vehicle_tracker_input);
+        mVehicleUvin = findViewById(R.id.vehicle_tracker_input2);
+
+        mEndpoint.setText(SharedPreferencesUtils.getUTMEndpoint(this));
+        mUsername.setText(SharedPreferencesUtils.getUsername(this));
+        mPassword.setText(SharedPreferencesUtils.getPassword(this));
 
 
         // If a bluetooth device has been selected from SelectDeviceActivity
@@ -127,23 +153,22 @@ public class TrackerSettingsActivity extends AppCompatActivity {
             }
         };
 
-        // Select Bluetooth Device
-        mButtonConnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Move to adapter list
-                Intent intent = new Intent(TrackerSettingsActivity.this, SelectDeviceActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                startActivity(intent);
-                finish();
-            }
-        });
 
         // Save settings in the tracker
         mButtonSave.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                connectedThread.write("Hola");
+                JSONObject settings = new JSONObject();
+                try {
+                    settings.put("endpoint",mEndpoint.getText());
+                    settings.put("username",mUsername.getText());
+                    settings.put("password",mPassword.getText());
+                    settings.put("vehicle",mVehicle.getText());
+                    connectedThread.write(settings.toString());
+                } catch (Exception e) {
+                    UIGenericUtils.ShowAlert(TrackerSettingsActivity.this, "Tracker not connected","Tracker is not connected", null);
+                    return;
+                }
             }
         });
 
@@ -162,6 +187,19 @@ public class TrackerSettingsActivity extends AppCompatActivity {
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE_SELECT_DRONE){
+            if(resultCode == RESULT_OK){
+                vehicleId = data.getStringExtra(SelectDroneActivity.PARAM_VEHICLE_ID_KEY);
+                vehicleName = data.getStringExtra(SelectDroneActivity.PARAM_VEHICLE_NAME_KEY);
+                mVehicle.setText(vehicleName);
+                mVehicleUvin.setText(vehicleId);
+            }
+        }
     }
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
@@ -288,12 +326,12 @@ public class TrackerSettingsActivity extends AppCompatActivity {
         }
 
         /* Call this from the main activity to send data to the remote device */
-        public void write(String input) {
+        public void write(String input) throws Exception {
             byte[] bytes = input.getBytes(); //converts entered String into bytes
             try {
                 mmOutStream.write(bytes);
             } catch (IOException e) {
-                Log.e("Send Error","Unable to send message",e);
+                throw new Exception("Could not connect to device");
             }
         }
 
@@ -313,5 +351,100 @@ public class TrackerSettingsActivity extends AppCompatActivity {
         if (createConnectThread != null){
             createConnectThread.cancel();
         }
+    }
+
+    public void onClickSelectDrone(View view){
+        Intent intent = new Intent(this, SelectDroneActivity.class);
+        if(vehicleId != null){
+            intent.putExtra(SelectDroneActivity.PARAM_VEHICLE_ID_KEY, vehicleId);
+        }
+        startActivityForResult(intent, REQUEST_CODE_SELECT_DRONE);
+    }
+
+    public void onClickEditUsername(View view){
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        float weight = 1.0f;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+        linearLayout.setPadding(45, 10,50,10);
+        linearLayout.setLayoutParams(param);
+        final EditText editTextExpressDuration = new EditText(this);
+        editTextExpressDuration.setText(mUsername.getText());
+        linearLayout.addView(editTextExpressDuration);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.str_change_username)
+                .setView(linearLayout)
+                .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String newUsername = editTextExpressDuration.getText().toString();
+                        mUsername.setText(newUsername);
+                    }
+                })
+                .setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
+
+    }
+
+    public void onClickEditPassword(View view){
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        float weight = 1.0f;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+        linearLayout.setPadding(45, 10,50,10);
+        linearLayout.setLayoutParams(param);
+        final EditText editTextExpressDuration = new EditText(this);
+        editTextExpressDuration.setText(mPassword.getText());
+        linearLayout.addView(editTextExpressDuration);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.change_password)
+                .setView(linearLayout)
+                .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String newPassword = editTextExpressDuration.getText().toString();
+                        mPassword.setText(newPassword);
+                    }
+                })
+                .setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
+
+    }
+
+    public void onClickEditEndpoint(View view){
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        float weight = 1.0f;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+        linearLayout.setPadding(45, 10,50,10);
+        linearLayout.setLayoutParams(param);
+        final EditText editTextExpressDuration = new EditText(this);
+        editTextExpressDuration.setText(mEndpoint.getText());
+        linearLayout.addView(editTextExpressDuration);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.str_change_utm_endpoint)
+                .setView(linearLayout)
+                .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String newDuration = editTextExpressDuration.getText().toString();
+                        mEndpoint.setText(newDuration);
+                    }
+                })
+                .setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
+
     }
 }

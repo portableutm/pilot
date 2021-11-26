@@ -90,8 +90,6 @@ public class SelectDeviceActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-        Intent a = new Intent(this , TrackerSettingsActivity.class);
-        startActivity(a);
         finish();
     }
 }

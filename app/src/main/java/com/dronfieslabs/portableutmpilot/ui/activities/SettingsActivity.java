@@ -33,6 +33,7 @@ import com.dronfieslabs.portableutmpilot.BuildConfig;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
+import com.dronfieslabs.portableutmpilot.SelectDeviceActivity;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
@@ -412,67 +413,13 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void onClickEditExpressVehicle(View view){
-//        final List<Vehicle>[] vehicles = new List[1];
-//        Thread th = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                DronfiesUssServices dronfies = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(SettingsActivity.this));
-//                try {
-//                     vehicles[0] = dronfies.getVehicles();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        });
-//        th.start();
-//        try {
-//            th.join();
-//            final AlertDialog[] alertDialog = {null};
-//
-//            final LinearLayout linearLayout = new LinearLayout(SettingsActivity.this);
-//            linearLayout.setOrientation(LinearLayout.VERTICAL);
-//            int width = LinearLayout.LayoutParams.MATCH_PARENT;
-//            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-//            float weight = 1.0f;
-//            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
-//            linearLayout.setPadding(45, 10,50,10);
-//            linearLayout.setLayoutParams(param);
-//
-//            try {
-//
-//                for (int i = 0 ; i < vehicles[0].size(); i++) {
-//                    final Button button = new Button(SettingsActivity.this);
-//                    button.setText(vehicles[0].get(i).getVehicleName());
-//                    final int ii = i;
-//                    button.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            SharedPreferencesUtils.updateExpressVehicle(SettingsActivity.this, vehicles[0].get(ii).getUvin());
-//                            textViewExpressVehicle.setText(SharedPreferencesUtils.getExpressVehicle(SettingsActivity.this));
-//                            alertDialog[0].dismiss();
-//                        }
-//                    });
-//                    linearLayout.addView(button);
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//
-//            int dp20 = UIGenericUtils.ConvertDPToPX(SettingsActivity.this, 20);
-//            linearLayout.setPadding(dp20, dp20, dp20, dp20);
-//
-//            alertDialog[0] = new AlertDialog.Builder(SettingsActivity.this)
-//                    .setTitle(R.string.str_express_vehicle)
-//                    .setView(linearLayout)
-//                    .show();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         onClickSelectDrone();
     }
     public void onClickTrackerSettings(View view) {
-        UIGenericUtils.GoToActivity(SettingsActivity.this, TrackerSettingsActivity.class);
+            // Move to adapter list
+            Intent intent = new Intent(SettingsActivity.this, SelectDeviceActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(intent);
     }
 
     //-------------------------------------------------------------------------------------------------------------

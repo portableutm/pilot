@@ -30,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
+            android:onClick="onClickEditEndpoint"
             android:orientation="vertical">
 
             <TextView
@@ -39,6 +40,7 @@
                 android:textSize="12dp" />
 
             <TextView
+                android:id="@+id/endpoint_tracker_input"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="https://demo.dronfieslabs.com:3000"
@@ -52,6 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
+            android:onClick="onClickEditUsername"
             android:orientation="vertical">
 
             <TextView
@@ -61,6 +64,7 @@
                 android:textSize="12dp" />
 
             <TextView
+                android:id="@+id/username_tracker_input"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="piloto"
@@ -71,6 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
+            android:onClick="onClickEditPassword"
             android:orientation="vertical">
 
             <TextView
@@ -80,6 +85,7 @@
                 android:textSize="12dp" />
 
             <TextView
+                android:id="@+id/password_tracker_input"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="piloto"
@@ -96,6 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
+            android:onClick="onClickSelectDrone"
             android:orientation="vertical">
 
             <TextView
@@ -105,10 +112,18 @@
                 android:textSize="12dp" />
 
             <TextView
+                android:id="@+id/vehicle_tracker_input"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="NombreDelVehiculo"
                 android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/vehicle_tracker_input2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NombreDelVehiculo"
+                android:textSize="12dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -124,15 +139,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:text="@string/str_save" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_connect"
-                style="@style/RaisedButton"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:layout_weight="1"
-                android:text="@string/str_tracker" />
 
         </LinearLayout>
 

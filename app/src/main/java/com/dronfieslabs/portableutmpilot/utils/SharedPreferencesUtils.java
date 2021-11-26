@@ -17,6 +17,7 @@ public class SharedPreferencesUtils {
     private static final String EXPRESS_RADIUS = "EXPRESS_RADIUS";
     private static final String EXPRESS_DURATION = "EXPRESS_DURATION";
     private static final String EXPRESS_VEHICLE = "EXPRESS_VEHICLE";
+    private static final String TRACKER_VEHICLE = "TRACKER_VEHICLE";
 
 
     // this method save into the sharedpreferences the string that represents the locale used by the app
@@ -116,6 +117,18 @@ public class SharedPreferencesUtils {
     public static String getExpressVehicle(Context context){
         SharedPreferences sharedPreferences = getSharedPreferences(context);
         return sharedPreferences.getString(EXPRESS_VEHICLE, "");
+    }
+
+    public static void updateTrackerVehicle(Context context, String newVehicle){
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(TRACKER_VEHICLE, newVehicle);
+        editor.commit();
+    }
+
+    public static String getTrackerVehicle(Context context){
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        return sharedPreferences.getString(TRACKER_VEHICLE, "");
     }
 
 
