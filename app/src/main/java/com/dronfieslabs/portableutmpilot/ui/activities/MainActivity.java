@@ -6,17 +6,19 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.dronfies.portableutmandroidclienttest.ExpressOperationData;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
-import com.dronfieslabs.portableutmpilot.Test;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
@@ -190,9 +192,28 @@ public class MainActivity extends AppCompatActivity {
     //--------------------------------------------------------------------------------------------------------------------
 
     private AlertDialog showDialogSayingToTheUserHeHasToWait30Seconds(){
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int dp20 = UIGenericUtils.ConvertDPToPX(this, 20);
+        linearLayout.setPadding(dp20, dp20, dp20, dp20);
+
+        TextView textViewWait = new TextView(this);
+        textViewWait.setText(R.string.miscellaneous_wait_until_op_created);
+        textViewWait.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+        textViewWait.setTypeface(textViewWait.getTypeface(), Typeface.BOLD);
+        linearLayout.addView(textViewWait);
+
+        int radius = SharedPreferencesUtils.getExpressRadius(this);
+        int duration = SharedPreferencesUtils.getExpressDuration(this);
+        int dp10 = UIGenericUtils.ConvertDPToPX(this, 20);
+        TextView textViewExplanation = new TextView(this);
+        textViewExplanation.setPadding(0, dp10, 0, 0);
+        textViewExplanation.setText(getString(R.string.miscellaneous_instant_request_explanation, radius, duration));
+        linearLayout.addView(textViewExplanation);
+
         AlertDialog alertDialog = new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle(R.string.str_creating_operation)
-                .setMessage(R.string.miscellaneous_wait_until_op_created)
+                .setView(linearLayout)
                 .setCancelable(false)
                 .create();
 
