@@ -8,13 +8,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
+import com.dronfies.portableutmandroidclienttest.NoAuthenticatedException;
+import com.dronfies.portableutmandroidclienttest.TrackerPosition;
+import com.dronfies.portableutmandroidclienttest.entities.IGenericCallback;
 import com.dronfieslabs.portableutmpilot.R;
-import com.dronfieslabs.portableutmpilot.djiwrapper.DJISDKHelper;
 import com.dronfieslabs.portableutmpilot.services.geometry.MercatorProjection;
 import com.dronfieslabs.portableutmpilot.services.geometry.Point;
 import com.dronfieslabs.portableutmpilot.services.geometry.Polygon;
 import com.dronfieslabs.portableutmpilot.ui.utils.Alarm;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
+import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,10 +38,11 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
     private enum EnumTrackerStatus {DISCONNECTED, CONNECTED, SENDING_POSITION}
 
     // state
-    private EnumTrackerStatus mTrackerStatus;
+    private String mOperationId;
     private int mOperationMaxAltitude;
     private List<LatLng> mOperationPolygon;
     private Polygon mOperationPolygonMercator;
+    private String mTrackerPositionRef;
 
     // views
     private GoogleMap mMap;
@@ -53,7 +59,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fly_with_tracker);
 
         // init state
-        mTrackerStatus = EnumTrackerStatus.DISCONNECTED;
+        mOperationId = getIntent().getStringExtra(Constants.OPERATION_ID_KEY);
         mOperationMaxAltitude = getIntent().getIntExtra(Constants.OPERATION_MAX_ALTITUDE_KEY, 0);
         mOperationPolygon = new ArrayList<>();
         List<Point> listVertices = new ArrayList<>();
@@ -82,10 +88,8 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
                 onClickDismissAlarm();
             }
         });
-        ((Button)findViewById(R.id.button_right)).setOnClickListener(view -> onClickDirectionButton(0));
-        ((Button)findViewById(R.id.button_down)).setOnClickListener(view -> onClickDirectionButton(1));
-        ((Button)findViewById(R.id.button_left)).setOnClickListener(view -> onClickDirectionButton(2));
-        ((Button)findViewById(R.id.button_up)).setOnClickListener(view -> onClickDirectionButton(3));
+
+        startReceivingTrackerPositionUpdates();
 
         // alarm
         mAlarm = new Alarm(this, mRelativeLayoutAlarm, mButtonDismissAlarm, mOperationPolygonMercator, mOperationMaxAltitude);
@@ -102,6 +106,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
     protected void onDestroy() {
         // if playing, stop both beeps
         mAlarm.stopBeep();
+        disconnectSocket();
         super.onDestroy();
     }
 
@@ -114,31 +119,6 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
 
     private void onClickDismissAlarm(){
         mAlarm.dismiss();
-    }
-
-    private void onClickDirectionButton(int direction){
-        switch (direction){
-            case 0:
-                mMarkerTracker.setPosition(new LatLng(mMarkerTracker.getPosition().latitude, mMarkerTracker.getPosition().longitude + 0.0001));
-                break;
-            case 1:
-                mMarkerTracker.setPosition(new LatLng(mMarkerTracker.getPosition().latitude - 0.0001, mMarkerTracker.getPosition().longitude));
-                break;
-            case 2:
-                mMarkerTracker.setPosition(new LatLng(mMarkerTracker.getPosition().latitude, mMarkerTracker.getPosition().longitude - 0.0001));
-                break;
-            case 3:
-                mMarkerTracker.setPosition(new LatLng(mMarkerTracker.getPosition().latitude + 0.0001, mMarkerTracker.getPosition().longitude));
-                break;
-            default:
-                UIGenericUtils.ShowToast(this, "UNKOWN");
-        }
-
-        double trackerLat = mMarkerTracker.getPosition().latitude;
-        double trackerLng = mMarkerTracker.getPosition().longitude;
-        double trackerAlt = 50;
-
-        mAlarm.updateVehiclePosition(trackerLat, trackerLng, trackerAlt);
     }
 
     //-------------------------------------------------------------------------------------------------------------
@@ -187,5 +167,31 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
             totalLng += vertex.longitude;
         }
         return new LatLng(totalLat/polygon.size(), totalLng/polygon.size());
+    }
+
+    private void startReceivingTrackerPositionUpdates(){
+        final DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(FlyWithTrackerActivity.this));
+        try {
+            mTrackerPositionRef = dronfiesUssServices.connectToTrackerPositionUpdates(mOperationId, new IGenericCallback<TrackerPosition>() {
+                @Override
+                public void onCallbackExecution(TrackerPosition trackerPosition, String errorMessage) {
+                    if(errorMessage != null){
+                        runOnUiThread(() -> UIGenericUtils.ShowToast(FlyWithTrackerActivity.this, errorMessage));
+                        return;
+                    }
+                    runOnUiThread(() -> {
+                        mMarkerTracker.setPosition(new LatLng(trackerPosition.getLatitude(), trackerPosition.getLongitude()));
+                        mAlarm.updateVehiclePosition(trackerPosition.getLatitude(), trackerPosition.getLongitude(), trackerPosition.getAltitude());
+                    });
+                }
+            });
+        } catch (NoAuthenticatedException e) {
+            UIGenericUtils.ShowAlert(this, "Error", String.format("There was an error trying to connect to the backend. Please, exit this view and enter again [Error: %s]", e.getMessage()));
+        }
+    }
+
+    private void disconnectSocket(){
+        final DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(FlyWithTrackerActivity.this));
+        dronfiesUssServices.disconnectFromTrackerPositionUpdates(mTrackerPositionRef);
     }
 }

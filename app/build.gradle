@@ -5,7 +5,7 @@ ext.versionMinor = 16
 ext.versionPatch = 1
 ext.versionClassifier = null
 ext.isSnapshot = false
-ext.minimumSdkVersion = 24
+ext.minimumSdkVersion = 26
 
 android {
     compileSdkVersion 30
@@ -132,6 +132,11 @@ repositories {
 
 dependencies {
 
+    // socket.io
+    implementation ('io.socket:socket.io-client:1.0.0') {
+        exclude group: 'org.json', module: 'json'
+    }
+
     // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:28.3.1')
 
@@ -144,7 +149,7 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:3.6'
+    implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:3.8'
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
     implementation 'androidx.navigation:navigation-ui:2.3.5'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
