@@ -1,4 +1,4 @@
-package com.dronfieslabs.portableutmpilot;
+package com.dronfieslabs.portableutmpilot.ui.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -11,6 +11,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.dronfieslabs.portableutmpilot.DeviceInfoModel;
+import com.dronfieslabs.portableutmpilot.DeviceListAdapter;
+import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.ui.activities.TrackerSettingsActivity;
 import com.google.android.material.snackbar.Snackbar;
 

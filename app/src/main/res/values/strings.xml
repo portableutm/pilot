@@ -53,6 +53,7 @@
     <string name="miscellaneous_info_dji_drone">Report live to the UTM using this app to fly the drone</string>
     <string name="miscellaneous_info_pilot">Report live to the UTM the device position as information of the pilot position</string>
     <string name="miscellaneous_info_tracker">Report live to the UTM using a Dronfies EASYID device</string>
+    <string name="miscellaneous_instant_request_explanation">"Instant Request" will request authorization to fly around your position, within a radius of %d km and for %d h. Both the radius and the duration can be configured in the settings section.</string>
     <string name="miscellaneous_load_dat_file_message">This functionality allows you to load the .DAT file associated with the operation in question, in order to extract from it the telemetry registered by the drone, and upload it to the UTM.</string>
     <string name="miscellaneous_select_utm_to_register">Select the UTM in which you want to register</string>
     <string name="miscellaneous_wait_until_op_created">Wait while the operation is created. This process usually takes about 30 seconds.</string>

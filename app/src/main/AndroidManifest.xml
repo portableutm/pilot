@@ -42,8 +42,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
+        android:extractNativeLibs="true"
         tools:replace="android:icon">
-        <activity android:name=".SelectDeviceActivity"/>
+        <activity
+            android:name=".ui.activities.SelectDeviceActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/LightStyle" />
+        <activity
             android:name=".ui.activities.FlyWithTrackerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LightStyle" />

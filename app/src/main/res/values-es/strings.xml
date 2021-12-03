@@ -45,6 +45,7 @@
     <string name="miscellaneous_info_dji_drone">Reportar en vivo al UTM utilizando esta app como app de vuelo</string>
     <string name="miscellaneous_info_pilot">Reportar al UTM la posición de este dispositivo como información de ubicación del piloto</string>
     <string name="miscellaneous_info_tracker">Reportar en vivo al UTM utilizando el dispositivo Dronfies EASYID</string>
+    <string name="miscellaneous_instant_request_explanation">"Solicitud Rápida" solicitará autorización para volar alrededor de su posición, en un radio de %d km y durante %d h. Tanto el radio como la duración pueden ser configurados en la sección de settings.</string>
     <string name="miscellaneous_load_dat_file_message">Esta funcionalidad le permite cargar el archivo .DAT asociado a la operación en cuestión, para así extraer de él la telemetría registrada por el dron, y subirla al UTM.</string>
     <string name="miscellaneous_select_utm_to_register">Selecciona el UTM en el que te quieres registrar</string>
     <string name="miscellaneous_wait_until_op_created">Espere mientras se crea la operación. Este proceso suele tardar unos 30 segundos.</string>

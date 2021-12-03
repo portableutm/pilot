@@ -13,4 +13,29 @@
         tools:context=".ui.activities.FlyWithTrackerActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
+
+
+    <!--#######################################################################################-->
+    <!--######################################## Alarm ########################################-->
+    <!--#######################################################################################-->
+    <RelativeLayout
+        android:id="@+id/relative_layout_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </RelativeLayout>
+
+    <!--#######################################################################################-->
+    <!--################################ Dismiss Alarm Button  ################################-->
+    <!--#######################################################################################-->
+
+    <Button
+        android:id="@+id/button_dismiss_alarm"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="40dp"
+        android:visibility="invisible"
+        android:text="@string/srt_dismiss"
+        style="@style/RaisedButton"/>
+
 </RelativeLayout>

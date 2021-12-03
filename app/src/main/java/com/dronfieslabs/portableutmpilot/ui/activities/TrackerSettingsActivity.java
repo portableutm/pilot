@@ -5,7 +5,6 @@ import static android.content.ContentValues.TAG;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
 import android.bluetooth.BluetoothAdapter;
@@ -29,11 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dronfieslabs.portableutmpilot.R;
-import com.dronfieslabs.portableutmpilot.SelectDeviceActivity;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
