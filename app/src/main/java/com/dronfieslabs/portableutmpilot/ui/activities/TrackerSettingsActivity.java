@@ -27,15 +27,22 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dronfies.portableutmandroidclienttest.Directory;
+import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
+import com.dronfies.portableutmandroidclienttest.Tracker;
+import com.dronfies.portableutmandroidclienttest.User;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
+import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.UUID;
 
 public class TrackerSettingsActivity extends AppCompatActivity {
@@ -43,14 +50,12 @@ public class TrackerSettingsActivity extends AppCompatActivity {
     private RelativeLayout mRelativeLayoutRoot;
     private LinearLayout progressBar;
     private Button mButtonSave;
-    private TextView mEndpoint;
     private TextView mUsername;
     private TextView mPassword;
-    private TextView mVehicle;
-    private TextView mVehicleUvin;
 
-    private String vehicleId = null;
-    private String vehicleName = null;
+    final private int INTENT_REGISTER_TRACKER = 2;
+
+    private String tracker_id;
 
     private String deviceName = null;
     private String deviceAddress;
@@ -62,8 +67,6 @@ public class TrackerSettingsActivity extends AppCompatActivity {
     private final static int CONNECTING_STATUS = 1; // used in bluetooth handler to identify message status
     private final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
 
-    public static final int REQUEST_CODE_SELECT_DRONE = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,16 +74,14 @@ public class TrackerSettingsActivity extends AppCompatActivity {
 
         mRelativeLayoutRoot = findViewById(R.id.relative_root);
         mButtonSave = findViewById(R.id.button_save_settings);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.str_tracker);
-        mEndpoint = findViewById(R.id.endpoint_tracker_input);
+
         mUsername = findViewById(R.id.username_tracker_input);
         mPassword = findViewById(R.id.password_tracker_input);
-        mVehicle = findViewById(R.id.vehicle_tracker_input);
-        mVehicleUvin = findViewById(R.id.vehicle_tracker_input2);
 
-        mEndpoint.setText(SharedPreferencesUtils.getUTMEndpoint(this));
         mUsername.setText(SharedPreferencesUtils.getUsername(this));
         mPassword.setText(SharedPreferencesUtils.getPassword(this));
 
@@ -91,7 +92,7 @@ public class TrackerSettingsActivity extends AppCompatActivity {
             // Get the device address to make BT Connection
             deviceAddress = getIntent().getStringExtra("deviceAddress");
             // Show progress and connection status
-            toolbar.setSubtitle("Connecting to " + deviceName + "...");
+            toolbar.setSubtitle(getString(R.string.connecting_to) + deviceName + "...");
             progressBar = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
 
             /*
@@ -129,22 +130,29 @@ public class TrackerSettingsActivity extends AppCompatActivity {
                                 mRelativeLayoutRoot.removeView(progressBar);
                                 break;
                             case -1:
-                                toolbar.setSubtitle("Device fails to connect");
+
+                                UIGenericUtils.ShowAlert(TrackerSettingsActivity.this, "Tracker not connected","Tracker is not connected",
+                                        new DialogInterface.OnDismissListener() {
+
+                                            @Override
+                                            public void onDismiss(DialogInterface dialog) {
+                                              finish();
+                                            }
+                                        } );
                                 mRelativeLayoutRoot.removeView(progressBar);
                                 break;
                         }
                         break;
 
                     case MESSAGE_READ:
-                        String arduinoMsg = msg.obj.toString(); // Read message from Arduino
-                        switch (arduinoMsg.toLowerCase()){
-                            case "led is turned on":
-
-                                break;
-                            case "led is turned off":
-
-                                break;
+                        String message = msg.obj.toString(); // Read message from Arduino
+                        String normalized = message.toLowerCase().substring(0,3);
+                        boolean isId = normalized.equals("id:");
+                        if (isId){
+                            tracker_id = message.substring(3);
+                            toolbar.setSubtitle("Tracker id: " + tracker_id);
                         }
+
                         break;
                 }
             }
@@ -155,17 +163,7 @@ public class TrackerSettingsActivity extends AppCompatActivity {
         mButtonSave.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                JSONObject settings = new JSONObject();
-                try {
-                    settings.put("endpoint",mEndpoint.getText());
-                    settings.put("username",mUsername.getText());
-                    settings.put("password",mPassword.getText());
-                    settings.put("vehicle",mVehicle.getText());
-                    connectedThread.write(settings.toString());
-                } catch (Exception e) {
-                    UIGenericUtils.ShowAlert(TrackerSettingsActivity.this, "Tracker not connected","Tracker is not connected", null);
-                    return;
-                }
+                linkTracker();
             }
         });
 
@@ -189,15 +187,13 @@ public class TrackerSettingsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE_SELECT_DRONE){
+        if(requestCode == INTENT_REGISTER_TRACKER){
             if(resultCode == RESULT_OK){
-                vehicleId = data.getStringExtra(SelectDroneActivity.PARAM_VEHICLE_ID_KEY);
-                vehicleName = data.getStringExtra(SelectDroneActivity.PARAM_VEHICLE_NAME_KEY);
-                mVehicle.setText(vehicleName);
-                mVehicleUvin.setText(vehicleId);
+                linkTracker();
             }
         }
     }
+
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
     //---------------------------------------------- ONCLICK METHODS ----------------------------------------------
@@ -260,7 +256,12 @@ public class TrackerSettingsActivity extends AppCompatActivity {
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
             connectedThread = new ConnectedThread(mmSocket);
-            connectedThread.run();
+            connectedThread.start();
+            try {
+                connectedThread.write("retrieveId");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         // Closes the client socket and causes the thread to finish.
@@ -350,13 +351,6 @@ public class TrackerSettingsActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickSelectDrone(View view){
-        Intent intent = new Intent(this, SelectDroneActivity.class);
-        if(vehicleId != null){
-            intent.putExtra(SelectDroneActivity.PARAM_VEHICLE_ID_KEY, vehicleId);
-        }
-        startActivityForResult(intent, REQUEST_CODE_SELECT_DRONE);
-    }
 
     public void onClickEditUsername(View view){
         final LinearLayout linearLayout = new LinearLayout(this);
@@ -415,33 +409,89 @@ public class TrackerSettingsActivity extends AppCompatActivity {
                 .show();
 
     }
+    boolean getTrackerConfigurationFromInstance(JSONObject settings) throws Exception {
+        boolean found = false;
 
-    public void onClickEditEndpoint(View view){
-        final LinearLayout linearLayout = new LinearLayout(this);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        float weight = 1.0f;
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
-        linearLayout.setPadding(45, 10,50,10);
-        linearLayout.setLayoutParams(param);
-        final EditText editTextExpressDuration = new EditText(this);
-        editTextExpressDuration.setText(mEndpoint.getText());
-        linearLayout.addView(editTextExpressDuration);
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.str_change_utm_endpoint)
-                .setView(linearLayout)
-                .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String newDuration = editTextExpressDuration.getText().toString();
-                        mEndpoint.setText(newDuration);
-                    }
-                })
-                .setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                })
-                .show();
+        String user = SharedPreferencesUtils.getUsername(TrackerSettingsActivity.this);
+        String pass = SharedPreferencesUtils.getPassword(TrackerSettingsActivity.this);
 
+        DronfiesUssServices api = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(TrackerSettingsActivity.this));
+        api.login_sync(user,pass);
+        User userInfo = api.getUserInfo();
+        settings.put("name",userInfo.getFirstName());
+        settings.put("surname", userInfo.getLastName());
+        settings.put("mail",userInfo.getEmail());
+
+        Tracker instance = api.getTrackerInformation(tracker_id);
+        if ( instance != null ) {
+            found = true;
+            settings.put("endpoint",SharedPreferencesUtils.getUTMEndpoint(TrackerSettingsActivity.this));
+            settings.put("uvin", instance.vehicle.getUvin());
+        } else {
+            DronfiesUssServices apiGlobal = UtilsOps.getDronfiesUssServices(getResources().getString(R.string.portableUTMMainEndpoint));
+            apiGlobal.login_sync(user,pass);
+            Tracker global = apiGlobal.getTrackerInformation(tracker_id);
+            if ( global != null ) {
+                found = true;
+                List<Directory> dir = global.getDirectory();
+                settings.put("endpoint",dir.get(0).getEndpoint());
+                settings.put("uvin", dir.get(0).getUvin());
+            }
+        }
+        return found;
     }
+
+    private void linkTracker(){
+        final LinearLayout spin = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
+        JSONObject settings = new JSONObject();
+        try {
+            settings.put("username",mUsername.getText());
+            settings.put("password",mPassword.getText());
+
+            Thread th = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try  {
+                        if ( getTrackerConfigurationFromInstance(settings) ){
+                            connectedThread.write(settings.toString());
+                            runOnUiThread(() ->mRelativeLayoutRoot.removeView(spin));
+                            runOnUiThread(()->UIGenericUtils.ShowErrorAlertWithOkButton(TrackerSettingsActivity.this,
+                                    getString(R.string.link_sucess), getString(R.string.link_sucess_msg), getString(R.string.ok),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            finish();
+                                        }
+                                    }));
+                        } else {
+                            runOnUiThread(() ->mRelativeLayoutRoot.removeView(spin));
+                            runOnUiThread(() -> UIGenericUtils.ShowConfirmationAlert(TrackerSettingsActivity.this,
+                                    getString(R.string.tracker_not_registered),getString(R.string.tracker_not_registered_msg),
+                                    getString(R.string.str_register_tracker), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent intent = new Intent(TrackerSettingsActivity.this, TrackerRegister.class);
+                                            Bundle b = new Bundle();
+                                            b.putString("tracker_id", tracker_id);
+                                            intent.putExtras(b);
+                                            startActivityForResult(intent, INTENT_REGISTER_TRACKER);
+                                        }
+                                    }, getString(R.string.str_cancel)));
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        runOnUiThread(() ->mRelativeLayoutRoot.removeView(spin));
+                        runOnUiThread(()->UIGenericUtils.ShowAlert(TrackerSettingsActivity.this, "Error!",e.getMessage(), null));
+                        return;
+                    }
+                }
+            });
+            th.start();
+        } catch (Exception e) {
+            UIGenericUtils.ShowAlert(TrackerSettingsActivity.this, "Error!",e.getMessage(), null);
+            return;
+        }
+    }
+
 }

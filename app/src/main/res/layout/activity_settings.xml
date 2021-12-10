@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,42 +33,42 @@
                 android:layout_margin="20dp"
                 android:text="@string/str_language"
                 android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="onClickEditLanguage"
                 android:orientation="vertical"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:paddingBottom="20dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground"
-                android:onClick="onClickEditLanguage">
+                android:paddingBottom="20dp">
 
                 <TextView
                     android:id="@+id/tv_language_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/str_language"
-                    android:textSize="18sp"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/tv_language_data"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="English"
-                    android:textSize="16sp"
-                    android:textColor="@color/gray"/>
+                    android:textColor="@color/gray"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/gray_light"/>
+                android:background="@color/gray_light" />
 
             <!--########################################################################################-->
             <!--######################################### UTM  #########################################-->
@@ -79,8 +80,8 @@
                 android:layout_margin="20dp"
                 android:text="UTM"
                 android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -95,118 +96,119 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textSize="18sp"
+                    android:text="@string/str_enable"
                     android:textColor="@color/black"
-                    android:text="@string/str_enable" />
+                    android:textSize="18sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_compat_utm_enable"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0"/>
+                    android:layout_weight="0" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackground"
-                android:onClick="onClickEditUTMEndpoint">
+                android:onClick="onClickEditUTMEndpoint"
+                android:orientation="vertical"
+                android:padding="20dp">
 
                 <TextView
                     android:id="@+id/tv_utm_endpoint_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/str_utm_endpoint"
-                    android:textSize="18sp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/text_view_utm_endpoint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColor="@color/gray"/>
+                    android:textColor="@color/gray"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackground"
-                android:onClick="onClickEditUsername">
+                android:onClick="onClickEditUsername"
+                android:orientation="vertical"
+                android:padding="20dp">
 
                 <TextView
                     android:id="@+id/tv_username_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/str_username"
-                    android:textSize="18sp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/text_view_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColor="@color/gray"/>
+                    android:textColor="@color/gray"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackground"
-                android:onClick="onClickEditPassword">
+                android:onClick="onClickEditPassword"
+                android:orientation="vertical"
+                android:padding="20dp">
 
                 <TextView
                     android:id="@+id/tv_password_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/str_password"
-                    android:textSize="18sp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/text_view_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
+                    android:inputType="textPassword"
                     android:textColor="@color/gray"
-                    android:inputType="textPassword"/>
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingBottom="20dp"
-                android:gravity="center">
+                android:paddingBottom="20dp">
+
                 <androidx.appcompat.widget.AppCompatButton
+                    style="@style/FlatButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/str_test_connection"
-                    style="@style/FlatButton"
-                    android:onClick="onClickTestConnection"/>
+                    android:onClick="onClickTestConnection"
+                    android:text="@string/str_test_connection" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/gray_light"/>
+                android:background="@color/gray_light" />
 
             <!--########################################################################################-->
             <!--################################### Instant Request  ###################################-->
@@ -218,8 +220,8 @@
                 android:layout_margin="20dp"
                 android:text="@string/str_instant_request"
                 android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -291,7 +293,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/str_vehicle"
                     android:textColor="@color/black"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/text_view_express_vehicle"
@@ -344,8 +346,8 @@
                 android:layout_margin="20dp"
                 android:text="@string/str_about"
                 android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -359,22 +361,22 @@
                     android:id="@+id/tv_version_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:text="@string/str_version"
                     android:textColor="@color/black"
-                    android:text="@string/str_version" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/tv_version_data"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColor="@color/gray"/>
+                    android:textColor="@color/gray"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/gray_light"/>
+                android:background="@color/gray_light" />
 
         </LinearLayout>
     </ScrollView>

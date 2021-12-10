@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.TrackerSettingsActivity"
+    tools:context=".ui.activities.TrackerRegister"
     android:id="@+id/relative_root">
 
     <androidx.appcompat.widget.Toolbar
@@ -34,20 +34,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:onClick="onClickEditUsername"
+            android:background="#D8D8D8"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username"
+                android:text="Tracker ID"
                 android:textSize="12dp" />
 
             <TextView
-                android:id="@+id/username_tracker_input"
+                android:id="@+id/tracker_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="piloto"
+                android:text="trackerId"
                 android:textSize="16dp" />
         </LinearLayout>
 
@@ -55,21 +55,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:onClick="onClickEditPassword"
+            android:onClick="onClickEditVehicle"
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Password"
+                android:text="Vehicle"
                 android:textSize="12dp" />
 
             <TextView
-                android:id="@+id/password_tracker_input"
+                android:id="@+id/vehicle_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="piloto"
+                android:text="@string/str_select_drone"
                 android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/vehicle_uvin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp" />
         </LinearLayout>
 
 
@@ -86,12 +93,12 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_save_settings"
+                android:id="@+id/button_register"
                 style="@style/RaisedButton"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:text="@string/str_save" />
+                android:text="@string/str_register" />
 
         </LinearLayout>
 
