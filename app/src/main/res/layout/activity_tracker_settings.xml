@@ -30,6 +30,7 @@
 
         <!--**************************** LAT LNG ****************************-->
         <!--*****************************************************************-->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -91,7 +92,24 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:text="@string/str_save" />
+                android:text="@string/str_link" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_change_vehicle"
+                style="@style/RaisedButton"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:text="@string/str_change_vehicle"
+                android:textSize="12sp" />
 
         </LinearLayout>
 

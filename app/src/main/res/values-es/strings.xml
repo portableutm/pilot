@@ -170,7 +170,7 @@
     <string name="str_dji_drone">Dron DJI</string>
     <string name="str_fly_or_pilot_position">¿Volar o Posición del Piloto?</string>
     <string name="miscellaneous_fly_or_report_pilot_position">Si deseas utilizar esta aplicación para volar el dron, presiona el botón \'Ir a Volar\'. De lo contrario si lo único que deseas es utilizar la aplicación para reportar al UTM la posición del piloto, selecciona la opción \'Reportar Posición del Piloto\'.</string>
-    <string name="str_tracker_settings">Ajustes del Tracker</string>
+    <string name="str_tracker_settings">Ajustes del tracker</string>
     <string name="str_register_tracker">Registrar Tracker</string>
     <string name="str_register">Registro</string>
     <string name="tracker_not_registered">Tracker no registrado</string>
@@ -178,4 +178,7 @@
     <string name="link_sucess">Vinculación exitosa</string>
     <string name="link_sucess_msg">El tracker se encuentra ahora configurado</string>
     <string name="connecting_to">"Conectandose a : "</string>
+    <string name="str_link">Vincular</string>
+    <string name="str_change_vehicle">Cambiar vehículo</string>
+
 </resources>

@@ -36,7 +36,6 @@ import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -50,10 +49,12 @@ public class TrackerSettingsActivity extends AppCompatActivity {
     private RelativeLayout mRelativeLayoutRoot;
     private LinearLayout progressBar;
     private Button mButtonSave;
+    private Button mButtonChangeVehicle;
     private TextView mUsername;
     private TextView mPassword;
 
     final private int INTENT_REGISTER_TRACKER = 2;
+    final private int INTENT_CHANGE_VEHICLE = 3;
 
     private String tracker_id;
 
@@ -74,6 +75,7 @@ public class TrackerSettingsActivity extends AppCompatActivity {
 
         mRelativeLayoutRoot = findViewById(R.id.relative_root);
         mButtonSave = findViewById(R.id.button_save_settings);
+        mButtonChangeVehicle = findViewById(R.id.button_change_vehicle);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -166,6 +168,12 @@ public class TrackerSettingsActivity extends AppCompatActivity {
                 linkTracker();
             }
         });
+        mButtonChangeVehicle.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                changeVehicle();
+            }
+        });
 
     }
 
@@ -187,7 +195,7 @@ public class TrackerSettingsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == INTENT_REGISTER_TRACKER){
+        if(requestCode == INTENT_REGISTER_TRACKER || requestCode == INTENT_CHANGE_VEHICLE){
             if(resultCode == RESULT_OK){
                 linkTracker();
             }
@@ -427,16 +435,6 @@ public class TrackerSettingsActivity extends AppCompatActivity {
             found = true;
             settings.put("endpoint",SharedPreferencesUtils.getUTMEndpoint(TrackerSettingsActivity.this));
             settings.put("uvin", instance.vehicle.getUvin());
-        } else {
-            DronfiesUssServices apiGlobal = UtilsOps.getDronfiesUssServices(getResources().getString(R.string.portableUTMMainEndpoint));
-            apiGlobal.login_sync(user,pass);
-            Tracker global = apiGlobal.getTrackerInformation(tracker_id);
-            if ( global != null ) {
-                found = true;
-                List<Directory> dir = global.getDirectory();
-                settings.put("endpoint",dir.get(0).getEndpoint());
-                settings.put("uvin", dir.get(0).getUvin());
-            }
         }
         return found;
     }
@@ -492,6 +490,53 @@ public class TrackerSettingsActivity extends AppCompatActivity {
             UIGenericUtils.ShowAlert(TrackerSettingsActivity.this, "Error!",e.getMessage(), null);
             return;
         }
+    }
+
+    private void changeVehicle() {
+        boolean found = false;
+        final LinearLayout spin = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
+
+
+        String user = SharedPreferencesUtils.getUsername(TrackerSettingsActivity.this);
+        String pass = SharedPreferencesUtils.getPassword(TrackerSettingsActivity.this);
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DronfiesUssServices api = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(TrackerSettingsActivity.this));
+                    api.login_sync(user, pass);
+
+                    Tracker instance = null;
+                    instance = api.getTrackerInformation(tracker_id);
+                    if (instance != null) {
+                        runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
+                        Intent intent = new Intent(TrackerSettingsActivity.this, TrackerRegister.class);
+                        Bundle b = new Bundle();
+                        b.putString("tracker_id", tracker_id);
+                        b.putBoolean("isEdit", true);
+                        intent.putExtras(b);
+                        startActivityForResult(intent, INTENT_CHANGE_VEHICLE);
+                    } else {
+                        runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
+                        runOnUiThread(() -> UIGenericUtils.ShowConfirmationAlert(TrackerSettingsActivity.this,
+                                getString(R.string.tracker_not_registered), getString(R.string.tracker_not_registered_msg),
+                                getString(R.string.str_register_tracker), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(TrackerSettingsActivity.this, TrackerRegister.class);
+                                        Bundle b = new Bundle();
+                                        b.putString("tracker_id", tracker_id);
+                                        intent.putExtras(b);
+                                        startActivityForResult(intent, INTENT_REGISTER_TRACKER);
+                                    }
+                                }, getString(R.string.str_cancel)));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        th.start();
     }
 
 }

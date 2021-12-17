@@ -173,7 +173,7 @@
     <string name="express_vehicle_not_selected">Please go to setting and select a vehicle under "Express vehicle" input</string>
     <string name="str_uvin" translatable="false">id</string>
     <string name="str_tracker">Tracker</string>
-    <string name="str_tracker_settings">Tracker settings</string>
+    <string name="str_tracker_settings">Tracker Settings</string>
     <string name="str_dji_drone">DJI Drone</string>
     <string name="str_instant_request">Instant Request</string>
     <string name="str_fly_or_pilot_position">Fly or Pilot Position?</string>
@@ -187,5 +187,7 @@
     <string name="link_sucess">Link successful</string>
     <string name="link_sucess_msg">The tracker is now set up</string>
     <string name="connecting_to">"Connecting to : "</string>
+    <string name="str_link">Link</string>
+    <string name="str_change_vehicle">Change Vehicle</string>
 
 </resources>

@@ -14,7 +14,6 @@ import android.view.View;
 import com.dronfieslabs.portableutmpilot.DeviceInfoModel;
 import com.dronfieslabs.portableutmpilot.DeviceListAdapter;
 import com.dronfieslabs.portableutmpilot.R;
-import com.dronfieslabs.portableutmpilot.ui.activities.TrackerSettingsActivity;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -70,10 +69,12 @@ public class SelectDeviceActivity extends AppCompatActivity {
             if (pairedDevices.size() > 0) {
                 // There are paired devices. Get the name and address of each paired device.
                 for (BluetoothDevice device : pairedDevices) {
-                    String deviceName = device.getName();
-                    String deviceHardwareAddress = device.getAddress(); // MAC address
-                    DeviceInfoModel deviceInfoModel = new DeviceInfoModel(deviceName,deviceHardwareAddress);
-                    deviceList.add(deviceInfoModel);
+                    if (device.getName().contains("Tracker")){
+                        String deviceName = device.getName();
+                        String deviceHardwareAddress = device.getAddress(); // MAC address
+                        DeviceInfoModel deviceInfoModel = new DeviceInfoModel(deviceName,deviceHardwareAddress);
+                        deviceList.add(deviceInfoModel);
+                    }
                 }
                 // Display paired device using recyclerView
                 RecyclerView recyclerView = findViewById(R.id.recyclerViewDevice);

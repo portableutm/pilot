@@ -33,6 +33,8 @@ public class TrackerRegister extends AppCompatActivity {
     private String vehicleId = null;
     private String vehicleName = null;
 
+    private boolean isEdit = false;
+
     public static final int REQUEST_CODE_SELECT_DRONE = 1;
 
 
@@ -44,6 +46,7 @@ public class TrackerRegister extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         if(b != null)
             tracker_id = b.getString("tracker_id");
+            isEdit = b.getBoolean("isEdit", false);
 
         mTrackerId = findViewById(R.id.tracker_id);
         mTrackerId.setText(tracker_id);
@@ -53,11 +56,18 @@ public class TrackerRegister extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.str_register_tracker);
+        if (isEdit){
+            getSupportActionBar().setTitle(R.string.str_change_vehicle);
+        } else {
+            getSupportActionBar().setTitle(R.string.str_register_tracker);
+        }
 
         mRoot = findViewById(R.id.relative_root);
 
         mButtonRegister = findViewById(R.id.button_register);
+        if (isEdit) {
+            mButtonRegister.setText(getString(R.string.str_save));
+        }
         mButtonRegister.setOnClickListener(new View.OnClickListener() {
 
             @Override
