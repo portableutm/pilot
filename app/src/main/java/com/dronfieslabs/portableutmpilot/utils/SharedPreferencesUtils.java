@@ -83,16 +83,16 @@ public class SharedPreferencesUtils {
         return sharedPreferences.getBoolean(UTM_ENABLE_KEY, true);
     }
 
-    public static void updateExpressRadius(Context context, int newRadius){
+    public static void updateExpressRadius(Context context, float newRadius){
         SharedPreferences sharedPreferences = getSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(EXPRESS_RADIUS, newRadius);
+        editor.putFloat(EXPRESS_RADIUS, newRadius);
         editor.commit();
     }
 
-    public static int getExpressRadius(Context context){
+    public static float getExpressRadius(Context context){
         SharedPreferences sharedPreferences = getSharedPreferences(context);
-        return sharedPreferences.getInt(EXPRESS_RADIUS, 1);
+        return sharedPreferences.getFloat(EXPRESS_RADIUS, 0.5F);
     }
 
     public static void updateExpressDuration(Context context, int newDuration){

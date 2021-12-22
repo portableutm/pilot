@@ -1,8 +1,13 @@
 package com.dronfieslabs.portableutmpilot.ui.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -24,6 +29,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -46,7 +53,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
 
     // views
     private GoogleMap mMap;
-    private Marker mMarkerTracker;
+    private Marker mMarkerTracker = null;
     private RelativeLayout mRelativeLayoutAlarm;
     private Button mButtonDismissAlarm;
 
@@ -148,7 +155,6 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
         });
 
         // draw the tracker
-        mMarkerTracker = mMap.addMarker(new MarkerOptions().position(getPolygonCenter(mOperationPolygon)));
     }
 
     private LatLngBounds getPolygonLatLngBounds(final List<LatLng> polygon) {
@@ -171,6 +177,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
 
     private void startReceivingTrackerPositionUpdates(){
         final DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(FlyWithTrackerActivity.this));
+
         try {
             mTrackerPositionRef = dronfiesUssServices.connectToTrackerPositionUpdates(mOperationId, new IGenericCallback<TrackerPosition>() {
                 @Override
@@ -180,6 +187,8 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
                         return;
                     }
                     runOnUiThread(() -> {
+                        if (mMarkerTracker == null){mMarkerTracker = mMap.addMarker(new MarkerOptions().position(getPolygonCenter(mOperationPolygon)));}
+                        mMarkerTracker.setIcon(BitmapFromVector(FlyWithTrackerActivity.this, R.drawable.ic_dronetop));
                         mMarkerTracker.setPosition(new LatLng(trackerPosition.getLatitude(), trackerPosition.getLongitude()));
                         mAlarm.updateVehiclePosition(trackerPosition.getLatitude(), trackerPosition.getLongitude(), trackerPosition.getAltitude());
                     });
@@ -188,6 +197,29 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
         } catch (NoAuthenticatedException e) {
             UIGenericUtils.ShowAlert(this, "Error", String.format("There was an error trying to connect to the backend. Please, exit this view and enter again [Error: %s]", e.getMessage()));
         }
+    }
+
+
+    private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
+        // below line is use to generate a drawable.
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+
+        // below line is use to set bounds to our vector drawable.
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+
+        // below line is use to create a bitmap for our
+        // drawable which we have added.
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
+        // below line is use to add bitmap in our canvas.
+        Canvas canvas = new Canvas(bitmap);
+
+        // below line is use to draw our
+        // vector drawable in canvas.
+        vectorDrawable.draw(canvas);
+        Bitmap newB = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+        // after generating our bitmap we are returning our bitmap.
+        return BitmapDescriptorFactory.fromBitmap(newB);
     }
 
     private void disconnectSocket(){

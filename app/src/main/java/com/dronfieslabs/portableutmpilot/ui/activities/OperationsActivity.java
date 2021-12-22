@@ -224,80 +224,9 @@ public class OperationsActivity extends AppCompatActivity {
     //-------------------------------------------------------------------------------------------------------------
 
     private void connectToTrackerAndGoToFlyWithTrackerActivity(Operation operation){
-        final AlertDialog[] alertDialog = {null};
-        final LinearLayout linearLayout = new LinearLayout(this);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height);
-        linearLayout.setPadding(50, 50,50,50);
-        linearLayout.setLayoutParams(param);
-
-        ProgressBar progressBar = new ProgressBar(this);
-        LinearLayout.LayoutParams lyParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lyParams.gravity = Gravity.CENTER;
-        progressBar.setLayoutParams(lyParams);
-        linearLayout.addView(progressBar);
-
-        alertDialog[0] = new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Select Tracker")
-                .setMessage("Wait a moment while the device discovers the trackers near around")
-                .setView(linearLayout)
-                .show();
-
-        new Thread(() -> {
-            try{
-                Thread.sleep(5000);
-            }catch (Exception ex){}
-            runOnUiThread(() -> {
-                linearLayout.removeView(progressBar);
-                alertDialog[0].setMessage("Select from the list the tracker you want to connect");
-                Button buttonTracker = new Button(new androidx.appcompat.view.ContextThemeWrapper(this, R.style.FlatButton), null, 0);
-                String tracker = "A5-335-229";
-                buttonTracker.setText("Tracker " + tracker);
-                buttonTracker.setOnClickListener(view -> {
-                    alertDialog[0].dismiss();
-                    onClickTracker(tracker, operation);
-                });
-                linearLayout.addView(buttonTracker);
-            });
-        }).start();
+        goToActivityPassingOperationData(FlyWithTrackerActivity.class, operation);
     }
 
-    private void onClickTracker(String tracker, Operation operation){
-        // show alert dialog asking for the user to wait while we connect with the tracker
-        final AlertDialog[] alertDialog = {null};
-        final LinearLayout linearLayout = new LinearLayout(this);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height);
-        linearLayout.setPadding(50, 50,50,50);
-        linearLayout.setLayoutParams(param);
-
-        ProgressBar progressBar = new ProgressBar(this);
-        LinearLayout.LayoutParams lyParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lyParams.gravity = Gravity.CENTER;
-        progressBar.setLayoutParams(lyParams);
-        linearLayout.addView(progressBar);
-
-        alertDialog[0] = new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Connecting to Tracker")
-                .setMessage(String.format("Wait a moment while the device connects with the tracker '%s'", tracker))
-                .setView(linearLayout)
-                .show();
-
-        // we wait 5 seconds, we dismiss the alert dialog, and then we show a message to the user indicating the tracker is connected to the device
-        new Thread(() -> {
-            try{
-                Thread.sleep(5000);
-            }catch (Exception ex){}
-            runOnUiThread(() -> {
-                alertDialog[0].dismiss();
-                goToActivityPassingOperationData(FlyWithTrackerActivity.class, operation);
-            });
-        }).start();
-    }
 
     private boolean areWeConnectedToATracker(){
         return false;

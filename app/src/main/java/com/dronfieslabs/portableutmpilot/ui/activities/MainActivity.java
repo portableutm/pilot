@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         }
         UtilsOps.getLocation(MainActivity.this, (latLng, errorMessage) -> {
             //CREATES THE OPERATION//
-            int radius = SharedPreferencesUtils.getExpressRadius(MainActivity.this);
+            float radius = SharedPreferencesUtils.getExpressRadius(MainActivity.this);
             int duration = SharedPreferencesUtils.getExpressDuration(MainActivity.this);
             ExpressOperationData oper = new ExpressOperationData(latLng,radius,duration,vehicleId);
             //*********************//
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         textViewWait.setTypeface(textViewWait.getTypeface(), Typeface.BOLD);
         linearLayout.addView(textViewWait);
 
-        int radius = SharedPreferencesUtils.getExpressRadius(this);
+        float radius = SharedPreferencesUtils.getExpressRadius(this);
         int duration = SharedPreferencesUtils.getExpressDuration(this);
         int dp10 = UIGenericUtils.ConvertDPToPX(this, 20);
         TextView textViewExplanation = new TextView(this);
