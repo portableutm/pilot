@@ -180,5 +180,6 @@
     <string name="connecting_to">"Conectandose a : "</string>
     <string name="str_link">Vincular</string>
     <string name="str_change_vehicle">Cambiar vehículo</string>
+    <string name="heading">Dirección</string>
 
 </resources>

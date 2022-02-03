@@ -1,17 +1,24 @@
 package com.dronfieslabs.portableutmpilot.ui.activities;
 
+import static com.dronfieslabs.portableutmpilot.utils.UtilsOps.getLocationDistanceInMeters;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.NoAuthenticatedException;
@@ -25,6 +32,8 @@ import com.dronfieslabs.portableutmpilot.ui.utils.Alarm;
 import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,9 +45,13 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class FlyWithTrackerActivity extends AppCompatActivity {
 
@@ -57,6 +70,17 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
     private RelativeLayout mRelativeLayoutAlarm;
     private Button mButtonDismissAlarm;
 
+    private TextView mAltitude;
+    private TextView mHeading;
+    private TextView mVSpeed;
+    private TextView mHSpeed;
+
+    private Date lastTime = null;
+
+    private double calculatedVSpeed = 0;
+    private double calculatedHSpeed = 0;
+
+
     // other variables
     private Alarm mAlarm;
 
@@ -70,7 +94,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
         mOperationMaxAltitude = getIntent().getIntExtra(Constants.OPERATION_MAX_ALTITUDE_KEY, 0);
         mOperationPolygon = new ArrayList<>();
         List<Point> listVertices = new ArrayList<>();
-        for(String str : getIntent().getStringArrayExtra(Constants.OPERATION_POLYGON_KEY)){
+        for (String str : getIntent().getStringArrayExtra(Constants.OPERATION_POLYGON_KEY)) {
             double lat = Double.parseDouble(str.split(";")[0]);
             double lng = Double.parseDouble(str.split(";")[1]);
             mOperationPolygon.add(new LatLng(lat, lng));
@@ -79,6 +103,11 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
         mOperationPolygonMercator = Polygon.newPolygon(listVertices);
 
         // views binding
+        mAltitude = findViewById(R.id.tv_altitude_value);
+        mHeading = findViewById(R.id.tv_heading_value);
+        mVSpeed = findViewById(R.id.tv_vspeed_value);
+        mHSpeed = findViewById(R.id.tv_hspeed_value);
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -124,7 +153,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
 
-    private void onClickDismissAlarm(){
+    private void onClickDismissAlarm() {
         mAlarm.dismiss();
     }
 
@@ -134,7 +163,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
 
-    private void onMapReady2(GoogleMap googleMap){
+    private void onMapReady2(GoogleMap googleMap) {
         mMap = googleMap;
 
         // we draw the operation
@@ -143,7 +172,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
         polygonOptions.strokeColor(Color.rgb(255, 162, 0));
         polygonOptions.fillColor(Color.argb(64, 255, 162, 0));
         polygonOptions.zIndex(-2);
-        for(LatLng latLng : mOperationPolygon){
+        for (LatLng latLng : mOperationPolygon) {
             polygonOptions.add(latLng);
         }
         mMap.addPolygon(polygonOptions);
@@ -153,9 +182,14 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
             final LatLngBounds latLngBounds = getPolygonLatLngBounds(mOperationPolygon);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 200));
         });
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
 
-        // draw the tracker
     }
+
+
 
     private LatLngBounds getPolygonLatLngBounds(final List<LatLng> polygon) {
         final LatLngBounds.Builder centerBuilder = LatLngBounds.builder();
@@ -179,6 +213,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
         final DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(FlyWithTrackerActivity.this));
 
         try {
+            lastTime = new Date();
             mTrackerPositionRef = dronfiesUssServices.connectToTrackerPositionUpdates(mOperationId, new IGenericCallback<TrackerPosition>() {
                 @Override
                 public void onCallbackExecution(TrackerPosition trackerPosition, String errorMessage) {
@@ -189,7 +224,15 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         if (mMarkerTracker == null){mMarkerTracker = mMap.addMarker(new MarkerOptions().position(getPolygonCenter(mOperationPolygon)));}
                         mMarkerTracker.setIcon(BitmapFromVector(FlyWithTrackerActivity.this, R.drawable.ic_dronetop));
+
+                        //Speed has to be done first before overwriting values
+                        mVSpeed.setText(new DecimalFormat("#.##").format(calculateVSpeed(Double.parseDouble((String) mAltitude.getText()),trackerPosition.getAltitude(), lastTime,trackerPosition.getTime_sent())));
+                        mHSpeed.setText(new DecimalFormat("#.##").format(calculateHSpeed(mMarkerTracker.getPosition(),trackerPosition, lastTime,trackerPosition.getTime_sent())));
+
                         mMarkerTracker.setPosition(new LatLng(trackerPosition.getLatitude(), trackerPosition.getLongitude()));
+//                        mHeading.setText(trackerPosition.getHeading());
+                        mAltitude.setText(String.valueOf(trackerPosition.getAltitude()));
+
                         mAlarm.updateVehiclePosition(trackerPosition.getLatitude(), trackerPosition.getLongitude(), trackerPosition.getAltitude());
                     });
                 }
@@ -225,5 +268,33 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
     private void disconnectSocket(){
         final DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(FlyWithTrackerActivity.this));
         dronfiesUssServices.disconnectFromTrackerPositionUpdates(mTrackerPositionRef);
+    }
+
+    //TODO: this 2 speed functions
+    private double calculateVSpeed(double lastAlt, double actualAlt, Date last_time_sent, Date actual_time_sent){
+        double res = 0;
+        //Get how many seconds has been between 2 positions
+        long diffAux = actual_time_sent.getTime() - last_time_sent.getTime();
+        double seconds = TimeUnit.MILLISECONDS.toSeconds(diffAux);
+
+        //get difference in altitud and apply linear rule
+        double difference = Math.abs(actualAlt - lastAlt);
+        res = difference / seconds;
+
+        return res;
+
+
+    }
+
+    private double calculateHSpeed(LatLng lastPoint, TrackerPosition actualPosition, Date last_time_sent, Date actual_time_sent){
+        double res = 0;
+        long diff = actual_time_sent.getTime() - last_time_sent.getTime();
+        double seconds = TimeUnit.MILLISECONDS.toSeconds(diff);
+
+        float distance = UtilsOps.getLocationDistanceInMeters(lastPoint.latitude,lastPoint.longitude,actualPosition.getLatitude(),actualPosition.getLongitude());
+        res = distance / seconds;
+        return res;
+
+
     }
 }

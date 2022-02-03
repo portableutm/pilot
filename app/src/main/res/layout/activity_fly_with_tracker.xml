@@ -7,12 +7,109 @@
     tools:context=".ui.activities.FlyWithTrackerActivity">
 
     <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/map"
-        tools:context=".ui.activities.FlyWithTrackerActivity"
-        android:name="com.google.android.gms.maps.SupportMapFragment"/>
+        tools:context=".ui.activities.FlyWithTrackerActivity" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"
+        android:background="#66FFFFFF"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_altitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+
+                android:text="@string/str_altitude" />
+
+            <TextView
+                android:id="@+id/tv_altitude_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="0" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/heading" />
+
+            <TextView
+                android:id="@+id/tv_heading_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="0" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_vspeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/vertical_speed_title" />
+
+            <TextView
+                android:id="@+id/tv_vspeed_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="0" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_hspeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/horizontal_speed_title" />
+
+            <TextView
+                android:id="@+id/tv_hspeed_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="0" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 
     <!--#######################################################################################-->
@@ -22,6 +119,7 @@
         android:id="@+id/relative_layout_alarm"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
     </RelativeLayout>
 
     <!--#######################################################################################-->
@@ -30,12 +128,12 @@
 
     <Button
         android:id="@+id/button_dismiss_alarm"
+        style="@style/RaisedButton"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="40dp"
-        android:visibility="invisible"
         android:text="@string/srt_dismiss"
-        style="@style/RaisedButton"/>
+        android:visibility="invisible" />
 
 </RelativeLayout>

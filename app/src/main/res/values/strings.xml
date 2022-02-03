@@ -189,5 +189,6 @@
     <string name="connecting_to">"Connecting to : "</string>
     <string name="str_link">Link</string>
     <string name="str_change_vehicle">Change Vehicle</string>
+    <string name="heading">Heading</string>
 
 </resources>
