@@ -1,6 +1,7 @@
 package com.dronfieslabs.portableutmpilot.ui.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
@@ -33,10 +34,13 @@ public class SelectDroneActivity extends AppCompatActivity {
 
     // state
     private String mSelectedVehicleId = null;
+    private int vehicleCount = 0;
 
     // views
     private RelativeLayout mRelativeLayoutRoot;
     private LinearLayout mLinearLayoutDrones;
+    private AppCompatButton mButtonLoadMore;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,16 @@ public class SelectDroneActivity extends AppCompatActivity {
         // views binding
         mRelativeLayoutRoot = findViewById(R.id.relative_layout_root);
         mLinearLayoutDrones = findViewById(R.id.linear_layout_drones);
+
+        mButtonLoadMore = findViewById(R.id.button_load_more);
+        mButtonLoadMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadDrones();
+            }
+        });
+
+
     }
 
     @Override
@@ -75,65 +89,85 @@ public class SelectDroneActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             try{
-                                List<Vehicle> listUserVehicles = dronfiesUssServices.getOperatorVehicles();
-                                // onResponse, we remove the progressbar from the activity
-                                runOnUiThread(new Runnable() {
+                                dronfiesUssServices.getOperatorVehicles(10, vehicleCount, new ICompletitionCallback<List<Vehicle>>() {
                                     @Override
-                                    public void run() {
-                                        mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                                    public void onResponse(List<Vehicle> vehicles, String s) {
+                                        List<Vehicle> listUserVehicles = vehicles;
+                                        // onResponse, we remove the progressbar from the activity
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mRelativeLayoutRoot.removeView(linearLayoutProgressBar);
+                                            }
+                                        });
+                                        if(listUserVehicles.isEmpty() && vehicleCount == 0){
+                                            // user has no vehicles
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    UIGenericUtils.ShowAlert(
+                                                            SelectDroneActivity.this,
+                                                            getString(R.string.str_no_drones),
+                                                            getString(R.string.exc_msg_user_has_no_drones));
+                                                }
+                                            });
+                                            return;
+                                        } else if (listUserVehicles.isEmpty()) {
+                                            //No more vehicles to show
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    UIGenericUtils.ShowAlert(
+                                                            SelectDroneActivity.this,
+                                                            getString(R.string.str_no_drones),
+                                                            getString(R.string.exc_msg_no_more_drones));
+                                                }
+                                            });
+                                        }
+                                        for(final Vehicle vehicle : listUserVehicles){
+                                            final CardView cardView = (CardView) getLayoutInflater().inflate(R.layout.layout_drone, null);
+                                            int dp20 = UIGenericUtils.ConvertDPToPX(SelectDroneActivity.this, 20);
+                                            ((TextView)cardView.findViewById(R.id.text_view_name)).setText(vehicle.getVehicleName());
+                                            ((TextView)cardView.findViewById(R.id.text_view_plate)).setText(getString(R.string.str_plate) + ": " + vehicle.getFaaNumber());
+                                            ((TextView)cardView.findViewById(R.id.text_view_serial)).setText(getString(R.string.str_serial) + ": " + vehicle.getnNumber());
+                                            ((TextView)cardView.findViewById(R.id.text_view_model)).setText(getString(R.string.str_model) + ": " + vehicle.getModel() + " ("+vehicle.getManufacturer()+")");
+                                            ((TextView)cardView.findViewById(R.id.text_view_uvin)).setText(getString(R.string.str_uvin) + ": " + vehicle.getUvin());
+                                            if(vehicle.getVehicleClass() != null){
+                                                if(vehicle.getVehicleClass().equals(Vehicle.EnumVehicleClass.MULTIROTOR)){
+                                                    ((ImageView)cardView.findViewById(R.id.image_view_icon)).setImageDrawable(getDrawable(R.drawable.ic_drone_32));
+                                                }else if(vehicle.getVehicleClass().equals(Vehicle.EnumVehicleClass.FIXEDWING)){
+                                                    ((ImageView)cardView.findViewById(R.id.image_view_icon)).setImageDrawable(getDrawable(R.drawable.ic_flight_takeoff_24));
+                                                }
+                                            } else { //Default icon
+                                                ((ImageView)cardView.findViewById(R.id.image_view_icon)).setImageDrawable(getDrawable(R.drawable.ic_drone_32));
+                                            }
+                                            final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                            layoutParams.setMargins(0, 0, 0, dp20);
+                                            cardView.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    onClickDrone(vehicle);
+                                                }
+                                            });
+                                            if(mSelectedVehicleId != null && vehicle.getUvin().equals(mSelectedVehicleId)){
+                                                cardView.setBackgroundColor(getColor(R.color.colorPrimary));
+                                                ((TextView)cardView.findViewById(R.id.text_view_name)).setTextColor(getColor(R.color.white));
+                                                ((TextView)cardView.findViewById(R.id.text_view_plate)).setTextColor(getColor(R.color.white));
+                                                ((TextView)cardView.findViewById(R.id.text_view_serial)).setTextColor(getColor(R.color.white));
+                                                ((TextView)cardView.findViewById(R.id.text_view_model)).setTextColor(getColor(R.color.white));
+                                                ((ImageView)cardView.findViewById(R.id.image_view_icon)).setColorFilter(getColor(R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
+                                            }
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    mLinearLayoutDrones.addView(cardView, layoutParams);
+                                                }
+                                            });
+                                            vehicleCount++;
+                                        }
                                     }
                                 });
-                                if(listUserVehicles.isEmpty()){
-                                    // user has no vehicles
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            UIGenericUtils.ShowAlert(
-                                                    SelectDroneActivity.this,
-                                                    getString(R.string.str_no_drones),
-                                                    getString(R.string.exc_msg_user_has_no_drones));
-                                        }
-                                    });
-                                    return;
-                                }
-                                for(final Vehicle vehicle : listUserVehicles){
-                                    final CardView cardView = (CardView) getLayoutInflater().inflate(R.layout.layout_drone, null);
-                                    int dp20 = UIGenericUtils.ConvertDPToPX(SelectDroneActivity.this, 20);
-                                    ((TextView)cardView.findViewById(R.id.text_view_name)).setText(vehicle.getVehicleName());
-                                    ((TextView)cardView.findViewById(R.id.text_view_plate)).setText(getString(R.string.str_plate) + ": " + vehicle.getFaaNumber());
-                                    ((TextView)cardView.findViewById(R.id.text_view_serial)).setText(getString(R.string.str_serial) + ": " + vehicle.getnNumber());
-                                    ((TextView)cardView.findViewById(R.id.text_view_model)).setText(getString(R.string.str_model) + ": " + vehicle.getModel() + " ("+vehicle.getManufacturer()+")");
-                                    ((TextView)cardView.findViewById(R.id.text_view_uvin)).setText(getString(R.string.str_uvin) + ": " + vehicle.getUvin());
-                                    if(vehicle.getVehicleClass() != null){
-                                        if(vehicle.getVehicleClass().equals(Vehicle.EnumVehicleClass.MULTIROTOR)){
-                                            ((ImageView)cardView.findViewById(R.id.image_view_icon)).setImageDrawable(getDrawable(R.drawable.ic_drone_32));
-                                        }else if(vehicle.getVehicleClass().equals(Vehicle.EnumVehicleClass.FIXEDWING)){
-                                            ((ImageView)cardView.findViewById(R.id.image_view_icon)).setImageDrawable(getDrawable(R.drawable.ic_flight_takeoff_24));
-                                        }
-                                    }
-                                    final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                    layoutParams.setMargins(0, 0, 0, dp20);
-                                    cardView.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            onClickDrone(vehicle);
-                                        }
-                                    });
-                                    if(mSelectedVehicleId != null && vehicle.getUvin().equals(mSelectedVehicleId)){
-                                        cardView.setBackgroundColor(getColor(R.color.colorPrimary));
-                                        ((TextView)cardView.findViewById(R.id.text_view_name)).setTextColor(getColor(R.color.white));
-                                        ((TextView)cardView.findViewById(R.id.text_view_plate)).setTextColor(getColor(R.color.white));
-                                        ((TextView)cardView.findViewById(R.id.text_view_serial)).setTextColor(getColor(R.color.white));
-                                        ((TextView)cardView.findViewById(R.id.text_view_model)).setTextColor(getColor(R.color.white));
-                                        ((ImageView)cardView.findViewById(R.id.image_view_icon)).setColorFilter(getColor(R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
-                                    }
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mLinearLayoutDrones.addView(cardView, layoutParams);
-                                        }
-                                    });
-                                }
+
                             }catch (Exception ex){}
                         }
                     }).start();

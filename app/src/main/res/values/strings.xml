@@ -43,6 +43,7 @@
     <string name="exc_msg_paragliding_pilot_must_enable_utm">You need to enable the UTM to use this functionality. To do this, please, go to settings.</string>
     <string name="exc_msg_permission_not_granted">This functionality requires permission to be granted in order to work properly</string>
     <string name="exc_msg_user_has_no_drones">There is no drone registered, asociated to your user account</string>
+    <string name="exc_msg_no_more_drones">There are no more drones to load</string>
     <string name="exc_msg_utm_connection_failed">It was not possible to connect to the UTM. Please, go to Settings and test the connection.</string>
     <string name="exc_msg_uvr">"The operation has not been accepted because there is an UVR in that place"</string>
 
