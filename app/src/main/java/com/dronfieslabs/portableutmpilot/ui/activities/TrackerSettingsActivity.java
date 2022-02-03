@@ -36,6 +36,7 @@ import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -43,6 +44,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 public class TrackerSettingsActivity extends AppCompatActivity {
 
@@ -52,6 +54,8 @@ public class TrackerSettingsActivity extends AppCompatActivity {
     private Button mButtonChangeVehicle;
     private TextView mUsername;
     private TextView mPassword;
+
+    private final CountDownLatch okLock = new CountDownLatch(1);
 
     final private int INTENT_REGISTER_TRACKER = 2;
     final private int INTENT_CHANGE_VEHICLE = 3;
@@ -145,16 +149,26 @@ public class TrackerSettingsActivity extends AppCompatActivity {
                                 break;
                         }
                         break;
-
+                    // MESSAGES READ
                     case MESSAGE_READ:
-                        String message = msg.obj.toString(); // Read message from Arduino
-                        String normalized = message.toLowerCase().substring(0,3);
-                        boolean isId = normalized.equals("id:");
-                        if (isId){
-                            tracker_id = message.substring(3);
-                            toolbar.setSubtitle("Tracker id: " + tracker_id);
-                        }
+                        try {
+                            String message = msg.obj.toString();
+                            JSONObject obj = new JSONObject(message); // Read message from Arduino
+                            switch (obj.getString("msg")){
+                                case "1":
+                                    tracker_id = obj.getString("body");
+                                    toolbar.setSubtitle("Tracker id: " + tracker_id);
+                                    break;
+                                case "0":
+                                    synchronized (okLock) {
+                                        okLock.countDown();
+                                    }
+                                    break;
 
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         break;
                 }
             }
@@ -266,7 +280,9 @@ public class TrackerSettingsActivity extends AppCompatActivity {
             connectedThread = new ConnectedThread(mmSocket);
             connectedThread.start();
             try {
-                connectedThread.write("retrieveId");
+                JSONObject msgToSend = new JSONObject();
+                msgToSend.put("msg", 1);
+                connectedThread.write(msgToSend.toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -333,6 +349,7 @@ public class TrackerSettingsActivity extends AppCompatActivity {
 
         /* Call this from the main activity to send data to the remote device */
         public void write(String input) throws Exception {
+            input = input + "\n";
             byte[] bytes = input.getBytes(); //converts entered String into bytes
             try {
                 mmOutStream.write(bytes);
@@ -442,7 +459,11 @@ public class TrackerSettingsActivity extends AppCompatActivity {
     private void linkTracker(){
         final LinearLayout spin = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
         JSONObject settings = new JSONObject();
+        JSONObject messageToSend = new JSONObject();
         try {
+            //Sets message to id 2 which is send settings
+            messageToSend.put("msg", 2);
+
             settings.put("username",mUsername.getText());
             settings.put("password",mPassword.getText());
 
@@ -450,32 +471,39 @@ public class TrackerSettingsActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     try  {
-                        if ( getTrackerConfigurationFromInstance(settings) ){
-                            connectedThread.write(settings.toString());
-                            runOnUiThread(() ->mRelativeLayoutRoot.removeView(spin));
-                            runOnUiThread(()->UIGenericUtils.ShowErrorAlertWithOkButton(TrackerSettingsActivity.this,
-                                    getString(R.string.link_sucess), getString(R.string.link_sucess_msg), getString(R.string.ok),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            finish();
-                                        }
-                                    }));
-                        } else {
-                            runOnUiThread(() ->mRelativeLayoutRoot.removeView(spin));
-                            runOnUiThread(() -> UIGenericUtils.ShowConfirmationAlert(TrackerSettingsActivity.this,
-                                    getString(R.string.tracker_not_registered),getString(R.string.tracker_not_registered_msg),
-                                    getString(R.string.str_register_tracker), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Intent intent = new Intent(TrackerSettingsActivity.this, TrackerRegister.class);
-                                            Bundle b = new Bundle();
-                                            b.putString("tracker_id", tracker_id);
-                                            intent.putExtras(b);
-                                            startActivityForResult(intent, INTENT_REGISTER_TRACKER);
-                                        }
-                                    }, getString(R.string.str_cancel)));
+                        synchronized (okLock) {
+                            if ( getTrackerConfigurationFromInstance(settings) ){
+                                messageToSend.put("body", settings);
+                                connectedThread.write(messageToSend.toString());
+                                okLock.wait(5000); //Wait untill tracker sends ACK
+                                if ( okLock.getCount() != 0 ) {
+                                    throw new RuntimeException("Tracker did not ACK message");
+                                }
+                                runOnUiThread(() ->mRelativeLayoutRoot.removeView(spin));
+                                runOnUiThread(()->UIGenericUtils.ShowErrorAlertWithOkButton(TrackerSettingsActivity.this,
+                                        getString(R.string.link_sucess), getString(R.string.link_sucess_msg), getString(R.string.ok),
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                finish();
+                                            }
+                                        }));
+                            } else {
+                                runOnUiThread(() ->mRelativeLayoutRoot.removeView(spin));
+                                runOnUiThread(() -> UIGenericUtils.ShowConfirmationAlert(TrackerSettingsActivity.this,
+                                        getString(R.string.tracker_not_registered),getString(R.string.tracker_not_registered_msg),
+                                        getString(R.string.str_register_tracker), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent intent = new Intent(TrackerSettingsActivity.this, TrackerRegister.class);
+                                                Bundle b = new Bundle();
+                                                b.putString("tracker_id", tracker_id);
+                                                intent.putExtras(b);
+                                                startActivityForResult(intent, INTENT_REGISTER_TRACKER);
+                                            }
+                                        }, getString(R.string.str_cancel)));
 
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
