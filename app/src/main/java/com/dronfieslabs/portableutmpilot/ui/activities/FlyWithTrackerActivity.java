@@ -222,13 +222,14 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
                         return;
                     }
                     runOnUiThread(() -> {
-                        if (mMarkerTracker == null){mMarkerTracker = mMap.addMarker(new MarkerOptions().position(getPolygonCenter(mOperationPolygon)));}
+                        if (mMarkerTracker == null){mMarkerTracker = mMap.addMarker(new MarkerOptions().position(getPolygonCenter(mOperationPolygon)).flat(true));}
                         mMarkerTracker.setIcon(BitmapFromVector(FlyWithTrackerActivity.this, R.drawable.ic_dronetop));
+                        mMarkerTracker.setRotation((float) trackerPosition.getHeading());
 
                         //Speed has to be done first before overwriting values
                         mVSpeed.setText(new DecimalFormat("#.##").format(calculateVSpeed(Double.parseDouble((String) mAltitude.getText()),trackerPosition.getAltitude(), lastTime,trackerPosition.getTime_sent())));
                         mHSpeed.setText(new DecimalFormat("#.##").format(calculateHSpeed(mMarkerTracker.getPosition(),trackerPosition, lastTime,trackerPosition.getTime_sent())));
-
+                        mHeading.setText(String.valueOf(trackerPosition.getHeading()));
                         mMarkerTracker.setPosition(new LatLng(trackerPosition.getLatitude(), trackerPosition.getLongitude()));
 //                        mHeading.setText(trackerPosition.getHeading());
                         mAltitude.setText(String.valueOf(trackerPosition.getAltitude()));

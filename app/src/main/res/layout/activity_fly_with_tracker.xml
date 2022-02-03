@@ -16,14 +16,15 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:layout_marginLeft="10dp"
-        android:background="#66FFFFFF"
+        android:layout_marginTop="40dp"
+        android:background="#CC3E3E3E"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -32,19 +33,24 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
 
-                android:text="@string/str_altitude" />
+                android:text="@string/str_altitude"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_altitude_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="0" />
+                android:text="0"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -53,7 +59,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:text="@string/heading" />
+                android:text="@string/heading"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_heading_value"
@@ -61,7 +69,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
-                android:text="0" />
+                android:text="0"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
@@ -76,6 +86,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
                 android:text="@string/vertical_speed_title" />
 
             <TextView
@@ -84,6 +96,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
                 android:text="0" />
         </LinearLayout>
 
@@ -98,6 +112,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
                 android:text="@string/horizontal_speed_title" />
 
             <TextView
@@ -106,6 +122,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
                 android:text="0" />
         </LinearLayout>
 
