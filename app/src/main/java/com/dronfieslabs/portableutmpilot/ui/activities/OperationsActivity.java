@@ -485,6 +485,7 @@ public class OperationsActivity extends AppCompatActivity {
                     strPolygon += "]";
                     // generate the intent and go to the new activity
                     Intent intent = new Intent(OperationsActivity.this, OperationActivity.class);
+                    intent.putExtra(OperationActivity.FLIGHT_COMMENTS, operation.getFlightComments());
                     if(operation.getState() != null && operation.getState().equals(Operation.EnumOperationState.NOT_ACCEPTED)){
                         if(operation.getFlightComments() != null){
                             if(operation.getFlightComments().trim().equalsIgnoreCase("ANOTHER_OPERATION")){
