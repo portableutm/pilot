@@ -191,5 +191,10 @@
     <string name="str_link">Link</string>
     <string name="str_change_vehicle">Change Vehicle</string>
     <string name="heading">Heading</string>
+    <string name="str_wifi_settings">WiFi Settings</string>
+    <string name="str_sim_setup">SIM Setup</string>
+    <string name="str_change_apn">Change APN</string>
+    <string name="change_pin">Change PIN</string>
+    <string name="str_change_ssid">Change WiFi Name</string>
 
 </resources>

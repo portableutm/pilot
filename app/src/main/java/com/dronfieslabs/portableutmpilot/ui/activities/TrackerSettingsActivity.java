@@ -3,13 +3,13 @@ package com.dronfieslabs.portableutmpilot.ui.activities;
 import static android.content.ContentValues.TAG;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,13 +21,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dronfies.portableutmandroidclienttest.Directory;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.Tracker;
 import com.dronfies.portableutmandroidclienttest.User;
@@ -42,7 +40,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
@@ -50,15 +47,23 @@ public class TrackerSettingsActivity extends AppCompatActivity {
 
     private RelativeLayout mRelativeLayoutRoot;
     private LinearLayout progressBar;
-    private Button mButtonSave;
-    private Button mButtonChangeVehicle;
-    private TextView mUsername;
-    private TextView mPassword;
+    private Button mButtonLinkSettings;
+    private Button mButtonWiFiSettings;
+    private Button mButtonSIMSettings;
+
+    private JSONObject settingsRetrieved;
+
+    private String username;
+    private String password;
 
     private final CountDownLatch okLock = new CountDownLatch(1);
 
+    final private int INTENT_LINK_TRACKER = 1;
     final private int INTENT_REGISTER_TRACKER = 2;
     final private int INTENT_CHANGE_VEHICLE = 3;
+    final private int INTENT_WIFI_SETTINGS = 4;
+    final private int INTENT_SIM_SETTINGS = 5;
+
 
     private String tracker_id;
 
@@ -78,18 +83,13 @@ public class TrackerSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tracker_settings);
 
         mRelativeLayoutRoot = findViewById(R.id.relative_root);
-        mButtonSave = findViewById(R.id.button_save_settings);
-        mButtonChangeVehicle = findViewById(R.id.button_change_vehicle);
+        mButtonLinkSettings = findViewById(R.id.button_link_settings);
+        mButtonWiFiSettings = findViewById(R.id.button_wifi_settings);
+        mButtonSIMSettings = findViewById(R.id.button_sim_settings);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.str_tracker);
-
-        mUsername = findViewById(R.id.username_tracker_input);
-        mPassword = findViewById(R.id.password_tracker_input);
-
-        mUsername.setText(SharedPreferencesUtils.getUsername(this));
-        mPassword.setText(SharedPreferencesUtils.getPassword(this));
 
 
         // If a bluetooth device has been selected from SelectDeviceActivity
@@ -156,7 +156,8 @@ public class TrackerSettingsActivity extends AppCompatActivity {
                             JSONObject obj = new JSONObject(message); // Read message from Arduino
                             switch (obj.getString("msg")){
                                 case "1":
-                                    tracker_id = obj.getString("body");
+                                    tracker_id = obj.getJSONObject("body").getString("id");
+                                    settingsRetrieved = obj.getJSONObject("body");
                                     toolbar.setSubtitle("Tracker id: " + tracker_id);
                                     break;
                                 case "0":
@@ -174,18 +175,47 @@ public class TrackerSettingsActivity extends AppCompatActivity {
             }
         };
 
-
+        Context context = this;
         // Save settings in the tracker
-        mButtonSave.setOnClickListener(new View.OnClickListener(){
+        mButtonLinkSettings.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                linkTracker();
+                try {
+                    Intent i = new Intent(context, TrackerLinkActivity.class);
+                    i.putExtra("tracker_id", tracker_id);
+                    i.putExtra("username", settingsRetrieved.getString("utm_username"));
+                    startActivityForResult(i, INTENT_LINK_TRACKER);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
-        mButtonChangeVehicle.setOnClickListener(new View.OnClickListener(){
+        mButtonWiFiSettings.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                changeVehicle();
+                try {
+                    Intent i = new Intent(context, TrackerWifiSettingsActivity.class);
+                    i.putExtra("ssid", settingsRetrieved.getString("wifi_ssid"));
+                    i.putExtra("password", settingsRetrieved.getString("wifi_password"));
+                    startActivityForResult(i, INTENT_WIFI_SETTINGS);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        mButtonSIMSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                try {
+                    Intent i = new Intent(context, TrackerSimSettingsActivity.class);
+                    i.putExtra("apn", settingsRetrieved.getString("apn"));
+                    i.putExtra("username", settingsRetrieved.getString("apn_username"));
+                    i.putExtra("passwword", settingsRetrieved.getString("apn_password"));
+                    i.putExtra("pin", settingsRetrieved.getInt("pin"));
+                    startActivityForResult(i, INTENT_SIM_SETTINGS);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -209,10 +239,30 @@ public class TrackerSettingsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == INTENT_REGISTER_TRACKER || requestCode == INTENT_CHANGE_VEHICLE){
-            if(resultCode == RESULT_OK){
-                linkTracker();
-            }
+        switch (requestCode) {
+            case INTENT_REGISTER_TRACKER:
+            case INTENT_CHANGE_VEHICLE:
+                if(resultCode == RESULT_OK){
+                    linkTracker(username, password);
+                }
+                break;
+            case INTENT_LINK_TRACKER:
+                if(resultCode == RESULT_OK){
+                    username = data.getStringExtra("username");
+                    password = data.getStringExtra("password");
+                    linkTracker(username, password);
+                }
+                break;
+            case INTENT_WIFI_SETTINGS:
+                if(resultCode == RESULT_OK) {
+                    sendWifiSettings(data.getStringExtra("ssid"), data.getStringExtra("password"));
+                }
+                break;
+            case INTENT_SIM_SETTINGS:
+                if(resultCode == RESULT_OK){
+                    sendSimSettings(data.getStringExtra("apn"),data.getStringExtra("username"),data.getStringExtra("password"),data.getStringExtra("pin"));
+                }
+                break;
         }
     }
 
@@ -375,70 +425,11 @@ public class TrackerSettingsActivity extends AppCompatActivity {
             createConnectThread.cancel();
         }
     }
-
-
-    public void onClickEditUsername(View view){
-        final LinearLayout linearLayout = new LinearLayout(this);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        float weight = 1.0f;
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
-        linearLayout.setPadding(45, 10,50,10);
-        linearLayout.setLayoutParams(param);
-        final EditText editTextExpressDuration = new EditText(this);
-        editTextExpressDuration.setText(mUsername.getText());
-        linearLayout.addView(editTextExpressDuration);
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.str_change_username)
-                .setView(linearLayout)
-                .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String newUsername = editTextExpressDuration.getText().toString();
-                        mUsername.setText(newUsername);
-                    }
-                })
-                .setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                })
-                .show();
-
-    }
-
-    public void onClickEditPassword(View view){
-        final LinearLayout linearLayout = new LinearLayout(this);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        float weight = 1.0f;
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
-        linearLayout.setPadding(45, 10,50,10);
-        linearLayout.setLayoutParams(param);
-        final EditText editTextExpressDuration = new EditText(this);
-        editTextExpressDuration.setText(mPassword.getText());
-        linearLayout.addView(editTextExpressDuration);
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.change_password)
-                .setView(linearLayout)
-                .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String newPassword = editTextExpressDuration.getText().toString();
-                        mPassword.setText(newPassword);
-                    }
-                })
-                .setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                })
-                .show();
-
-    }
     boolean getTrackerConfigurationFromInstance(JSONObject settings) throws Exception {
         boolean found = false;
 
-        String user = SharedPreferencesUtils.getUsername(TrackerSettingsActivity.this);
-        String pass = SharedPreferencesUtils.getPassword(TrackerSettingsActivity.this);
+        String user = settings.getString("utm_username");
+        String pass = settings.getString("utm_password");
 
         DronfiesUssServices api = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(TrackerSettingsActivity.this));
         api.login_sync(user,pass);
@@ -450,13 +441,13 @@ public class TrackerSettingsActivity extends AppCompatActivity {
         Tracker instance = api.getTrackerInformation(tracker_id);
         if ( instance != null ) {
             found = true;
-            settings.put("endpoint",SharedPreferencesUtils.getUTMEndpoint(TrackerSettingsActivity.this));
+            settings.put("utm_endpoint",SharedPreferencesUtils.getUTMEndpoint(TrackerSettingsActivity.this));
             settings.put("uvin", instance.vehicle.getUvin());
         }
         return found;
     }
 
-    private void linkTracker(){
+    private void linkTracker(String username, String password){
         final LinearLayout spin = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
         JSONObject settings = new JSONObject();
         JSONObject messageToSend = new JSONObject();
@@ -464,8 +455,8 @@ public class TrackerSettingsActivity extends AppCompatActivity {
             //Sets message to id 2 which is send settings
             messageToSend.put("msg", 2);
 
-            settings.put("username",mUsername.getText());
-            settings.put("password",mPassword.getText());
+            settings.put("utm_username",username);
+            settings.put("utm_password",password);
 
             Thread th = new Thread(new Runnable() {
                 @Override
@@ -520,51 +511,105 @@ public class TrackerSettingsActivity extends AppCompatActivity {
         }
     }
 
-    private void changeVehicle() {
-        boolean found = false;
+
+
+    void sendWifiSettings(String ssid, String password) {
         final LinearLayout spin = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
+        JSONObject settings = new JSONObject();
+        JSONObject messageToSend = new JSONObject();
+        try {
+            //Sets message to id 3 which is send wifi settings
+            messageToSend.put("msg", 3);
 
+            settings.put("wifi_ssid",ssid);
+            settings.put("wifi_password",password);
 
-        String user = SharedPreferencesUtils.getUsername(TrackerSettingsActivity.this);
-        String pass = SharedPreferencesUtils.getPassword(TrackerSettingsActivity.this);
-        Thread th = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    DronfiesUssServices api = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(TrackerSettingsActivity.this));
-                    api.login_sync(user, pass);
+            Thread th = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try  {
+                        synchronized (okLock) {
+                            messageToSend.put("body", settings);
+                            connectedThread.write(messageToSend.toString());
+                            okLock.wait(5000); //Wait until tracker sends ACK
+                            if (okLock.getCount() != 0) {
+                                throw new RuntimeException("Tracker did not ACK message");
+                            }
+                            runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
+                            runOnUiThread(() -> UIGenericUtils.ShowErrorAlertWithOkButton(TrackerSettingsActivity.this,
+                                    getString(R.string.link_sucess), getString(R.string.link_sucess_msg), getString(R.string.ok),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            finish();
+                                        }
+                                    }));
+                        }
 
-                    Tracker instance = null;
-                    instance = api.getTrackerInformation(tracker_id);
-                    if (instance != null) {
-                        runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
-                        Intent intent = new Intent(TrackerSettingsActivity.this, TrackerRegister.class);
-                        Bundle b = new Bundle();
-                        b.putString("tracker_id", tracker_id);
-                        b.putBoolean("isEdit", true);
-                        intent.putExtras(b);
-                        startActivityForResult(intent, INTENT_CHANGE_VEHICLE);
-                    } else {
-                        runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
-                        runOnUiThread(() -> UIGenericUtils.ShowConfirmationAlert(TrackerSettingsActivity.this,
-                                getString(R.string.tracker_not_registered), getString(R.string.tracker_not_registered_msg),
-                                getString(R.string.str_register_tracker), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(TrackerSettingsActivity.this, TrackerRegister.class);
-                                        Bundle b = new Bundle();
-                                        b.putString("tracker_id", tracker_id);
-                                        intent.putExtras(b);
-                                        startActivityForResult(intent, INTENT_REGISTER_TRACKER);
-                                    }
-                                }, getString(R.string.str_cancel)));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        runOnUiThread(() ->mRelativeLayoutRoot.removeView(spin));
+                        runOnUiThread(()->UIGenericUtils.ShowAlert(TrackerSettingsActivity.this, "Error!",e.getMessage(), null));
+                        return;
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            }
-        });
-        th.start();
+            });
+            th.start();
+        } catch (Exception e) {
+            UIGenericUtils.ShowAlert(TrackerSettingsActivity.this, "Error!",e.getMessage(), null);
+            return;
+        }
+    }
+
+    void sendSimSettings(String apn, String username, String password, String pin) {
+        final LinearLayout spin = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
+        JSONObject settings = new JSONObject();
+        JSONObject messageToSend = new JSONObject();
+        try {
+            //Sets message to id 4 which is send apn settings
+            messageToSend.put("msg", 4);
+
+            settings.put("apn",apn);
+            settings.put("apn_username",username);
+            settings.put("apn_password",password);
+            settings.put("pin",pin);
+
+            Thread th = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try  {
+                        synchronized (okLock) {
+                            messageToSend.put("body", settings);
+                            connectedThread.write(messageToSend.toString());
+                            okLock.wait(5000); //Wait until tracker sends ACK
+                            if (okLock.getCount() != 0) {
+                                throw new RuntimeException("Tracker did not ACK message");
+                            }
+                            runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
+                            runOnUiThread(() -> UIGenericUtils.ShowErrorAlertWithOkButton(TrackerSettingsActivity.this,
+                                    getString(R.string.link_sucess), getString(R.string.link_sucess_msg), getString(R.string.ok),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            finish();
+                                        }
+                                    }));
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        runOnUiThread(() ->mRelativeLayoutRoot.removeView(spin));
+                        runOnUiThread(()->UIGenericUtils.ShowAlert(TrackerSettingsActivity.this, "Error!",e.getMessage(), null));
+                        return;
+                    }
+                }
+            });
+            th.start();
+        } catch (Exception e) {
+            UIGenericUtils.ShowAlert(TrackerSettingsActivity.this, "Error!",e.getMessage(), null);
+            return;
+        }
+
     }
 
 }

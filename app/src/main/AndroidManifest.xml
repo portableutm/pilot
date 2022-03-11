@@ -45,6 +45,18 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:icon">
         <activity
+            android:name=".ui.activities.TrackerLinkActivity"
+            android:exported="true"
+            android:theme="@style/LightStyle" />
+        <activity
+            android:name=".ui.activities.TrackerWifiSettingsActivity"
+            android:exported="true"
+            android:theme="@style/LightStyle" />
+        <activity
+            android:name=".ui.activities.TrackerSimSettingsActivity"
+            android:exported="true"
+            android:theme="@style/LightStyle" />
+        <activity
             android:name=".ui.activities.TrackerRegister"
             android:exported="true"
             android:theme="@style/LightStyle" />

@@ -44,10 +44,10 @@ public class TrackerRegister extends AppCompatActivity {
         setContentView(R.layout.activity_tracker_register);
 
         Bundle b = getIntent().getExtras();
-        if(b != null)
+        if(b != null) {
             tracker_id = b.getString("tracker_id");
             isEdit = b.getBoolean("isEdit", false);
-
+        }
         mTrackerId = findViewById(R.id.tracker_id);
         mTrackerId.setText(tracker_id);
 

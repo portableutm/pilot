@@ -19,105 +19,32 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         android:orientation="vertical"
+        android:gravity="center"
         android:padding="20dp">
 
-        <!--************************* PLATE NUMBER  *************************-->
-        <!--*****************************************************************-->
-
-        <!--************************* UTM ENDPOINT  *************************-->
-        <!--*****************************************************************-->
-
-
-        <!--**************************** LAT LNG ****************************-->
-        <!--*****************************************************************-->
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_link_settings"
+            style="@style/RaisedButton"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:onClick="onClickEditUsername"
-            android:orientation="vertical">
+            android:layout_margin="20dp"
+            android:text="@string/str_link" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username"
-                android:textSize="12dp" />
-
-            <TextView
-                android:id="@+id/username_tracker_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="piloto"
-                android:textSize="16dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_wifi_settings"
+            style="@style/RaisedButton"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:onClick="onClickEditPassword"
-            android:orientation="vertical">
+            android:layout_margin="20dp"
+            android:text="@string/str_wifi_settings" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Password"
-                android:textSize="12dp" />
-
-            <TextView
-                android:id="@+id/password_tracker_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="piloto"
-                android:textSize="16dp" />
-        </LinearLayout>
-
-
-        <!--**************************** STATUS  ****************************-->
-        <!--*****************************************************************-->
-
-        <!--************************* GO FLY BUTTON *************************-->
-        <!--*****************************************************************-->
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_sim_settings"
+            style="@style/RaisedButton"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_save_settings"
-                style="@style/RaisedButton"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:text="@string/str_link" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_change_vehicle"
-                style="@style/RaisedButton"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:text="@string/str_change_vehicle"
-                android:textSize="12sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="horizontal" />
+            android:layout_margin="20dp"
+            android:text="@string/str_sim_setup" />
 
     </LinearLayout>
 
