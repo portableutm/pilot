@@ -180,42 +180,30 @@ public class TrackerSettingsActivity extends AppCompatActivity {
         mButtonLinkSettings.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                try {
-                    Intent i = new Intent(context, TrackerLinkActivity.class);
-                    i.putExtra("tracker_id", tracker_id);
-                    i.putExtra("username", settingsRetrieved.getString("utm_username"));
-                    startActivityForResult(i, INTENT_LINK_TRACKER);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                Intent i = new Intent(context, TrackerLinkActivity.class);
+                i.putExtra("tracker_id", tracker_id);
+                i.putExtra("username", settingsRetrieved.optString("utm_username"));
+                startActivityForResult(i, INTENT_LINK_TRACKER);
             }
         });
         mButtonWiFiSettings.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                try {
-                    Intent i = new Intent(context, TrackerWifiSettingsActivity.class);
-                    i.putExtra("ssid", settingsRetrieved.getString("wifi_ssid"));
-                    i.putExtra("password", settingsRetrieved.getString("wifi_password"));
-                    startActivityForResult(i, INTENT_WIFI_SETTINGS);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                Intent i = new Intent(context, TrackerWifiSettingsActivity.class);
+                i.putExtra("ssid", settingsRetrieved.optString("wifi_ssid"));
+                i.putExtra("password", settingsRetrieved.optString("wifi_password"));
+                startActivityForResult(i, INTENT_WIFI_SETTINGS);
             }
         });
         mButtonSIMSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                try {
-                    Intent i = new Intent(context, TrackerSimSettingsActivity.class);
-                    i.putExtra("apn", settingsRetrieved.getString("apn"));
-                    i.putExtra("username", settingsRetrieved.getString("apn_username"));
-                    i.putExtra("passwword", settingsRetrieved.getString("apn_password"));
-                    i.putExtra("pin", settingsRetrieved.getInt("pin"));
-                    startActivityForResult(i, INTENT_SIM_SETTINGS);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                Intent i = new Intent(context, TrackerSimSettingsActivity.class);
+                i.putExtra("apn", settingsRetrieved.optString("apn"));
+                i.putExtra("username", settingsRetrieved.optString("apn_username"));
+                i.putExtra("passwword", settingsRetrieved.optString("apn_password"));
+                i.putExtra("pin", settingsRetrieved.optInt("pin"));
+                startActivityForResult(i, INTENT_SIM_SETTINGS);
             }
         });
 
