@@ -171,7 +171,7 @@
     <string name="str_duration_hours">Duration (Hours)</string>
     <string name="str_vehicle">Vehicle</string>
     <string name="express_vehicle_not_selected_title">Vehicle not selected</string>
-    <string name="express_vehicle_not_selected">Please go to setting and select a vehicle under "Express vehicle" input</string>
+    <string name="express_vehicle_not_selected">Please go to setting and select a vehicle under "Instant Request" input</string>
     <string name="str_uvin" translatable="false">id</string>
     <string name="str_tracker">Tracker</string>
     <string name="str_tracker_settings">Tracker Settings</string>

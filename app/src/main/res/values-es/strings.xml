@@ -164,7 +164,7 @@
     <string name="str_duration_hours">Duración (Horas)</string>
     <string name="str_vehicle">Vehículo</string>
     <string name="express_vehicle_not_selected_title">Vehículo no seleccionado</string>
-    <string name="express_vehicle_not_selected">Por favor seleccione un vehículo en las opciones, en donde se indica \"Vehículo Express\"</string>
+    <string name="express_vehicle_not_selected">Por favor seleccione un vehículo en las opciones, bajo el menu \"Solicitud rápida\"</string>
     <string name="str_tracker">Tracker</string>
     <string name="str_instant_request">Solicitud rápida</string>
     <string name="str_dji_drone">Dron DJI</string>

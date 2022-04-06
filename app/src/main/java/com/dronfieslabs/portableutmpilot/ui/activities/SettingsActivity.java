@@ -1,9 +1,12 @@
 package com.dronfieslabs.portableutmpilot.ui.activities;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
@@ -20,11 +23,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView textViewExpressRadius;
     private TextView textViewExpressDuration;
     private TextView textViewExpressVehicle;
+    private LinearLayout expressLinearLayout;
 
     public static final int REQUEST_CODE_SELECT_DRONE = 1;
 
@@ -75,6 +81,8 @@ public class SettingsActivity extends AppCompatActivity {
         String versionName = BuildConfig.VERSION_NAME;
         ((TextView)findViewById(R.id.tv_version_data)).setText(versionName);
 
+        expressLinearLayout = findViewById(R.id.expressRL);
+
         SwitchCompat switchCompatUTMEnable = findViewById(R.id.switch_compat_utm_enable);
         switchCompatUTMEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -85,6 +93,16 @@ public class SettingsActivity extends AppCompatActivity {
         scrollViewRoot = findViewById(R.id.scroll_view_root);
         if(getIntent().getBooleanExtra(Constants.SCROLL_TO_BOTTOM_KEY, false)){
             scrollViewRoot.post(() -> scrollViewRoot.fullScroll(View.FOCUS_DOWN));
+        }
+        if(getIntent().getBooleanExtra(Constants.HIGHLIGHT_INSTANT_VEHICLE_KEY, false)){
+            ObjectAnimator animator = ObjectAnimator.ofInt(expressLinearLayout, "backgroundColor", Color.RED, Color.WHITE);
+            // duration of one color
+            animator.setDuration(800);
+            animator.setEvaluator(new ArgbEvaluator());
+
+            // It will be repeated 10 times
+            animator.setRepeatCount(7);
+            animator.start();
         }
 
         textViewUTMEndpoint = findViewById(R.id.text_view_utm_endpoint);

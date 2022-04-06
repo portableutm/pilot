@@ -5,4 +5,5 @@ public class Constants {
     public static String OPERATION_MAX_ALTITUDE_KEY = "OPERATION_MAX_ALTITUDE";
     public static String OPERATION_POLYGON_KEY = "OPERATION_POLYGON";
     public static String SCROLL_TO_BOTTOM_KEY = "SCROLL_TO_BOTTOM";
+    public static String HIGHLIGHT_INSTANT_VEHICLE_KEY = "HIGHLIGHT_INSTANT_VEHICLE";
 }

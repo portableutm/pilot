@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
         // and we can't leave on the stack old activities after an important configuration change
         if(scrollDownSettingsActivity){
             intent.putExtra(Constants.SCROLL_TO_BOTTOM_KEY, true);
+            intent.putExtra(Constants.HIGHLIGHT_INSTANT_VEHICLE_KEY, true);
         }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
