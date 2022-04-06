@@ -196,5 +196,6 @@
     <string name="str_change_apn">Change APN</string>
     <string name="change_pin">Change PIN</string>
     <string name="str_change_ssid">Change WiFi Name</string>
+    <string name="invalid_instant_duration">Duration must be a integer  value between 1 and 99</string>
 
 </resources>

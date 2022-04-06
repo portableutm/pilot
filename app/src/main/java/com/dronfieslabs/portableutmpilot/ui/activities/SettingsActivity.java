@@ -386,7 +386,7 @@ public class SettingsActivity extends AppCompatActivity {
                 .setView(linearLayout)
                 .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        int newRadius = Integer.parseInt(editTextExpressRadius.getText().toString());
+                        float newRadius = Float.parseFloat(editTextExpressRadius.getText().toString());
                         SharedPreferencesUtils.updateExpressRadius(SettingsActivity.this, newRadius);
                         textViewExpressRadius.setText(String.valueOf(newRadius));
                     }
@@ -415,9 +415,13 @@ public class SettingsActivity extends AppCompatActivity {
                 .setView(linearLayout)
                 .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        int newDuration = Integer.parseInt(editTextExpressDuration.getText().toString());
-                        SharedPreferencesUtils.updateExpressDuration(SettingsActivity.this, newDuration);
-                        textViewExpressDuration.setText(String.valueOf(newDuration));
+                        try {
+                            int newDuration = Integer.parseInt(editTextExpressDuration.getText().toString());
+                            SharedPreferencesUtils.updateExpressDuration(SettingsActivity.this, newDuration);
+                            textViewExpressDuration.setText(String.valueOf(newDuration));
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(SettingsActivity.this, R.string.invalid_instant_duration, Toast.LENGTH_LONG).show();
+                        }
                     }
                 })
                 .setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {

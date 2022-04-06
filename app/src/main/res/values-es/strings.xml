@@ -187,5 +187,6 @@
     <string name="str_change_apn">Cambiar APN</string>
     <string name="change_pin">Cambiar PIN</string>
     <string name="str_change_ssid">Cambiar nombre de WiFi</string>
+    <string name="invalid_instant_duration">La duracion debe ser un valor entero entre 1 y 99</string>
 
 </resources>
