@@ -38,6 +38,7 @@ import com.dronfieslabs.portableutmpilot.BuildConfig;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.entities.ICompletitionCallback;
+import com.dronfieslabs.portableutmpilot.ui.utils.UIGenericUtils;
 import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
@@ -199,6 +200,15 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void onCLickLogout(View view){
+        //set empty username
+        SharedPreferencesUtils.updateUsername(this, "");
+        SharedPreferencesUtils.updatePassword(this, "");
+        //send user to login screen
+        UIGenericUtils.GoToActivity(SettingsActivity.this, LoginActivity.class);
+
     }
 
     public void onClickEditUsername(View view){
