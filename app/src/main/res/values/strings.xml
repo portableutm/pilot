@@ -197,5 +197,7 @@
     <string name="change_pin">Change PIN</string>
     <string name="str_change_ssid">Change WiFi Name</string>
     <string name="invalid_instant_duration">Duration must be a integer  value between 1 and 99</string>
+    <string name="confirm_instant_request_title">Confirm operation creation</string>
+    <string name="confirm_instant_request_description">A new circular operation with radius %1$f Km will be created and valid for %2$d hours starting now. If you want to change this parameters click \"cancel\" and change them in the settings</string>
 
 </resources>

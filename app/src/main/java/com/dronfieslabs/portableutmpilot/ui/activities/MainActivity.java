@@ -1,5 +1,6 @@
 package com.dronfieslabs.portableutmpilot.ui.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import androidx.appcompat.app.AlertDialog;
@@ -91,18 +92,41 @@ public class MainActivity extends AppCompatActivity {
     //--------------------------------------------------------------------------------------------------------------------
 
     private void onClickInstantRequest(){
-        AlertDialog alertDialog = showDialogSayingToTheUserHeHasToWait30Seconds();
         DronfiesUssServices dronfiesUssServices = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(MainActivity.this));
+
         if(dronfiesUssServices == null){
             UIGenericUtils.ShowAlert(MainActivity.this, getString(R.string.str_utm_connection_failed), getString(R.string.exc_msg_utm_connection_failed));
             return;
         }
+
         String vehicleId = SharedPreferencesUtils.getExpressVehicle(this);
         if(vehicleId == ""){
-            alertDialog.dismiss();
             showDialogExplainingToTheUserHeHasToSelectAVehicleToUseThisFeature();
             return;
         }
+
+        UIGenericUtils.ShowConfirmationAlert(MainActivity.this,
+                getString(R.string.confirm_instant_request_title),
+                String.format(getString(R.string.confirm_instant_request_description),
+                        SharedPreferencesUtils.getExpressRadius(MainActivity.this),
+                        SharedPreferencesUtils.getExpressDuration(MainActivity.this)),
+                getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onClickInstantRequest_1stPart(dronfiesUssServices);
+                    }
+                },
+                getString(R.string.str_cancel)
+        );
+
+    }
+
+    private void onClickInstantRequest_1stPart(DronfiesUssServices dronfiesUssServices){
+        AlertDialog alertDialog = showDialogSayingToTheUserHeHasToWait30Seconds();
+
+        String vehicleId = SharedPreferencesUtils.getExpressVehicle(this);
+
+
         UtilsOps.getLocation(MainActivity.this, (latLng, errorMessage) -> {
             //CREATES THE OPERATION//
             float radius = SharedPreferencesUtils.getExpressRadius(MainActivity.this);

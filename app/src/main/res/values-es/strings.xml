@@ -188,5 +188,7 @@
     <string name="change_pin">Cambiar PIN</string>
     <string name="str_change_ssid">Cambiar nombre de WiFi</string>
     <string name="invalid_instant_duration">La duracion debe ser un valor entero entre 1 y 99</string>
+    <string name="confirm_instant_request_title">Confirmar creación de operación</string>
+    <string name="confirm_instant_request_description">Se creará una nueva operacion circular de radio %1$f Km y de duracion %2$d hora/s a partir de ahora. Si desea cambiar estos parametros cancele y dirijase a la configuración</string>
 
 </resources>
