@@ -19,8 +19,8 @@
     <string name="exc_msg_invalid_operation_contact_phone__2">El telefono de contacto esta vacio. Este campo es obligatorio</string>
     <string name="exc_msg_invalid_operation_contact_phone__3">El telefono de contacto debe ser todos numeros</string>
     <string name="exc_msg_invalid_operation_datetime">Formato de fecha y hora inválido (dd/MM/yyyy HH:mm)</string>
-    <string name="exc_msg_invalid_operation_description">La descripción no puede contener la combinación de caracteres</string>
-    <string name="exc_msg_invalid_operation_description__2">La descripción debe tener entre 1 y 50 caracteres</string>
+    <string name="exc_msg_invalid_operation_description">El nombre no puede contener la combinación de caracteres</string>
+    <string name="exc_msg_invalid_operation_description__2">El nombre debe tener entre 1 y 50 caracteres</string>
     <string name="exc_msg_invalid_operation_drone">El dron no puede contener la combinación de caracteres</string>
     <string name="exc_msg_invalid_operation_drone__2">El dron debe tener entre 1 y 40 caracteres</string>
     <string name="exc_msg_invalid_operation_pilot">El piloto no puede contener la combinación de caracteres</string>

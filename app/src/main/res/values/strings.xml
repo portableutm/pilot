@@ -28,8 +28,8 @@
     <string name="exc_msg_invalid_operation_contact_phone__2">The contact phone can not be empty. This field is required</string>
     <string name="exc_msg_invalid_operation_contact_phone__3">The contact phone must be all numbers</string>
     <string name="exc_msg_invalid_operation_datetime">Datetime format is not valid (dd/MM/yyyy HH:mm)</string>
-    <string name="exc_msg_invalid_operation_description">The description can not contain the following combination of characters</string>
-    <string name="exc_msg_invalid_operation_description__2">The description must be between 1 and 50 characters</string>
+    <string name="exc_msg_invalid_operation_description">The name can not contain the following combination of characters</string>
+    <string name="exc_msg_invalid_operation_description__2">The name must be between 1 and 50 characters</string>
     <string name="exc_msg_invalid_operation_drone">The dron can not contain the following combination of characters</string>
     <string name="exc_msg_invalid_operation_drone__2">The drone must be between 1 and 40 characters</string>
     <string name="exc_msg_invalid_operation_pilot">The pilot can not contain the following combination of characters</string>
