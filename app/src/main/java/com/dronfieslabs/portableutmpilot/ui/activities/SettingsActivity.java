@@ -307,7 +307,7 @@ public class SettingsActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String newPhone = editTextExpressPhone.getText().toString();
                         SharedPreferencesUtils.updateExpressPhone(SettingsActivity.this, newPhone);
-                        textViewExpressRadius.setText(newPhone);
+                        textViewExpressPhone.setText(newPhone);
                     }
                 })
                 .setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
