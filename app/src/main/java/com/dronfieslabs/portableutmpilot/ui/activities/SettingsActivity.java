@@ -54,6 +54,7 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView textViewExpressDuration;
     private TextView textViewExpressVehicle;
     private LinearLayout expressLinearLayout;
+    private TextView textViewExpressPhone;
 
     public static final int REQUEST_CODE_SELECT_DRONE = 1;
 
@@ -113,6 +114,7 @@ public class SettingsActivity extends AppCompatActivity {
         textViewExpressRadius = findViewById(R.id.text_view_express_radius);
         textViewExpressDuration = findViewById(R.id.text_view_express_duration);
         textViewExpressVehicle = findViewById(R.id.text_view_express_vehicle);
+        textViewExpressPhone = findViewById(R.id.text_view_express_phone);
 
         // set UTM values
         switchCompatUTMEnable.setChecked(SharedPreferencesUtils.getUTMEnable(this));
@@ -123,6 +125,7 @@ public class SettingsActivity extends AppCompatActivity {
         textViewExpressDuration.setText(String.valueOf(SharedPreferencesUtils.getExpressDuration(this)));
         textViewExpressRadius.setText(String.valueOf(SharedPreferencesUtils.getExpressRadius(this)));
         textViewExpressVehicle.setText(SharedPreferencesUtils.getExpressVehicle(this));
+        textViewExpressPhone.setText(SharedPreferencesUtils.getExpressPhone(this));
 
         setCurrentLanguage();
     }
@@ -283,6 +286,35 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             })
             .show();
+    }
+
+    public void onClickEditExpressPhone(View view){
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        float weight = 1.0f;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+        linearLayout.setPadding(45, 10,50,10);
+        linearLayout.setLayoutParams(param);
+        final EditText editTextExpressPhone = new EditText(this);
+        editTextExpressPhone.setText(textViewExpressPhone.getText());
+        linearLayout.addView(editTextExpressPhone);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.str_contact_phone)
+                .setView(linearLayout)
+                .setPositiveButton(R.string.str_change, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String newPhone = editTextExpressPhone.getText().toString();
+                        SharedPreferencesUtils.updateExpressPhone(SettingsActivity.this, newPhone);
+                        textViewExpressRadius.setText(newPhone);
+                    }
+                })
+                .setNegativeButton(R.string.str_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
     }
 
     public void onClickEditUTMEndpoint(View view){

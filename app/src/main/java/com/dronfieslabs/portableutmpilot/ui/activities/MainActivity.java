@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         mButtonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickSettings(false);
+                onClickSettings(false, false);
             }
         });
     }
@@ -105,6 +105,12 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        String phone = SharedPreferencesUtils.getExpressPhone(this);
+        if(phone.isEmpty() || phone == null) {
+            showDialogExplainingToTheUserHeHasToAddPhoneNumberToUseThisFeature();
+            return;
+        }
+
         UIGenericUtils.ShowConfirmationAlert(MainActivity.this,
                 getString(R.string.confirm_instant_request_title),
                 String.format(getString(R.string.confirm_instant_request_description),
@@ -131,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
             //CREATES THE OPERATION//
             float radius = SharedPreferencesUtils.getExpressRadius(MainActivity.this);
             int duration = SharedPreferencesUtils.getExpressDuration(MainActivity.this);
-            ExpressOperationData oper = new ExpressOperationData(latLng,radius,duration,vehicleId);
+            ExpressOperationData oper = new ExpressOperationData(latLng,radius,duration,vehicleId,"");
             //*********************//
             if(!dronfiesUssServices.isAuthenticated()){
                 String username = SharedPreferencesUtils.getUsername(MainActivity.this);
@@ -188,13 +194,15 @@ public class MainActivity extends AppCompatActivity {
         goToOperationsActivity(false);
     }
 
-    private void onClickSettings(boolean scrollDownSettingsActivity){
+    private void onClickSettings(boolean scrollDownSettingsActivity, boolean highlightVehicle){
         Intent intent = new Intent(this, SettingsActivity.class);
         // we have to clear the activities stack before going to the settings activity
         // this is because in settings activity we can change important settings (like app language),
         // and we can't leave on the stack old activities after an important configuration change
         if(scrollDownSettingsActivity){
             intent.putExtra(Constants.SCROLL_TO_BOTTOM_KEY, true);
+        }
+        if(highlightVehicle){
             intent.putExtra(Constants.HIGHLIGHT_INSTANT_VEHICLE_KEY, true);
         }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -250,12 +258,36 @@ public class MainActivity extends AppCompatActivity {
 
         Button button = new Button(new ContextThemeWrapper(this, R.style.RaisedButton), null, 0);
         button.setText(getString(R.string.str_settings));
-        button.setOnClickListener(view -> onClickSettings(true));
+        button.setOnClickListener(view -> onClickSettings(true,true));
         linearLayout.addView(button);
 
         AlertDialog alertDialog = new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle(getString(R.string.express_vehicle_not_selected_title))
                 .setMessage(getString(R.string.express_vehicle_not_selected))
+                .setView(linearLayout)
+                .create();
+
+        alertDialog.show();
+    }
+
+    private void showDialogExplainingToTheUserHeHasToAddPhoneNumberToUseThisFeature(){
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        float weight = 1.0f;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+        linearLayout.setPadding(50, 50,50,50);
+        linearLayout.setLayoutParams(param);
+
+        Button button = new Button(new ContextThemeWrapper(this, R.style.RaisedButton), null, 0);
+        button.setText(getString(R.string.str_settings));
+        button.setOnClickListener(view -> onClickSettings(true,false));
+        linearLayout.addView(button);
+
+        AlertDialog alertDialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.express_phone_not_set_title))
+                .setMessage(getString(R.string.express_phone_not_set))
                 .setView(linearLayout)
                 .create();
 
