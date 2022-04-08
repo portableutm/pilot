@@ -89,7 +89,7 @@ public class SelectDroneActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             try{
-                                dronfiesUssServices.getOperatorVehicles(10, vehicleCount, new ICompletitionCallback<List<Vehicle>>() {
+                                dronfiesUssServices.getOperatorVehicles("authorized", Vehicle.EnumVehicleAuthorization.AUTHORIZED.name(), 10, vehicleCount, new ICompletitionCallback<List<Vehicle>>() {
                                     @Override
                                     public void onResponse(List<Vehicle> vehicles, String s) {
                                         List<Vehicle> listUserVehicles = vehicles;
