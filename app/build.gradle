@@ -151,7 +151,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
 
     //PUTM SDK
-    implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:3.30'
+    implementation 'com.dronfies.portableutmandroidclienttest:utm_android_sdk:3.31'
 
 
     implementation 'androidx.navigation:navigation-fragment:2.3.5'

@@ -37,6 +37,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dronfieslabs.portableutmpilot.IGenericCallback;
 import com.dronfieslabs.portableutmpilot.R;
@@ -273,6 +274,9 @@ public class OperationsActivity extends AppCompatActivity {
                         operationsLoaded++;
                     }
                     mOperationsLoaded += operationsLoaded;
+                    if (operationsLoaded == 0){
+                        Toast.makeText(getApplicationContext(),getString(R.string.no_more_operations),Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         } catch (NoAuthenticatedException e) {

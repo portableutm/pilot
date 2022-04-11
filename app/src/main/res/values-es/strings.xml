@@ -192,5 +192,6 @@
     <string name="confirm_instant_request_description">Se creará una nueva operacion circular de radio %1$f Km y de duracion %2$d hora/s a partir de ahora. Si desea cambiar estos parametros cancele y dirijase a la configuración</string>
     <string name="express_phone_not_set_title">Numero de contacto</string>
     <string name="express_phone_not_set">Debe indicar un numero de telefono para contacto en los ajustes de la aplicación</string>
+    <string name="no_more_operations">No hay más operaciones para cargar</string>
 
 </resources>
