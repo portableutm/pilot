@@ -9,26 +9,29 @@
     tools:context=".ui.activities.OperationsActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:layout_height="?attr/actionBarSize"
-        android:layout_width="match_parent"
         android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar">
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
+
                 <LinearLayout
                     android:id="@+id/linearLayoutOperations"
                     android:layout_width="match_parent"
@@ -37,28 +40,48 @@
                     android:padding="10dp">
 
                 </LinearLayout>
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_load_more"
+                    style="@style/RaisedButton"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:text="@string/str_load_more"
-                    style="@style/RaisedButton"/>
+                    android:text="@string/str_load_more" />
             </LinearLayout>
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-      android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/buttonAddOperation"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_add_white_24dp"
-        app:fabSize="normal"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:elevation="8dp"
-        android:onClick="onClickAddOperation"/>
+        android:onClick="onClickAddOperation"
+        android:src="@drawable/ic_add_white_24dp"
+        app:fabSize="normal" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/filterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:elevation="8dp"
+
+        android:onClick="onClickFilter"
+        app:srcCompat="@drawable/ic_filter"
+        tools:ignore="SpeakableTextPresentCheck" />
 
 </RelativeLayout>

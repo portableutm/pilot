@@ -30,6 +30,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,6 +53,7 @@ import com.dronfieslabs.portableutmpilot.utils.SharedPreferencesUtils;
 import com.dronfieslabs.portableutmpilot.utils.UtilsOps;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -72,6 +75,9 @@ public class OperationsActivity extends AppCompatActivity {
     private LinearLayout mLinearLayoutOperations;
     private RelativeLayout mRelativeLayoutRoot;
     private AppCompatButton mButtonLoadMore;
+
+    private List<String> states = new ArrayList();
+
 
     //-------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
@@ -197,6 +203,179 @@ public class OperationsActivity extends AppCompatActivity {
         UIGenericUtils.GoToActivity(OperationsActivity.this, AddOperationActivity.class);
     }
 
+    public void onClickFilter(View view){
+        final LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        float weight = 1.0f;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, height, weight);
+        linearLayout.setPadding(50, 50,50,50);
+        linearLayout.setLayoutParams(param);
+
+        CheckBox activated = new CheckBox(getApplicationContext());
+        activated.setText("Activated");
+        activated.setChecked(states.contains("ACTIVATED"));
+//        activated.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked){
+//                    states.add("ACTIVATED");
+//                } else {
+//                    states.remove("ACTIVATED");
+//                }
+//
+//            }
+//        });
+        linearLayout.addView(activated);
+
+        CheckBox proposed = new CheckBox(getApplicationContext());
+        proposed.setText("Proposed");
+        proposed.setChecked(states.contains("PROPOSED"));
+
+//        proposed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked){
+//                    states.add("PROPOSED");
+//                } else {
+//                    states.remove("PROPOSED");
+//                }
+//
+//            }
+//        });
+        linearLayout.addView(proposed);
+
+        CheckBox accepted = new CheckBox(getApplicationContext());
+        accepted.setText("Accepted");
+        accepted.setChecked(states.contains("ACCEPTED"));
+
+//        accepted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked){
+//                    states.add("ACCEPTED");
+//                } else {
+//                    states.remove("ACCEPTED");
+//                }
+//
+//            }
+//        });
+        linearLayout.addView(accepted);
+
+        CheckBox pending = new CheckBox(getApplicationContext());
+        pending.setText("Pending");
+        pending.setChecked(states.contains("PENDING"));
+
+//        pending.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked){
+//                    states.add("PENDING");
+//                } else {
+//                    states.remove("PENDING");
+//                }
+//
+//            }
+//        });
+        linearLayout.addView(pending);
+
+        CheckBox rogue = new CheckBox(getApplicationContext());
+        rogue.setText("Rogue");
+        rogue.setChecked(states.contains("ROGUE"));
+
+//        rogue.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked){
+//                    states.add("ROGUE");
+//                } else {
+//                    states.remove("ROGUE");
+//                }
+//
+//            }
+//        });
+        linearLayout.addView(rogue);
+
+        CheckBox closed = new CheckBox(getApplicationContext());
+        closed.setText("Closed");
+        closed.setChecked(states.contains("CLOSED"));
+
+//        closed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked){
+//                    states.add("CLOSED");
+//                } else {
+//                    states.remove("CLOSED");
+//                }
+//
+//            }
+//        });
+        linearLayout.addView(closed);
+
+        CheckBox not_accepted = new CheckBox(getApplicationContext());
+        not_accepted.setText("Not Accepted");
+        not_accepted.setChecked(states.contains("NOT_ACCEPTED"));
+
+//        not_accepted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked){
+//                    states.add("NOT_ACCEPTED");
+//                } else {
+//                    states.remove("NOT_ACCEPTED");
+//                }
+//
+//            }
+//        });
+        linearLayout.addView(not_accepted);
+
+
+        AlertDialog alertDialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Filter")
+                .setView(linearLayout)
+                .create();
+
+        Button okay = new Button(getApplicationContext());
+        okay.setText(getString(R.string.button_ok));
+        okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                states.clear();
+                if(activated.isChecked()){
+                    states.add("ACTIVATED");
+                }
+                if(proposed.isChecked()){
+                    states.add("PROPOSED");
+                }
+                if(not_accepted.isChecked()){
+                    states.add("NOT_ACCEPTED");
+                }
+                if(accepted.isChecked()){
+                    states.add("ACCEPTED");
+                }
+                if(closed.isChecked()){
+                    states.add("CLOSED");
+                }
+                if(pending.isChecked()){
+                    states.add("PROPOSED");
+                }
+                if(rogue.isChecked()){
+                    states.add("ROGUE");
+                }
+                mLinearLayoutOperations.removeAllViews();
+                mOperationsLoaded = 0;
+                loadOperations();
+                alertDialog.dismiss();
+            }
+        });
+        linearLayout.addView(okay);
+
+        alertDialog.show();
+
+    }
+
     public void onClickDrone(Operation operation){
         goToActivityPassingOperationData(FlightActivity.class, operation);
     }
@@ -239,7 +418,7 @@ public class OperationsActivity extends AppCompatActivity {
         // to refresh the operations list, we first remove all old operations
         //mLinearLayoutOperations.removeAllViews();
         try {
-           UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(this)).getOperations(OPERATIONS_PER_PAGE, mOperationsLoaded, new ICompletitionCallback<List<Operation>>() {
+           UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(this)).getOperations(OPERATIONS_PER_PAGE, mOperationsLoaded, states, new ICompletitionCallback<List<Operation>>() {
                 @Override
                 public void onResponse(final List<Operation> operations, final String errorMessage) {
                     // onResponse, we remove the progressbar from the activity
