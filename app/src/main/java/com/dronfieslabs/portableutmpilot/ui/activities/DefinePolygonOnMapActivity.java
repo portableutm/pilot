@@ -12,7 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.dronfies.portableutmandroidclienttest.UASVolumeReservation;
 import com.dronfieslabs.portableutmpilot.R;
 import com.dronfies.portableutmandroidclienttest.DronfiesUssServices;
 import com.dronfies.portableutmandroidclienttest.RestrictedFlightVolume;
@@ -27,11 +29,16 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -168,10 +175,12 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
                     return;
                 }
                 drawRFVs(dronfiesUssServices, googleMap);
+                drawUVRs(dronfiesUssServices, googleMap);
                 }
             });
         }else{
             drawRFVs(dronfiesUssServices, googleMap);
+            drawUVRs(dronfiesUssServices, googleMap);
         }
     }
 
@@ -326,6 +335,7 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
                 try {
                     listRFVs = dronfiesUssServices.getRestrictedFlightVolumes();
                 } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Could not load RFVs", Toast.LENGTH_LONG);
                     // if we couldn't get the rfvs, we do not draw them
                     return;
                 }
@@ -339,6 +349,41 @@ public class DefinePolygonOnMapActivity extends FragmentActivity implements OnMa
                                     .fillColor(Color.argb(64, 255, 0, 0))
                                     .strokeColor(Color.rgb(255, 0, 0))
                                     .strokeWidth(3f)
+                            );
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    private void drawUVRs(final DronfiesUssServices dronfiesUssServices, final GoogleMap googleMap){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<UASVolumeReservation> listUVRs = null;
+                try {
+                    listUVRs = dronfiesUssServices.getUASVolumes();
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Could not load UVRs", Toast.LENGTH_LONG);
+                    // if we couldn't get the rfvs, we do not draw them
+                    return;
+                }
+                for(final UASVolumeReservation uvr : listUVRs){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            PatternItem dash = new Dash(10);
+                            PatternItem gap = new Gap(10);
+                            List<PatternItem> patternList = new ArrayList<>();
+                            patternList.add(dash);
+                            patternList.add(gap);
+                            googleMap.addPolygon(
+                                    new PolygonOptions()
+                                            .addAll(uvr.getPolygon())
+                                            .fillColor(Color.argb(64, 255, 165, 0))
+                                            .strokeColor(Color.rgb(255, 0, 0))
+                                            .strokeWidth(3f).strokePattern(patternList)
                             );
                         }
                     });
