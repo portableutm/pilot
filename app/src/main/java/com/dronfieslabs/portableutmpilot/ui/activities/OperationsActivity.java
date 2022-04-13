@@ -216,119 +216,37 @@ public class OperationsActivity extends AppCompatActivity {
         CheckBox activated = new CheckBox(getApplicationContext());
         activated.setText("Activated");
         activated.setChecked(states.contains("ACTIVATED"));
-//        activated.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked){
-//                    states.add("ACTIVATED");
-//                } else {
-//                    states.remove("ACTIVATED");
-//                }
-//
-//            }
-//        });
         linearLayout.addView(activated);
 
         CheckBox proposed = new CheckBox(getApplicationContext());
         proposed.setText("Proposed");
         proposed.setChecked(states.contains("PROPOSED"));
-
-//        proposed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked){
-//                    states.add("PROPOSED");
-//                } else {
-//                    states.remove("PROPOSED");
-//                }
-//
-//            }
-//        });
         linearLayout.addView(proposed);
 
         CheckBox accepted = new CheckBox(getApplicationContext());
         accepted.setText("Accepted");
         accepted.setChecked(states.contains("ACCEPTED"));
 
-//        accepted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked){
-//                    states.add("ACCEPTED");
-//                } else {
-//                    states.remove("ACCEPTED");
-//                }
-//
-//            }
-//        });
         linearLayout.addView(accepted);
 
         CheckBox pending = new CheckBox(getApplicationContext());
         pending.setText("Pending");
         pending.setChecked(states.contains("PENDING"));
-
-//        pending.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked){
-//                    states.add("PENDING");
-//                } else {
-//                    states.remove("PENDING");
-//                }
-//
-//            }
-//        });
         linearLayout.addView(pending);
 
         CheckBox rogue = new CheckBox(getApplicationContext());
         rogue.setText("Rogue");
         rogue.setChecked(states.contains("ROGUE"));
-
-//        rogue.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked){
-//                    states.add("ROGUE");
-//                } else {
-//                    states.remove("ROGUE");
-//                }
-//
-//            }
-//        });
         linearLayout.addView(rogue);
 
         CheckBox closed = new CheckBox(getApplicationContext());
         closed.setText("Closed");
         closed.setChecked(states.contains("CLOSED"));
-
-//        closed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked){
-//                    states.add("CLOSED");
-//                } else {
-//                    states.remove("CLOSED");
-//                }
-//
-//            }
-//        });
         linearLayout.addView(closed);
 
         CheckBox not_accepted = new CheckBox(getApplicationContext());
         not_accepted.setText("Not Accepted");
         not_accepted.setChecked(states.contains("NOT_ACCEPTED"));
-
-//        not_accepted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked){
-//                    states.add("NOT_ACCEPTED");
-//                } else {
-//                    states.remove("NOT_ACCEPTED");
-//                }
-//
-//            }
-//        });
         linearLayout.addView(not_accepted);
 
 

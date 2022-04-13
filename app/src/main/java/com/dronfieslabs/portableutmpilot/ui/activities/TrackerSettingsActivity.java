@@ -464,7 +464,6 @@ public class TrackerSettingsActivity extends AppCompatActivity {
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                finish();
                                             }
                                         }));
                             } else {
@@ -529,7 +528,6 @@ public class TrackerSettingsActivity extends AppCompatActivity {
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            finish();
                                         }
                                     }));
                         }
@@ -579,7 +577,6 @@ public class TrackerSettingsActivity extends AppCompatActivity {
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            finish();
                                         }
                                     }));
                         }
