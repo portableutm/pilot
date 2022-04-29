@@ -66,11 +66,38 @@ public class TrackerLinkActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("username",mUsername.getText().toString());
-                returnIntent.putExtra("password",mPassword.getText().toString());
-                setResult(Activity.RESULT_OK,returnIntent);
-                finish();
+                final LinearLayout spin = UIGenericUtils.ShowProgressBar(mRelativeLayoutRoot);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        DronfiesUssServices api = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(TrackerLinkActivity.this));
+                        try {
+                            api.login_sync(mUsername.getText().toString(), mPassword.getText().toString());
+                        } catch (Exception e) {
+                            runOnUiThread(() -> UIGenericUtils.ShowErrorAlertWithOkButton(TrackerLinkActivity.this,getString(R.string.str_login_failed),getString(R.string.str_login_failed),getString(R.string.ok),null));
+                            runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
+                            return;
+                        }
+                        if(!api.isAuthenticated()){
+                            runOnUiThread(() -> UIGenericUtils.ShowErrorAlertWithOkButton(TrackerLinkActivity.this,getString(R.string.str_login_failed),getString(R.string.str_login_failed),getString(R.string.ok),null));
+                            runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
+                            return;
+                        }
+                        Intent returnIntent = new Intent();
+                        returnIntent.putExtra("username",mUsername.getText().toString());
+                        returnIntent.putExtra("password",mPassword.getText().toString());
+                        setResult(Activity.RESULT_OK,returnIntent);
+                        finish();
+                    }
+                }).start();
+
+            }
+        });
+
+        mChangeVehicleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeVehicle();
             }
         });
     }
@@ -82,7 +109,11 @@ public class TrackerLinkActivity extends AppCompatActivity {
             case INTENT_REGISTER_TRACKER:
             case INTENT_CHANGE_VEHICLE:
                 if(resultCode == RESULT_OK){
-//                    linkTracker(data.getStringExtra("username"), data.getStringExtra("password"));
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("username",mUsername.getText().toString());
+                    returnIntent.putExtra("password",mPassword.getText().toString());
+                    setResult(Activity.RESULT_OK,returnIntent);
+                    finish();
                 }
                 break;
         }
@@ -159,11 +190,15 @@ public class TrackerLinkActivity extends AppCompatActivity {
                 try {
                     DronfiesUssServices api = UtilsOps.getDronfiesUssServices(SharedPreferencesUtils.getUTMEndpoint(TrackerLinkActivity.this));
                     api.login_sync(user, pass);
-
+                    if(!api.isAuthenticated()){
+                       runOnUiThread(() -> UIGenericUtils.ShowErrorAlertWithOkButton(TrackerLinkActivity.this,getString(R.string.str_login_failed),getString(R.string.str_login_failed),getString(R.string.ok),null));
+                       runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
+                       return;
+                    }
                     Tracker instance = null;
                     instance = api.getTrackerInformation(tracker_id);
+                    runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
                     if (instance != null) {
-                        runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
                         Intent intent = new Intent(TrackerLinkActivity.this, TrackerRegister.class);
                         Bundle b = new Bundle();
                         b.putString("tracker_id", tracker_id);
@@ -171,7 +206,6 @@ public class TrackerLinkActivity extends AppCompatActivity {
                         intent.putExtras(b);
                         startActivityForResult(intent, INTENT_CHANGE_VEHICLE);
                     } else {
-                        runOnUiThread(() -> mRelativeLayoutRoot.removeView(spin));
                         runOnUiThread(() -> UIGenericUtils.ShowConfirmationAlert(TrackerLinkActivity.this,
                                 getString(R.string.tracker_not_registered), getString(R.string.tracker_not_registered_msg),
                                 getString(R.string.str_register_tracker), new DialogInterface.OnClickListener() {

@@ -17,7 +17,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="15dp"
+        android:background="#CC3E3E3E"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_lastSeen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/lastSeen"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_lastSeen_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="0s"
+            android:textColor="#FFFFFF"
+            android:layout_marginEnd="10dp"
+            android:textSize="16sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="50dp"
         android:background="#CC3E3E3E"
         android:orientation="vertical">
 
@@ -25,12 +54,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
+
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tv_altitude"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
 
                 android:text="@string/str_altitude"
@@ -42,6 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
                 android:text="0"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />
@@ -133,16 +165,17 @@
     <!--#######################################################################################-->
     <!--######################################## Alarm ########################################-->
     <!--#######################################################################################-->
+
+    <!--#######################################################################################-->
+    <!--################################ Dismiss Alarm Button  ################################-->
+    <!--#######################################################################################-->
+
     <RelativeLayout
         android:id="@+id/relative_layout_alarm"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </RelativeLayout>
-
-    <!--#######################################################################################-->
-    <!--################################ Dismiss Alarm Button  ################################-->
-    <!--#######################################################################################-->
 
     <Button
         android:id="@+id/button_dismiss_alarm"

@@ -193,5 +193,6 @@
     <string name="express_phone_not_set_title">Numero de contacto</string>
     <string name="express_phone_not_set">Debe indicar un numero de telefono para contacto en los ajustes de la aplicación</string>
     <string name="no_more_operations">No hay más operaciones para cargar</string>
+    <string name="lastSeen">Ultima Posición</string>
 
 </resources>

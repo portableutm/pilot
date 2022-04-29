@@ -74,11 +74,15 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
     private TextView mHeading;
     private TextView mVSpeed;
     private TextView mHSpeed;
+    private TextView mLastSeen;
+    private Date lastPosition = null;
 
     private Date lastTime = null;
 
     private double calculatedVSpeed = 0;
     private double calculatedHSpeed = 0;
+
+    Thread thread;
 
 
     // other variables
@@ -107,6 +111,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
         mHeading = findViewById(R.id.tv_heading_value);
         mVSpeed = findViewById(R.id.tv_vspeed_value);
         mHSpeed = findViewById(R.id.tv_hspeed_value);
+        mLastSeen = findViewById(R.id.tv_lastSeen_value);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -127,6 +132,33 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
 
         startReceivingTrackerPositionUpdates();
 
+        thread = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!thread.isInterrupted()) {
+                        Thread.sleep(1000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(lastPosition == null){
+                                    mLastSeen.setText("...");
+                                } else {
+                                    long diff = new Date().getTime() - lastPosition.getTime();
+                                    int seconds = Math.round(TimeUnit.MILLISECONDS.toSeconds(diff));
+                                    mLastSeen.setText( String.valueOf(seconds)+ "s");
+                                }
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        thread.start();
+
         // alarm
         mAlarm = new Alarm(this, mRelativeLayoutAlarm, mButtonDismissAlarm, mOperationPolygonMercator, mOperationMaxAltitude);
     }
@@ -143,6 +175,7 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
         // if playing, stop both beeps
         mAlarm.stopBeep();
         disconnectSocket();
+        thread.interrupt();
         super.onDestroy();
     }
 
@@ -233,6 +266,9 @@ public class FlyWithTrackerActivity extends AppCompatActivity {
                         mMarkerTracker.setPosition(new LatLng(trackerPosition.getLatitude(), trackerPosition.getLongitude()));
 //                        mHeading.setText(trackerPosition.getHeading());
                         mAltitude.setText(String.valueOf(trackerPosition.getAltitude()));
+
+                        lastPosition = new Date();
+                        mLastSeen.setText(String.valueOf(0) + "s");
 
                         mAlarm.updateVehiclePosition(trackerPosition.getLatitude(), trackerPosition.getLongitude(), trackerPosition.getAltitude());
                     });

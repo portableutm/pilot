@@ -202,5 +202,6 @@
     <string name="express_phone_not_set_title">Contact number not set</string>
     <string name="express_phone_not_set">"You have to set a phone number in settings to use this feature "</string>
     <string name="no_more_operations">There are no more operations to load</string>
+    <string name="lastSeen">Last Seen</string>
 
 </resources>
